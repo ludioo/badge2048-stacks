@@ -5,6 +5,18 @@ import { checkGameOver } from './checkGameOver';
 import { createEmptyBoard } from './utils';
 import { BOARD_SIZE } from './constants';
 
+export function createInitialState(): GameState {
+  const emptyBoard = createEmptyBoard();
+  let newBoard = spawnTile(emptyBoard);
+  newBoard = spawnTile(newBoard);
+
+  return {
+    board: newBoard,
+    score: 0,
+    status: 'playing',
+  };
+}
+
 /**
  * Game reducer - handles all game state transitions
  * Pure function that returns new state based on action
@@ -12,18 +24,7 @@ import { BOARD_SIZE } from './constants';
 export function gameReducer(state: GameState, action: GameAction): GameState {
   switch (action.type) {
     case 'RESTART': {
-      // Create new empty board
-      const emptyBoard = createEmptyBoard();
-      
-      // Spawn 2 initial tiles
-      let newBoard = spawnTile(emptyBoard);
-      newBoard = spawnTile(newBoard);
-
-      return {
-        board: newBoard,
-        score: 0,
-        status: 'playing',
-      };
+      return createInitialState();
     }
 
     case 'SLIDE_LEFT': {

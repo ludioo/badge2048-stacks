@@ -21,9 +21,10 @@ interface GameState {
 
 ### Board Structure
 
-* 4×4 grid (16 cells)
+* **Fixed 4×4 grid** (16 cells total) - dimensions never change
 * Each cell: `number` (tile value) or `null` (empty)
 * Example: `[[2, 4, null, null], [null, 2, 4, 8], ...]`
+* **Important:** The board is always 4 rows × 4 columns. It does not expand or shrink.
 
 ### Score
 

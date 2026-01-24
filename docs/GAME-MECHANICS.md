@@ -4,18 +4,25 @@
 
 ## Core Mechanics
 
-* 4×4 grid puzzle
+* **Fixed 4×4 grid** (16 cells) - board size never changes
 * Endless until no moves remain
 * Merge identical tiles on slide
 * Incremental scoring
 * New tiles spawn after valid moves
 * Failure = no moves + no empty cells
 
+## Board Structure
+
+* **Grid Size:** Always 4×4 (16 cells total)
+* **Cell States:** Empty (null) or contains a number tile (2, 4, 8, 16, 32, 64, 128, 256, 512, 1024, 2048, 4096+)
+* **Maximum Tiles:** Up to 16 tiles can exist simultaneously (when board is full)
+* **Important:** Board dimensions are fixed and never expand
+
 ## Input
 
-* Keyboard arrow keys (MVP)
-* Optional click (future)
-* Optional swipe (future)
+* **Keyboard:** Arrow keys (up, down, left, right)
+* **Touch:** Swipe gestures (mobile)
+* **Mouse:** Drag/swipe gestures (desktop)
 
 ## State Machine (Deterministic)
 

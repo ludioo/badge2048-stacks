@@ -13,7 +13,9 @@
 ### Styling
 
 * **TailwindCSS** - Utility-first CSS framework
-* **Framer Motion** (optional) - Animation library for smooth transitions
+* **Shadcn/ui** - Modern React component library built on Radix UI and Tailwind CSS
+* **Aceternity UI** - Premium UI components and animations for enhanced visual effects
+* **Framer Motion** - Animation library for smooth transitions (used with Aceternity components)
 
 ## Project Structure
 

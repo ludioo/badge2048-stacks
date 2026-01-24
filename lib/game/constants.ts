@@ -8,8 +8,8 @@ export const DEFAULT_BADGES: Badge[] = [
   { tier: 'elite', threshold: 8192, unlocked: false, claimed: false },
 ];
 
-// Board size
-export const BOARD_SIZE = 4;
+// Board size - FIXED, never changes
+export const BOARD_SIZE = 4; // 4x4 grid = 16 cells total
 
 // Spawn probabilities
 export const SPAWN_2_PROBABILITY = 0.9; // 90% chance for 2
