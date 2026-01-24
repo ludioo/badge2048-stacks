@@ -78,8 +78,9 @@ const DEFAULT_BADGES: Badge[] = [
 ### Keys
 
 * `gameState` (optional): Save game in progress
-* `badges`: User's badge state
-* `highScore` (optional): Best score achieved
+* `badges_v1`: User's badge state (current)
+* `highScore_v1` (optional): Best score achieved (current)
+* Legacy keys (auto-migrated): `badges`, `highScore`
 
 ### Badge Storage Format
 

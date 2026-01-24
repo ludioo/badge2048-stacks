@@ -58,6 +58,6 @@ See [DATA-MODELS.md](./DATA-MODELS.md) for detailed badge data structure.
 ## Persistence
 
 * Badges stored in browser local storage (MVP)
-* Key: `badges` or `userBadges`
+* Key: `badges_v1` (legacy `badges` auto-migrated)
 * Persists across sessions
 * Will migrate to on-chain storage in future

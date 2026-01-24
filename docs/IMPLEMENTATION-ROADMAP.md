@@ -119,13 +119,15 @@ Sebelum mulai, pastikan sudah membaca:
 **File Referensi:** `PAGES-ROUTING.md`
 
 ### Fitur yang diimplementasikan:
-- [ ] Setup App Router structure
-- [ ] Home page (redirect ke /play atau landing)
-- [ ] `/play` page dengan game component
-- [ ] Navigation component (header/navbar)
-- [ ] Basic layout component
+- [x] Setup App Router structure
+- [x] Home page (redirect ke /play atau landing)
+- [x] `/play` page dengan game component
+- [x] Navigation component (header/navbar)
+- [x] Basic layout component
 
 **Deliverable:** Multi-page structure dengan navigasi yang berfungsi
+
+**Status:** ✅ **PHASE 4 COMPLETE** - Struktur multi-page dan navigasi sudah berjalan.
 
 **Urutan Detail:**
 1. Setup routing structure
@@ -141,13 +143,20 @@ Sebelum mulai, pastikan sudah membaca:
 **File Referensi:** `BADGE-SYSTEM.md`, `DATA-MODELS.md`
 
 ### Fitur yang diimplementasikan:
-- [ ] Badge data structure
-- [ ] Badge unlock logic (check score threshold)
-- [ ] Badge state management
-- [ ] Local storage persistence untuk badges
-- [ ] Badge unlock detection setelah game over
+- [x] Badge data structure
+- [x] Badge unlock logic (check score threshold)
+- [x] Badge state management
+- [x] Local storage persistence untuk badges
+- [x] Badge unlock detection setelah game over
+- [x] Badge unlock toast/popup after game over
+- [x] High score storage (localStorage)
+- [x] Storage schema guard + migration (badges_v1)
+- [x] Analytics hook event `badge_unlocked`
+- [x] Tests untuk loadBadgesFromStorage (array/object/corrupt)
 
 **Deliverable:** Badge system logic yang bisa detect unlock dan persist ke local storage
+
+**Status:** ✅ **PHASE 5 COMPLETE** - Badge logic, persistence, dan testing unlock sudah tervalidasi.
 
 **Urutan Detail:**
 1. Define badge types dan default badges
@@ -155,6 +164,11 @@ Sebelum mulai, pastikan sudah membaca:
 3. Integrate dengan game over flow
 4. Implementasi local storage save/load
 5. Test badge unlock dengan berbagai score
+6. Tambahkan toast/popup saat badge unlocked
+7. Simpan high score ke local storage
+8. Tambahkan schema versioning + migrasi
+9. Siapkan analytics event hook
+10. Tambahkan test storage load + corrupt data
 
 ---
 
