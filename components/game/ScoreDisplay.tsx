@@ -1,7 +1,7 @@
 'use client'
 
 import React, { useEffect, useRef, useState } from 'react'
-import { AnimatePresence, motion } from 'framer-motion'
+import { AnimatePresence, motion, useReducedMotion } from 'framer-motion'
 import { cn } from '@/lib/utils'
 
 interface ScoreDisplayProps {
@@ -12,6 +12,7 @@ interface ScoreDisplayProps {
 export function ScoreDisplay({ score, className }: ScoreDisplayProps) {
   const [delta, setDelta] = useState<number | null>(null)
   const prevScoreRef = useRef(score)
+  const prefersReducedMotion = useReducedMotion()
 
   useEffect(() => {
     const prev = prevScoreRef.current
@@ -48,10 +49,10 @@ export function ScoreDisplay({ score, className }: ScoreDisplayProps) {
           {delta !== null && (
             <motion.span
               key={delta}
-              initial={{ opacity: 0, y: 8, scale: 0.95 }}
-              animate={{ opacity: 1, y: -12, scale: 1 }}
-              exit={{ opacity: 0, y: -24, scale: 0.95 }}
-              transition={{ duration: 0.35, ease: 'easeOut' }}
+              initial={prefersReducedMotion ? { opacity: 1, y: 0, scale: 1 } : { opacity: 0, y: 8, scale: 0.95 }}
+              animate={{ opacity: 1, y: prefersReducedMotion ? 0 : -12, scale: 1 }}
+              exit={{ opacity: 0, y: prefersReducedMotion ? 0 : -24, scale: prefersReducedMotion ? 1 : 0.95 }}
+              transition={prefersReducedMotion ? { duration: 0 } : { duration: 0.35, ease: 'easeOut' }}
               className="absolute -right-2 -top-2 rounded-full bg-emerald-500/90 px-2 py-0.5 text-xs font-semibold text-white shadow"
             >
               +{delta.toLocaleString()}

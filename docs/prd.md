@@ -44,8 +44,9 @@ This project is a simple, endless puzzle mini-game (2048-like) implemented as a 
 ### 5.2 Input
 
 * Keyboard arrow keys (MVP)
-* Optional click (future)
-* Optional swipe (future)
+* Touch swipe (MVP)
+* Mouse drag/swipe (MVP)
+* Button-based click controls (future)
 
 ### 5.3 State Machine (Deterministic)
 
@@ -243,3 +244,8 @@ Includes:
 
 This document = PRD MASTER v1.0
 Next: PRD v2 (On-chain spec)
+
+## 19. Performance Notes
+
+* Production performance baselines are tracked in `PERFORMANCE-BASELINE.md`.
+* Mobile throttling includes a performance preset for release readiness.

@@ -1,7 +1,7 @@
 'use client'
 
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react'
-import { AnimatePresence, motion } from 'framer-motion'
+import { AnimatePresence, motion, useReducedMotion } from 'framer-motion'
 import { cn } from '@/lib/utils'
 import { useGame } from '@/hooks/useGame'
 import { useBadges } from '@/hooks/useBadges'
@@ -21,6 +21,7 @@ import { Button } from '@/components/ui/button'
 export function Game() {
   const { state, tiles, move, restart, lastMoveEffects, invalidMoveTick } = useGame()
   const { unlockBadges } = useBadges()
+  const prefersReducedMotion = useReducedMotion()
   const touchStartRef = useRef<{ x: number; y: number } | null>(null)
   const mouseStartRef = useRef<{ x: number; y: number } | null>(null)
   const gestureHandledRef = useRef(false)
@@ -137,6 +138,14 @@ export function Game() {
     return () => clearTimeout(timeout)
   }, [])
 
+  useEffect(() => {
+    return () => {
+      if (!audioRef.current) return
+      audioRef.current.close().catch(() => undefined)
+      audioRef.current = null
+    }
+  }, [])
+
   const playTone = useCallback((frequency: number, durationMs: number, type: OscillatorType, gainValue: number) => {
     if (!soundEnabled) return
     const AudioContextConstructor =
@@ -219,6 +228,7 @@ export function Game() {
     const direction = getSwipeDirection(deltaX, deltaY)
     if (!direction) return
 
+    event.preventDefault()
     gestureHandledRef.current = true
     handleMove(direction)
   }
@@ -259,7 +269,7 @@ export function Game() {
             initial={{ opacity: 0, y: -12 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -12 }}
-            transition={{ duration: 0.2, ease: 'easeOut' }}
+            transition={prefersReducedMotion ? { duration: 0 } : { duration: 0.2, ease: 'easeOut' }}
             className="pointer-events-none fixed left-1/2 top-4 z-[60] w-[92vw] max-w-sm -translate-x-1/2 rounded-2xl border border-slate-200 bg-white/95 px-4 py-3 text-center shadow-lg backdrop-blur"
             role="status"
             aria-live="polite"
@@ -328,7 +338,7 @@ export function Game() {
             initial={{ opacity: 0, y: 6 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -6 }}
-            transition={{ duration: 0.2, ease: 'easeOut' }}
+            transition={prefersReducedMotion ? { duration: 0 } : { duration: 0.2, ease: 'easeOut' }}
             className="rounded-full bg-slate-900 px-3 py-1 text-[11px] text-white shadow-sm"
           >
             Swipe, drag, or use arrow keys to move tiles
@@ -341,6 +351,7 @@ export function Game() {
         onTouchStart={handleTouchStart}
         onTouchMove={handleTouchMove}
         onTouchEnd={handleTouchEnd}
+        onTouchCancel={handleTouchEnd}
         onMouseDown={handleMouseDown}
         onMouseMove={handleMouseMove}
         onMouseUp={handleMouseUp}
@@ -348,12 +359,12 @@ export function Game() {
       >
         <motion.div
           animate={{
-            scale: pulseBoard ? 1.01 : 1,
-            x: shakeBoard ? [0, -6, 6, -4, 4, 0] : 0,
+            scale: prefersReducedMotion ? 1 : pulseBoard ? 1.01 : 1,
+            x: prefersReducedMotion ? 0 : shakeBoard ? [0, -6, 6, -4, 4, 0] : 0,
           }}
           transition={{
-            scale: { duration: 0.16, ease: 'easeOut' },
-            x: { duration: 0.24, ease: 'easeInOut' },
+            scale: prefersReducedMotion ? { duration: 0 } : { duration: 0.16, ease: 'easeOut' },
+            x: prefersReducedMotion ? { duration: 0 } : { duration: 0.24, ease: 'easeInOut' },
           }}
         >
           <GameBoard tiles={tiles} />

@@ -1,7 +1,7 @@
 'use client'
 
 import React, { useMemo } from 'react'
-import { motion } from 'framer-motion'
+import { motion, useReducedMotion } from 'framer-motion'
 import { cn } from '@/lib/utils'
 
 interface TileProps {
@@ -45,6 +45,7 @@ const getFontSize = (value: number | null) => {
 }
 
 const TileComponent = ({ value, row, col, isNew = false, isMerged = false, className }: TileProps) => {
+  const prefersReducedMotion = useReducedMotion()
   const style = useMemo(
     () => ({
       gridRowStart: row + 1,
@@ -67,31 +68,37 @@ const TileComponent = ({ value, row, col, isNew = false, isMerged = false, class
         className
       )}
       style={style}
-      layout
-      transition={{ layout: { duration: 0.16, ease: 'easeOut' } }}
-      initial={isNew ? { scale: 0, opacity: 0 } : false}
+      layout={!prefersReducedMotion}
+      transition={{
+        layout: prefersReducedMotion ? { duration: 0 } : { duration: 0.16, ease: 'easeOut' },
+      }}
+      initial={!prefersReducedMotion && isNew ? { scale: 0, opacity: 0 } : false}
       animate={
-        isNew
+        prefersReducedMotion
+          ? {}
+          : isNew
           ? {
               scale: 1,
               opacity: 1,
               transition: {
-                type: "spring",
+                type: 'spring',
                 stiffness: 300,
                 damping: 20,
-                duration: 0.2
-              }
+                duration: 0.2,
+              },
             }
           : isMerged
           ? {
               scale: [1, 1.1, 1],
               transition: {
                 duration: 0.2,
-                times: [0, 0.5, 1]
-              }
+                times: [0, 0.5, 1],
+              },
             }
           : {}
       }
+      data-testid="tile"
+      data-value={value ?? ''}
     >
       {value || ''}
     </motion.div>

@@ -82,7 +82,7 @@ All game logic in `/lib/game/`:
 * Navigation items and page titles
 * Modal dialogs and confirmation messages
 
-Code comments and documentation can be in any language, but all user-visible strings must be English.
+Documentation should be in English. Code comments can be in any language, but all user-visible strings must be English.
 
 ## Build & Deploy
 

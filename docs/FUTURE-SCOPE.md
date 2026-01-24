@@ -21,7 +21,6 @@
 ## Game Enhancements
 
 * Click controls (button-based)
-* Swipe controls (touch)
 * Undo functionality
 * Hint system
 * Different game modes

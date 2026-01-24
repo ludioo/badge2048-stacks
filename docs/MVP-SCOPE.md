@@ -11,6 +11,8 @@
 * ✅ Score system with incremental scoring
 * ✅ Game over detection
 * ✅ Keyboard controls (arrow keys)
+* ✅ Touch swipe controls
+* ✅ Mouse drag controls
 * ✅ Restart functionality
 
 ### UI/UX
@@ -58,7 +60,6 @@
 * ❌ Tokenomics
 * ❌ Social share
 * ❌ Multiplayer
-* ❌ Click/swipe controls (keyboard only)
 * ❌ Profile page
 * ❌ Game history
 * ❌ Undo functionality
