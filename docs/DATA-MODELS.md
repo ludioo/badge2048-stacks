@@ -50,6 +50,7 @@ interface Badge {
   threshold: number;
   unlocked: boolean;
   claimed: boolean;
+  claimedAt?: string;
 }
 
 type BadgeState = Badge[];
@@ -61,6 +62,7 @@ type BadgeState = Badge[];
 * `threshold`: Minimum score required
 * `unlocked`: Whether user has reached threshold
 * `claimed`: Whether user has claimed the badge
+* `claimedAt`: ISO timestamp when badge was claimed (optional)
 
 ### Default Badge Configuration
 
@@ -97,7 +99,8 @@ const DEFAULT_BADGES: Badge[] = [
       "tier": "silver",
       "threshold": 2048,
       "unlocked": true,
-      "claimed": true
+      "claimed": true,
+      "claimedAt": "2026-01-24T10:15:30.000Z"
     }
   ]
 }

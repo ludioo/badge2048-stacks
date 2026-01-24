@@ -18,6 +18,7 @@ export interface Badge {
   threshold: number;
   unlocked: boolean;
   claimed: boolean;
+  claimedAt?: string;
 }
 
 export type BadgeState = Badge[];

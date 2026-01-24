@@ -20,7 +20,8 @@ const isBadge = (value: unknown): value is Badge => {
     badgeTiers.has(candidate.tier) &&
     typeof candidate.threshold === 'number' &&
     typeof candidate.unlocked === 'boolean' &&
-    typeof candidate.claimed === 'boolean'
+    typeof candidate.claimed === 'boolean' &&
+    (candidate.claimedAt === undefined || typeof candidate.claimedAt === 'string')
   )
 }
 
@@ -34,7 +35,8 @@ const areBadgeStatesEqual = (left: BadgeState, right: BadgeState) => {
       leftBadge.tier !== rightBadge.tier ||
       leftBadge.threshold !== rightBadge.threshold ||
       leftBadge.unlocked !== rightBadge.unlocked ||
-      leftBadge.claimed !== rightBadge.claimed
+      leftBadge.claimed !== rightBadge.claimed ||
+      leftBadge.claimedAt !== rightBadge.claimedAt
     ) {
       return false
     }
@@ -53,10 +55,12 @@ export const normalizeBadgeState = (badges: BadgeState): BadgeState => {
 
   return DEFAULT_BADGES.map((defaultBadge) => {
     const stored = badgeByTier.get(defaultBadge.tier)
+    const claimedAt = stored?.claimed && stored.claimedAt ? stored.claimedAt : undefined
     return {
       ...defaultBadge,
       unlocked: stored?.unlocked ?? defaultBadge.unlocked,
       claimed: stored?.claimed ?? defaultBadge.claimed,
+      ...(claimedAt ? { claimedAt } : {}),
     }
   })
 }

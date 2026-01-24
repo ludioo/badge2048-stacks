@@ -177,21 +177,29 @@ Sebelum mulai, pastikan sudah membaca:
 **File Referensi:** `BADGE-SYSTEM.md`, `PAGES-ROUTING.md`
 
 ### Fitur yang diimplementasikan:
-- [ ] `/badges` page
-- [ ] Badge card component
-- [ ] Display all badge tiers
-- [ ] Visual distinction (owned vs locked)
-- [ ] Badge styling sesuai tier
+- [x] `/badges` page
+- [x] Badge card component
+- [x] Display all badge tiers
+- [x] Visual distinction (owned vs locked)
+- [x] Badge styling sesuai tier
+- [x] Badge progress summary + claim shortcut
+- [x] Tier icon (SVG) per badge
+- [x] Claimed timestamp display
 
 **Deliverable:** Halaman badges yang menampilkan semua tier dengan status yang jelas
 
+**Status:** ✅ **PHASE 6 COMPLETE** - Halaman badges siap digunakan dengan status dan progress.
+
 **Urutan Detail:**
-1. Buat `/badges` page
-2. Buat BadgeCard component
-3. Load badges dari local storage
-4. Styling untuk owned badges (highlighted)
-5. Styling untuk locked badges (greyed)
-6. Test dengan berbagai badge states
+1. ✅ Buat `/badges` page
+2. ✅ Buat BadgeCard component
+3. ✅ Load badges dari local storage
+4. ✅ Badge progress summary + claim shortcut
+5. ✅ Styling untuk owned badges (highlighted)
+6. ✅ Styling untuk locked badges (greyed)
+7. ✅ Tier icon (SVG) per badge
+8. ✅ Claimed timestamp display
+9. ✅ Test dengan berbagai badge states
 
 ---
 

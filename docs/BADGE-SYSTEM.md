@@ -42,6 +42,8 @@ Each badge can be in one of these states:
 * Owned badges (claimed) highlighted with color
 * Unlocked but unclaimed badges shown with "Claim" indicator
 * Locked badges greyed out with threshold visible
+* Summary chips for Owned/Claimable/Locked plus unlocked progress bar
+* Claimed badges show "Last updated" timestamp
 
 ### Badge Visual Design
 
