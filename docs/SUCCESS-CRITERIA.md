@@ -1,5 +1,7 @@
 # Success Criteria
 
+**Application Name:** badge2048
+
 ## Technical Success
 
 ### Game Stability

@@ -1,5 +1,11 @@
 # Pages & Routing Specification
 
+**Application Name:** badge2048
+
+## Language Requirement
+
+**IMPORTANT:** All page content, labels, buttons, and user-facing text must be in English.
+
 ## Required Pages (MVP)
 
 ### `/play`

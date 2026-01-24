@@ -1,4 +1,6 @@
-# Dokumentasi PRD - Mini dApp Puzzle Game 2048
+# Dokumentasi PRD - badge2048
+
+**Application Name:** badge2048
 
 Dokumentasi ini dipecah menjadi beberapa file untuk memudahkan implementasi bertahap.
 
@@ -28,26 +30,24 @@ Dokumentasi ini dipecah menjadi beberapa file untuk memudahkan implementasi bert
 - **[FUTURE-SCOPE.md](./FUTURE-SCOPE.md)** - Fitur untuk fase selanjutnya
 - **[SUCCESS-CRITERIA.md](./SUCCESS-CRITERIA.md)** - Kriteria kesuksesan proyek
 
-## Urutan Implementasi yang Disarankan
+## 🚀 Mulai Implementasi
 
-1. **Phase 1: Core Game** (GAME-MECHANICS.md + GAME-IMPLEMENTATION.md)
-   - Implementasi logic game 2048
-   - State management
-   - Testing
+**PENTING:** Baca **[IMPLEMENTATION-ROADMAP.md](./IMPLEMENTATION-ROADMAP.md)** untuk urutan implementasi yang detail per fitur!
 
-2. **Phase 2: UI/UX** (UI-UX-SPEC.md)
-   - Styling dan animasi
-   - Responsive design
+Roadmap tersebut memberikan:
+- ✅ Urutan phase yang jelas
+- ✅ Checklist per fitur
+- ✅ File referensi untuk setiap phase
+- ✅ Deliverable yang harus dicapai
+- ✅ Tips implementasi
 
-3. **Phase 3: Multi-page Structure** (PAGES-ROUTING.md)
-   - Setup routing Next.js
-   - Halaman /play
+## Urutan Implementasi Ringkas
 
-4. **Phase 4: Badge System** (BADGE-SYSTEM.md + CLAIM-FLOW.md)
-   - Logic unlock badge
-   - Halaman /badges dan /claim
-   - Local storage persistence
-
-5. **Phase 5: Polish** (MVP-SCOPE.md)
-   - Finalisasi fitur MVP
-   - Testing end-to-end
+1. **Phase 1: Setup & Foundation** → `TECH-STACK.md`, `DATA-MODELS.md`
+2. **Phase 2: Core Game Logic** → `GAME-MECHANICS.md`, `GAME-IMPLEMENTATION.md`
+3. **Phase 3: Game UI Component** → `UI-UX-SPEC.md`
+4. **Phase 4: Multi-Page Structure** → `PAGES-ROUTING.md`
+5. **Phase 5: Badge System Logic** → `BADGE-SYSTEM.md`
+6. **Phase 6: Badge Display Page** → `BADGE-SYSTEM.md`
+7. **Phase 7: Claim Flow** → `CLAIM-FLOW.md`
+8. **Phase 8: Integration & Polish** → `MVP-SCOPE.md`, `SUCCESS-CRITERIA.md`

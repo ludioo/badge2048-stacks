@@ -1,5 +1,7 @@
 # MVP Scope
 
+**Application Name:** badge2048
+
 ## Included Features
 
 ### Core Gameplay

@@ -1,5 +1,7 @@
 # Data Models Specification
 
+**Application Name:** badge2048
+
 ## Game State
 
 ### TypeScript Definition

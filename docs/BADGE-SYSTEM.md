@@ -1,5 +1,7 @@
 # Badge System Specification
 
+**Application Name:** badge2048
+
 ## Purpose
 
 * Represent achievements via score milestones

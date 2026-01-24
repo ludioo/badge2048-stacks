@@ -1,5 +1,7 @@
 # Claim Flow Specification (Pre-Chain)
 
+**Application Name:** badge2048
+
 ## Flow Overview
 
 ```

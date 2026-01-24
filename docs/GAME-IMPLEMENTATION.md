@@ -1,5 +1,7 @@
 # Game Implementation Requirements
 
+**Application Name:** badge2048
+
 ## Architecture Principles
 
 * Pure reducer-style logic

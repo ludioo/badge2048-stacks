@@ -1,5 +1,7 @@
 # Future Scope
 
+**Application Name:** badge2048
+
 ## On-Chain Features
 
 * On-chain badge minting (NFTs)

@@ -1,5 +1,7 @@
 # Game Mechanics Specification
 
+**Application Name:** badge2048
+
 ## Core Mechanics
 
 * 4×4 grid puzzle

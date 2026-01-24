@@ -1,5 +1,7 @@
 # Tech Stack Specification
 
+**Application Name:** badge2048
+
 ## Frontend Framework
 
 ### Core
@@ -67,6 +69,18 @@ All game logic in `/lib/game/`:
 * ESLint for code quality
 * Prettier for code formatting (optional)
 * Testing framework (Jest/Vitest) for game logic
+
+## Language & Content Guidelines
+
+**IMPORTANT:** All user-facing content must be in English:
+* All page content, UI text, and labels
+* Error messages and user feedback
+* Game instructions and help text
+* Badge names, descriptions, and tier labels
+* Navigation items and page titles
+* Modal dialogs and confirmation messages
+
+Code comments and documentation can be in any language, but all user-visible strings must be English.
 
 ## Build & Deploy
 

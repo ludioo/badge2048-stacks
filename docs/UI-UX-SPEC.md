@@ -1,5 +1,17 @@
 # UI/UX Specification
 
+**Application Name:** badge2048
+
+## Language Requirement
+
+**IMPORTANT:** All pages and website content must be fully in English. This includes:
+- All UI text, labels, and buttons
+- Error messages and notifications
+- Game instructions and tooltips
+- Modal dialogs and confirmations
+- Navigation and page titles
+- Badge names and descriptions
+
 ## Visual Design
 
 ### Style

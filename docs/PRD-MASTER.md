@@ -1,8 +1,12 @@
 # PRD MASTER v1.0 — Mini dApp Puzzle Game + Badge System
 
+## Application Name
+
+**badge2048** - The official name of this application.
+
 ## Overview
 
-This project is a simple, endless puzzle mini-game (2048-like) implemented as a browser-based dApp with a slightly modernized UI/UX. Users play the game, achieve score milestones, and become eligible to claim Badges. Badges are displayed publicly in a dedicated page and will later be minted on-chain (chain TBD).
+badge2048 is a simple, endless puzzle mini-game (2048-like) implemented as a browser-based dApp with a slightly modernized UI/UX. Users play the game, achieve score milestones, and become eligible to claim Badges. Badges are displayed publicly in a dedicated page and will later be minted on-chain (chain TBD).
 
 ## Goals
 
