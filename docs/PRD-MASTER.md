@@ -34,9 +34,9 @@ badge2048 is a simple, endless puzzle mini-game (2048-like) implemented as a bro
 * Primary: Builder ecosystem users (Base/Stacks/Talent)
 * Secondary: Casual public players
 
-## Dokumentasi Terkait
+## Related Documentation
 
-Untuk detail spesifikasi, lihat:
+For detailed specs, see:
 - [Game Mechanics](./GAME-MECHANICS.md)
 - [Game Implementation](./GAME-IMPLEMENTATION.md)
 - [UI/UX Specification](./UI-UX-SPEC.md)
@@ -53,3 +53,8 @@ Untuk detail spesifikasi, lihat:
 
 This document = PRD MASTER v1.0
 Next: PRD v2 (On-chain spec)
+
+## Performance Notes
+
+- Production performance baselines are tracked in `PERFORMANCE-BASELINE.md`.
+- Mobile throttling includes a performance preset for release readiness.

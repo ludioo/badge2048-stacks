@@ -93,7 +93,7 @@ npm test
 
 **Phase 2 Deliverable:** ✅ **COMPLETE**
 
-> Pure game logic functions yang fully tested, bisa di-test via console/unit tests
+> Pure game logic functions are fully tested and can be exercised via console/unit tests
 
 **Status:** ✅ **VERIFIED**
 
@@ -107,9 +107,9 @@ npm test
 
 ## 📝 Notes
 
-- **UI belum ada** - Ini normal untuk Phase 2. UI akan dibuat di Phase 3.
-- **Game belum bisa dimainkan di browser** - Ini expected. Phase 2 hanya core logic.
-- **Semua logic sudah siap** untuk diintegrasikan dengan React components di Phase 3.
+- **UI is not present yet** - This is expected for Phase 2. UI is built in Phase 3.
+- **Game is not playable in the browser yet** - This is expected. Phase 2 is core logic only.
+- **All logic is ready** to be integrated with React components in Phase 3.
 
 ## 🔄 Next Steps
 

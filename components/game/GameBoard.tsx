@@ -32,7 +32,12 @@ export function GameBoard({ tiles, className }: GameBoardProps) {
   } as React.CSSProperties
 
   return (
-    <div className={cn('relative w-fit mx-auto', className)} style={gridStyle}>
+    <div
+      className={cn('relative w-fit mx-auto', className)}
+      style={gridStyle}
+      data-testid="game-board"
+      aria-label="2048 game board"
+    >
       {/* Fixed 4x4 grid = 16 cells (background) */}
       <div
         className={cn(

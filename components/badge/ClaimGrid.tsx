@@ -119,7 +119,12 @@ export function ClaimGrid() {
             <Button asChild size="sm">
               <Link href="/play">Play now</Link>
             </Button>
-            <Button asChild variant="outline" size="sm">
+            <Button
+              asChild
+              variant="outline"
+              size="sm"
+              className="border-slate-300 text-slate-800 hover:bg-slate-100"
+            >
               <Link href="/badges">View badges</Link>
             </Button>
           </div>

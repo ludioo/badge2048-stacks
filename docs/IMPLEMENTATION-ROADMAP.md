@@ -1,282 +1,295 @@
-# Implementation Roadmap - Per Fitur
+﻿# Implementation Roadmap - Feature by Feature
 
 **Application Name:** badge2048
 
-Dokumen ini memberikan urutan implementasi yang disarankan untuk membangun badge2048 secara bertahap.
+This document provides the recommended implementation order to build badge2048 in phases.
 
-## 📋 Prerequisites
+## Prerequisites
 
-Sebelum mulai, pastikan sudah membaca:
-- **[TECH-STACK.md](./TECH-STACK.md)** - Setup project structure
-- **[DATA-MODELS.md](./DATA-MODELS.md)** - Pahami struktur data yang akan digunakan
+Before starting, read:
+- **[TECH-STACK.md](./TECH-STACK.md)** - Project structure setup
+- **[DATA-MODELS.md](./DATA-MODELS.md)** - Understand the data structures
 
 **IMPORTANT:** All pages and website content must be fully in English. See `UI-UX-SPEC.md` and `TECH-STACK.md` for language requirements.
 
 ---
 
-## 🎯 Phase 1: Setup & Foundation ✅ COMPLETE
+## Phase 1: Setup and Foundation (Complete)
 
-**File Referensi:** `TECH-STACK.md`, `DATA-MODELS.md`
+**Reference Files:** `TECH-STACK.md`, `DATA-MODELS.md`
 
-### Tugas:
-1. ✅ Setup Next.js project dengan TypeScript
-   - Next.js 16.1.4 dengan TypeScript 5
-   - tsconfig.json dikonfigurasi dengan benar
-2. ✅ Setup TailwindCSS
-   - TailwindCSS v4 dengan PostCSS plugin
-   - globals.css sudah import TailwindCSS
-3. ✅ Buat struktur folder sesuai `TECH-STACK.md`
-   - `app/` dengan routing pages (home, play, claim, badges)
-   - `components/` dengan subfolder (game, badge, ui)
-   - `lib/game/` dengan semua file game logic
-   - `hooks/` dan `types/` folders
-4. ✅ Define TypeScript types dari `DATA-MODELS.md`
-   - `lib/game/types.ts` berisi: Tile, GameStatus, GameState, BadgeTier, Badge, BadgeState, GameAction
-   - `lib/game/constants.ts` berisi DEFAULT_BADGES dan constants
-   - `lib/game/utils.ts` berisi utility functions
-5. ✅ Setup basic routing (minimal home page)
-   - Home page (`app/page.tsx`) dengan navigation
-   - `/play`, `/badges`, `/claim` pages sudah dibuat
+### Tasks:
+1. [x] Setup Next.js project with TypeScript
+   - Next.js 16.1.4 with TypeScript 5
+   - `tsconfig.json` configured correctly
+2. [x] Setup TailwindCSS
+   - TailwindCSS v4 with PostCSS plugin
+   - `globals.css` imports TailwindCSS
+3. [x] Create folder structure per `TECH-STACK.md`
+   - `app/` with routing pages (home, play, claim, badges)
+   - `components/` with subfolders (game, badge, ui)
+   - `lib/game/` with game logic files
+   - `hooks/` and `types/` folders
+4. [x] Define TypeScript types from `DATA-MODELS.md`
+   - `lib/game/types.ts` includes Tile, GameStatus, GameState, BadgeTier, Badge, BadgeState, GameAction
+   - `lib/game/constants.ts` includes DEFAULT_BADGES and constants
+   - `lib/game/utils.ts` includes utility functions
+5. [x] Setup basic routing (minimum home page)
+   - Home page (`app/page.tsx`) with navigation
+   - `/play`, `/badges`, `/claim` pages created
    - Navigation component (`components/ui/navigation.tsx`)
-   - Layout dengan metadata badge2048
+   - Layout with badge2048 metadata
 
-**Deliverable:** ✅ Project structure siap, types defined, bisa run dev server
+**Deliverable:** Project structure ready, types defined, dev server runs.
 
-**Status:** ✅ **PHASE 1 COMPLETE** - Semua tugas sudah terimplementasi dan diverifikasi.
+**Status:** Phase 1 COMPLETE - All tasks implemented and verified.
 
 ---
 
-## 🎮 Phase 2: Core Game Logic ✅ COMPLETE
+## Phase 2: Core Game Logic (Complete)
 
-**File Referensi:** `GAME-MECHANICS.md`, `GAME-IMPLEMENTATION.md`
+**Reference Files:** `GAME-MECHANICS.md`, `GAME-IMPLEMENTATION.md`
 
-### Fitur yang diimplementasikan:
+### Features implemented:
 - [x] Game state structure (board, score, status)
 - [x] Slide logic (left, right, up, down)
 - [x] Merge logic (tiles merge, score increment)
 - [x] Spawn logic (random tile spawn)
 - [x] Game over detection
-- [x] Reducer function untuk state management
-- [x] Unit tests untuk game logic
+- [x] Reducer function for state management
+- [x] Unit tests for game logic
 
-**Deliverable:** ✅ Pure game logic functions yang fully tested, bisa di-test via console/unit tests
+**Deliverable:** Pure game logic functions that are fully tested and can be validated via unit tests.
 
-**Urutan Detail:**
-1. ✅ Buat types (`types.ts`) - Sudah ada dari Phase 1
-2. ✅ Buat constants (`constants.ts`) - Sudah ada dari Phase 1
-3. ✅ Implementasi slide logic (`slide.ts`)
-4. ✅ Implementasi merge logic (`merge.ts`)
-5. ✅ Implementasi spawn logic (`spawn.ts`)
-6. ✅ Implementasi game over check (`checkGameOver.ts`)
-7. ✅ Buat reducer (`reducer.ts`)
-8. ✅ Write unit tests - 49 tests, semua pass
+**Detailed order:**
+1. [x] Create types (`types.ts`) - done in Phase 1
+2. [x] Create constants (`constants.ts`) - done in Phase 1
+3. [x] Implement slide logic (`slide.ts`)
+4. [x] Implement merge logic (`merge.ts`)
+5. [x] Implement spawn logic (`spawn.ts`)
+6. [x] Implement game over check (`checkGameOver.ts`)
+7. [x] Create reducer (`reducer.ts`)
+8. [x] Write unit tests - 49 tests, all passing
 
-**Status:** ✅ **PHASE 2 COMPLETE** - Semua game logic functions sudah diimplementasi dan fully tested dengan Vitest.
+**Status:** Phase 2 COMPLETE - all game logic functions implemented and fully tested with Vitest.
 
 ---
 
-## 🎨 Phase 3: Game UI Component ✅ COMPLETE
+## Phase 3: Game UI Component (Complete)
 
-**File Referensi:** `UI-UX-SPEC.md`, `GAME-MECHANICS.md`
+**Reference Files:** `UI-UX-SPEC.md`, `GAME-MECHANICS.md`
 
-### Fitur yang diimplementasikan:
-- [x] Game board component (4×4 grid)
-- [x] Tile component dengan styling dan animations (shadcn + aceternity)
+### Features implemented:
+- [x] Game board component (4x4 grid)
+- [x] Tile component with styling and animations (shadcn + aceternity)
 - [x] Score display component
-- [x] Basic animations (slide, merge, spawn) menggunakan Framer Motion
+- [x] Basic animations (slide, merge, spawn) using Framer Motion
 - [x] Game over modal (shadcn Dialog)
 - [x] Restart button
 - [x] Keyboard input handling (arrow keys)
-- [x] Touch swipe (mobile) dan drag mouse (desktop)
-- [x] Responsive design untuk mobile dan desktop
+- [x] Touch swipe (mobile) and mouse drag (desktop)
+- [x] Responsive design for mobile and desktop
 - [x] Game feel polish: board pulse, score delta, invalid move shake
 - [x] Optional feedback: sound toggle (spawn/merge) + haptic toggle (mobile)
 - [x] Onboarding hint (auto-dismiss)
 
-**Deliverable:** ✅ Game bisa dimainkan di browser dengan UI yang bagus, fully responsive, dan visual feedback lengkap
+**Deliverable:** Game playable in the browser with a polished UI/UX, responsive layout, and rich feedback.
 
-**Urutan Detail:**
-1. ✅ Buat GameBoard component (static grid dulu)
-2. ✅ Buat Tile component dengan styling dan aceternity animations
-3. ✅ Integrate game logic dengan React state menggunakan reducer
-4. ✅ Implementasi keyboard controls
-5. ✅ Tambahkan animasi slide menggunakan framer-motion
-6. ✅ Tambahkan animasi merge dengan pop effect
-7. ✅ Tambahkan animasi spawn untuk tile baru
-8. ✅ Buat GameOver modal menggunakan shadcn Dialog
-9. ✅ Implementasi restart functionality
-10. ✅ Responsive styling
-11. ✅ Touch swipe + mouse drag input
-12. ✅ Game feel polish (board pulse, score delta, invalid move shake)
-13. ✅ Optional feedback (sound/haptics) + onboarding hint
+**Detailed order:**
+1. [x] Create GameBoard component (static grid first)
+2. [x] Create Tile component with styling and aceternity animations
+3. [x] Integrate game logic with React state using reducer
+4. [x] Implement keyboard controls
+5. [x] Add slide animation using Framer Motion
+6. [x] Add merge animation with pop effect
+7. [x] Add spawn animation for new tiles
+8. [x] Create GameOver modal using shadcn Dialog
+9. [x] Implement restart functionality
+10. [x] Responsive styling
+11. [x] Touch swipe + mouse drag input
+12. [x] Game feel polish (board pulse, score delta, invalid move shake)
+13. [x] Optional feedback (sound/haptics) + onboarding hint
 
-**Status:** ✅ **PHASE 3 COMPLETE** - Game UI component sudah fully implemented dengan shadcn dan aceternity, semua tests pass, dan game playable di browser.
+**Status:** Phase 3 COMPLETE - Game UI fully implemented and playable in the browser.
 
 ---
 
-## 🏗️ Phase 4: Multi-Page Structure
+## Phase 4: Multi-Page Structure (Complete)
 
-**File Referensi:** `PAGES-ROUTING.md`
+**Reference Files:** `PAGES-ROUTING.md`
 
-### Fitur yang diimplementasikan:
+### Features implemented:
 - [x] Setup App Router structure
-- [x] Home page (redirect ke /play atau landing)
-- [x] `/play` page dengan game component
+- [x] Home page (redirect to /play or landing)
+- [x] `/play` page with game component
 - [x] Navigation component (header/navbar)
 - [x] Basic layout component
 
-**Deliverable:** Multi-page structure dengan navigasi yang berfungsi
+**Deliverable:** Multi-page structure with working navigation.
 
-**Status:** ✅ **PHASE 4 COMPLETE** - Struktur multi-page dan navigasi sudah berjalan.
+**Status:** Phase 4 COMPLETE - Multi-page structure and navigation are working.
 
-**Urutan Detail:**
-1. Setup routing structure
-2. Buat layout component dengan navigation
-3. Buat `/play` page (pindahkan game component ke sini)
-4. Buat home page
-5. Test navigation antar pages
+**Detailed order:**
+1. [x] Setup routing structure
+2. [x] Create layout component with navigation
+3. [x] Create `/play` page (move game component here)
+4. [x] Create home page
+5. [x] Test navigation across pages
 
 ---
 
-## 🏆 Phase 5: Badge System Logic
+## Phase 5: Badge System Logic (Complete)
 
-**File Referensi:** `BADGE-SYSTEM.md`, `DATA-MODELS.md`
+**Reference Files:** `BADGE-SYSTEM.md`, `DATA-MODELS.md`
 
-### Fitur yang diimplementasikan:
+### Features implemented:
 - [x] Badge data structure
 - [x] Badge unlock logic (check score threshold)
 - [x] Badge state management
-- [x] Local storage persistence untuk badges
-- [x] Badge unlock detection setelah game over
+- [x] Local storage persistence for badges
+- [x] Badge unlock detection after game over
 - [x] Badge unlock toast/popup after game over
 - [x] High score storage (localStorage)
-- [x] Storage schema guard + migration (badges_v1)
+- [x] Storage schema guard + migration (`badges_v1`)
 - [x] Analytics hook event `badge_unlocked`
-- [x] Tests untuk loadBadgesFromStorage (array/object/corrupt)
+- [x] Tests for loadBadgesFromStorage (array/object/corrupt)
 
-**Deliverable:** Badge system logic yang bisa detect unlock dan persist ke local storage
+**Deliverable:** Badge system logic that can detect unlocks and persist to local storage.
 
-**Status:** ✅ **PHASE 5 COMPLETE** - Badge logic, persistence, dan testing unlock sudah tervalidasi.
+**Status:** Phase 5 COMPLETE - Badge logic, persistence, and unlock testing validated.
 
-**Urutan Detail:**
-1. Define badge types dan default badges
-2. Buat badge unlock function
-3. Integrate dengan game over flow
-4. Implementasi local storage save/load
-5. Test badge unlock dengan berbagai score
-6. Tambahkan toast/popup saat badge unlocked
-7. Simpan high score ke local storage
-8. Tambahkan schema versioning + migrasi
-9. Siapkan analytics event hook
-10. Tambahkan test storage load + corrupt data
+**Detailed order:**
+1. [x] Define badge types and default badges
+2. [x] Create badge unlock function
+3. [x] Integrate with game over flow
+4. [x] Implement local storage save/load
+5. [x] Test badge unlock with various scores
+6. [x] Add toast/popup when badge unlocked
+7. [x] Save high score to local storage
+8. [x] Add schema versioning and migration
+9. [x] Add analytics event hook
+10. [x] Add storage load + corrupt data tests
 
 ---
 
-## 📄 Phase 6: Badge Display Page
+## Phase 6: Badge Display Page (Complete)
 
-**File Referensi:** `BADGE-SYSTEM.md`, `PAGES-ROUTING.md`
+**Reference Files:** `BADGE-SYSTEM.md`, `PAGES-ROUTING.md`
 
-### Fitur yang diimplementasikan:
+### Features implemented:
 - [x] `/badges` page
 - [x] Badge card component
 - [x] Display all badge tiers
 - [x] Visual distinction (owned vs locked)
-- [x] Badge styling sesuai tier
+- [x] Badge styling per tier
 - [x] Badge progress summary + claim shortcut
 - [x] Tier icon (SVG) per badge
 - [x] Claimed timestamp display
 
-**Deliverable:** Halaman badges yang menampilkan semua tier dengan status yang jelas
+**Deliverable:** Badge page showing all tiers with clear status indicators.
 
-**Status:** ✅ **PHASE 6 COMPLETE** - Halaman badges siap digunakan dengan status dan progress.
+**Status:** Phase 6 COMPLETE - Badge page ready with status and progress.
 
-**Urutan Detail:**
-1. ✅ Buat `/badges` page
-2. ✅ Buat BadgeCard component
-3. ✅ Load badges dari local storage
-4. ✅ Badge progress summary + claim shortcut
-5. ✅ Styling untuk owned badges (highlighted)
-6. ✅ Styling untuk locked badges (greyed)
-7. ✅ Tier icon (SVG) per badge
-8. ✅ Claimed timestamp display
-9. ✅ Test dengan berbagai badge states
+**Detailed order:**
+1. [x] Create `/badges` page
+2. [x] Create BadgeCard component
+3. [x] Load badges from local storage
+4. [x] Badge progress summary + claim shortcut
+5. [x] Styling for owned badges (highlighted)
+6. [x] Styling for locked badges (greyed out)
+7. [x] Tier icon (SVG) per badge
+8. [x] Claimed timestamp display
+9. [x] Test with various badge states
 
 ---
 
-## ✅ Phase 7: Claim Flow
+## Phase 7: Claim Flow (Complete)
 
-**File Referensi:** `CLAIM-FLOW.md`, `BADGE-SYSTEM.md`
+**Reference Files:** `CLAIM-FLOW.md`, `BADGE-SYSTEM.md`
 
-### Fitur yang diimplementasikan:
+### Features implemented:
 - [x] `/claim` page
 - [x] List eligible badges (unlocked but not claimed)
 - [x] Claim button per badge
 - [x] Claim confirmation flow
-- [x] Update badge state setelah claim
+- [x] Update badge state after claim
 - [x] Success feedback
-- [x] Navigation ke /badges setelah claim
+- [x] Navigation to /badges after claim
 
-**Deliverable:** ✅ Claim flow yang lengkap dari unlock sampai claim
+**Deliverable:** Complete claim flow from unlock to claim.
 
-**Status:** ✅ **PHASE 7 COMPLETE** - Claim flow tervalidasi dengan test end-to-end berbasis Vitest.
+**Status:** Phase 7 COMPLETE - Claim flow validated with unit tests and manual UI testing.
 
-**Urutan Detail:**
-1. ✅ Buat `/claim` page
-2. ✅ Filter badges (unlocked but not claimed)
-3. ✅ Buat claim button
-4. ✅ Implementasi claim action (update state)
-5. ✅ Save ke local storage
-6. ✅ Show success message
-7. ✅ Update /badges page setelah claim
-8. ✅ Test end-to-end flow (Vitest claim flow)
+**Detailed order:**
+1. [x] Create `/claim` page
+2. [x] Filter badges (unlocked but not claimed)
+3. [x] Create claim button
+4. [x] Implement claim action (update state)
+5. [x] Save to local storage
+6. [x] Show success message
+7. [x] Update /badges page after claim
+8. [x] Validate claim flow (unit tests + manual UI)
 
-### Feedback Phase 7
-- ✅ Flow claim sudah lengkap: list eligible, konfirmasi, update state, dan persist.
-- ✅ UX jelas: ada success banner + CTA ke `/badges`, serta empty state yang informatif.
-- ✅ Konsistensi visual meningkat: warna tier + tombol claim sudah lebih hidup.
-- ✅ Test UI manual (browser) sudah dilakukan oleh user dan aman di desktop/mobile.
-- ✅ Accessibility: notifikasi sukses dengan `aria-live` sudah ditambahkan.
-- ✅ UI: state "loading" singkat pada tombol konfirmasi sudah ditambahkan.
+### Phase 7 Feedback
+- [x] Claim flow complete: list eligible, confirm, update state, and persist
+- [x] UX is clear: success banner + CTA to `/badges`, informative empty state
+- [x] Visual consistency improved: tier colors + claim button styling
+- [x] Manual UI testing done on desktop/mobile
+- [x] Accessibility: success feedback with `aria-live`
+- [x] UI: brief loading state on confirmation button
 
 ---
 
-## 🎯 Phase 8: Integration & Polish
+## Phase 8: Integration and Polish
 
-**File Referensi:** `MVP-SCOPE.md`, `SUCCESS-CRITERIA.md`
+**Reference Files:** `MVP-SCOPE.md`, `SUCCESS-CRITERIA.md`, `TESTING-MATRIX.md`, `PERFORMANCE-BASELINE.md`, `POLISH-CHECKLIST.md`
 
-### Fitur yang diimplementasikan:
-- [ ] End-to-end testing semua flow
-- [ ] Bug fixes
-- [ ] UI/UX polish
-- [ ] Performance optimization
-- [ ] Mobile responsiveness check
-- [ ] Cross-browser testing
+### Features to implement:
+- [x] End-to-end testing for all flows
+- [x] Bug fixes
+- [x] UI/UX polish
+- [x] Performance optimization
+- [x] Mobile responsiveness check
+- [x] Cross-browser testing
 
-**Deliverable:** MVP yang complete dan siap untuk demo
+**Status:** Phase 8 COMPLETE - MVP ready for demo validation.
 
-**Urutan Detail:**
-1. Test semua user flows
-2. Fix bugs yang ditemukan
-3. Polish animations dan transitions
+**Deliverable:** MVP complete and ready for demo.
+
+**Detailed order:**
+1. Test all user flows
+2. Fix bugs found
+3. Polish animations and transitions
 4. Optimize performance
-5. Test di berbagai devices
-6. Final review terhadap MVP-SCOPE.md
+5. Test on multiple devices
+6. Final review against MVP-SCOPE.md
+
+**Progress update:**
+- E2E coverage added for navigation, play smoke, badges state, and claim flow.
+- E2E run on 2026-01-24: 20/20 tests passed.
+- Touch gesture cleanup on cancel and reduced-motion handling for animations.
+- Production Lighthouse baseline captured in `PERFORMANCE-BASELINE.md`.
+- Mobile throttling baseline captured in `PERFORMANCE-BASELINE.md`.
+- Mobile perf preset baseline captured in `PERFORMANCE-BASELINE.md`.
+- Release summary published in `RELEASE-SUMMARY.md`.
+- Lighthouse baseline captured in `PERFORMANCE-BASELINE.md` (local dev run).
+- Cross-browser + mobile checks validated via Playwright engines and device emulation (see `TESTING-MATRIX.md`).
 
 ---
 
-## 📊 Progress Tracking
+## Progress Tracking
 
-Gunakan checklist di atas untuk track progress. Setiap phase harus complete sebelum lanjut ke phase berikutnya.
+Use the checklist above to track progress. Each phase should be complete before moving to the next.
 
-## 💡 Tips
+## Tips
 
-1. **Jangan skip testing** - Test setiap phase sebelum lanjut
-2. **Commit sering** - Commit setelah setiap fitur kecil selesai
-3. **Refer ke dokumen** - Baca file referensi sebelum mulai implementasi
-4. **Start simple** - Implementasi basic version dulu, baru tambah polish
-5. **Test di browser** - Jangan hanya test di unit tests, test juga di browser
-6. **English only** - Semua konten user-facing harus dalam bahasa Inggris (lihat `UI-UX-SPEC.md`)
+1. **Do not skip testing** - Test each phase before moving on
+2. **Commit often** - Commit after each small feature
+3. **Refer to the docs** - Read reference files before implementation
+4. **Start simple** - Build the basic version first, then add polish
+5. **Test in the browser** - Do not rely only on unit tests
+6. **English only** - All user-facing content must be in English (see `UI-UX-SPEC.md`)
 
-## 🔄 Iterasi
+## Iteration
 
-Jika menemukan issue atau perlu perubahan, update dokumen terkait dan lanjutkan implementasi.
+If issues are found or changes are needed, update the relevant docs and continue implementation.
