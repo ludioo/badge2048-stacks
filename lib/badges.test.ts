@@ -4,8 +4,10 @@ import type { BadgeState } from '@/lib/game/types'
 import {
   BADGES_STORAGE_KEY,
   LEGACY_BADGES_STORAGE_KEY,
+  claimBadgeForTier,
   loadBadgesFromStorage,
   normalizeBadgeState,
+  saveBadgesToStorage,
   unlockBadgesForScore,
 } from '@/lib/badges'
 
@@ -120,5 +122,29 @@ describe('loadBadgesFromStorage', () => {
     const loaded = loadBadgesFromStorage(storage)
 
     expect(loaded).toEqual(DEFAULT_BADGES)
+  })
+})
+
+describe('claim flow', () => {
+  it('unlocks, claims, and persists a badge', () => {
+    const { badges: unlocked } = unlockBadgesForScore(2048, DEFAULT_BADGES)
+    const claimedAt = '2026-01-24T10:15:30.000Z'
+    const { badges: claimed, claimedBadge, didChange } = claimBadgeForTier(
+      'bronze',
+      unlocked,
+      claimedAt
+    )
+
+    expect(didChange).toBe(true)
+    expect(claimedBadge?.claimed).toBe(true)
+    expect(claimedBadge?.claimedAt).toBe(claimedAt)
+
+    const { storage } = createStorage()
+    saveBadgesToStorage(claimed, storage)
+    const loaded = loadBadgesFromStorage(storage)
+    const bronze = loaded.find((badge) => badge.tier === 'bronze')
+
+    expect(bronze?.claimed).toBe(true)
+    expect(bronze?.claimedAt).toBe(claimedAt)
   })
 })

@@ -1,88 +1,16 @@
 'use client'
 
-import type { ReactNode } from 'react'
 import Link from 'next/link'
 import { cn } from '@/lib/utils'
-import type { Badge, BadgeTier } from '@/lib/game/types'
-
-type TierMeta = {
-  label: string
-  description: string
-  accent: string
-  background: string
-  border: string
-  softBackground: string
-  icon: string
-  iconSvg: ReactNode
-}
-
-const tierMeta: Record<BadgeTier, TierMeta> = {
-  bronze: {
-    label: 'Bronze',
-    description: 'First milestone achievement',
-    accent: 'text-amber-900',
-    background: 'bg-gradient-to-br from-amber-100 to-amber-200',
-    border: 'border-amber-200',
-    softBackground: 'bg-amber-50',
-    icon: 'bg-amber-200 text-amber-900',
-    iconSvg: (
-      <svg viewBox="0 0 24 24" className="h-5 w-5" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-        <circle cx="12" cy="8" r="4" />
-        <path d="M8 12l-2 8 6-4 6 4-2-8" />
-      </svg>
-    ),
-  },
-  silver: {
-    label: 'Silver',
-    description: 'Intermediate achievement',
-    accent: 'text-slate-800',
-    background: 'bg-gradient-to-br from-slate-100 to-slate-200',
-    border: 'border-slate-200',
-    softBackground: 'bg-slate-50',
-    icon: 'bg-slate-200 text-slate-800',
-    iconSvg: (
-      <svg viewBox="0 0 24 24" className="h-5 w-5" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-        <path d="M12 3l7 3v6c0 5-3 9-7 11-4-2-7-6-7-11V6l7-3z" />
-      </svg>
-    ),
-  },
-  gold: {
-    label: 'Gold',
-    description: 'Advanced achievement',
-    accent: 'text-yellow-900',
-    background: 'bg-gradient-to-br from-yellow-100 to-yellow-200',
-    border: 'border-yellow-200',
-    softBackground: 'bg-yellow-50',
-    icon: 'bg-yellow-200 text-yellow-900',
-    iconSvg: (
-      <svg viewBox="0 0 24 24" className="h-5 w-5" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-        <path d="M3 8l4 3 5-6 5 6 4-3v9H3z" />
-        <path d="M5 21h14" />
-      </svg>
-    ),
-  },
-  elite: {
-    label: 'Elite',
-    description: 'Expert level achievement',
-    accent: 'text-purple-900',
-    background: 'bg-gradient-to-br from-purple-100 to-purple-200',
-    border: 'border-purple-200',
-    softBackground: 'bg-purple-50',
-    icon: 'bg-purple-200 text-purple-900',
-    iconSvg: (
-      <svg viewBox="0 0 24 24" className="h-5 w-5" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-        <path d="M13 2L6 13h5l-1 9 7-11h-5l1-9z" />
-      </svg>
-    ),
-  },
-}
+import type { Badge } from '@/lib/game/types'
+import { badgeTierMeta } from '@/components/badge/badgeMeta'
 
 type BadgeCardProps = {
   badge: Badge
 }
 
 export function BadgeCard({ badge }: BadgeCardProps) {
-  const meta = tierMeta[badge.tier]
+  const meta = badgeTierMeta[badge.tier]
   const isClaimed = badge.claimed
   const isUnlocked = badge.unlocked && !badge.claimed
   const isLocked = !badge.unlocked

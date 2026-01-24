@@ -3,6 +3,7 @@
 import { useCallback, useEffect, useRef, useState } from 'react'
 import type { BadgeState, BadgeTier } from '@/lib/game/types'
 import {
+  claimBadgeForTier,
   createDefaultBadges,
   emitBadgeUnlocked,
   loadBadgesFromStorage,
@@ -61,9 +62,28 @@ export function useBadges() {
   }, [])
 
 
+  const claimBadge = useCallback((tier: BadgeTier) => {
+    const { badges: updated, didChange, claimedBadge } = claimBadgeForTier(
+      tier,
+      badgesRef.current
+    )
+
+    let nextBadges = badgesRef.current
+
+    if (didChange) {
+      nextBadges = updated
+      badgesRef.current = updated
+      setBadges(updated)
+      saveBadgesToStorage(updated)
+    }
+
+    return { badges: nextBadges, claimedBadge }
+  }, [])
+
   return {
     badges,
     unlockBadges,
     replaceBadges,
+    claimBadge,
   }
 }

@@ -163,6 +163,31 @@ export const unlockBadgesForScore = (
   }
 }
 
+export const claimBadgeForTier = (
+  tier: BadgeTier,
+  badges: BadgeState,
+  claimedAt: string = new Date().toISOString()
+): { badges: BadgeState; didChange: boolean; claimedBadge?: Badge } => {
+  const normalized = normalizeBadgeState(badges)
+  let claimedBadge: Badge | undefined
+
+  const updated = normalized.map((badge) => {
+    if (badge.tier !== tier) return badge
+    if (!badge.unlocked || badge.claimed) return badge
+    claimedBadge = { ...badge, claimed: true, claimedAt }
+    return claimedBadge
+  })
+
+  const normalizedChanged = !areBadgeStatesEqual(normalized, badges)
+  const claimChanged = !areBadgeStatesEqual(updated, normalized)
+
+  return {
+    badges: updated,
+    didChange: normalizedChanged || claimChanged,
+    claimedBadge,
+  }
+}
+
 export const emitBadgeUnlocked = (detail: { tiers: BadgeTier[]; score: number }) => {
   if (typeof window === 'undefined') return
   try {
