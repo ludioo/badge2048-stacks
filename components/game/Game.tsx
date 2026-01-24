@@ -292,7 +292,11 @@ export function Game() {
             <div className="rounded-xl border border-slate-200 bg-white px-6 py-3 text-3xl font-bold text-slate-800 shadow-sm">
               {state.score.toLocaleString()}
             </div>
-            <Button onClick={restart} size="lg" className="w-full sm:w-auto">
+            <Button
+              onClick={restart}
+              size="lg"
+              className="w-full sm:w-auto bg-slate-900 text-white hover:bg-slate-800"
+            >
               Play Again
             </Button>
           </div>
