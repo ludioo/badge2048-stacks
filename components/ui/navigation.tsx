@@ -4,6 +4,7 @@ import { useState } from 'react'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import { cn } from '@/lib/utils'
+import { WalletConnect } from './wallet-connect'
 
 export default function Navigation() {
   const pathname = usePathname()
@@ -32,17 +33,20 @@ export default function Navigation() {
           <Link href="/" className="text-xl font-bold text-gray-900">
             badge2048
           </Link>
-          <div className="hidden md:flex gap-2">
-            {navLinks.map((link) => (
-              <Link
-                key={link.href}
-                href={link.href}
-                aria-current={pathname === link.href ? 'page' : undefined}
-                className={getLinkClassName(link.href)}
-              >
-                {link.label}
-              </Link>
-            ))}
+          <div className="flex items-center gap-3 sm:gap-4">
+            <div className="hidden md:flex gap-2">
+              {navLinks.map((link) => (
+                <Link
+                  key={link.href}
+                  href={link.href}
+                  aria-current={pathname === link.href ? 'page' : undefined}
+                  className={getLinkClassName(link.href)}
+                >
+                  {link.label}
+                </Link>
+              ))}
+            </div>
+            <WalletConnect />
           </div>
           <button
             type="button"
@@ -79,6 +83,11 @@ export default function Navigation() {
                 {link.label}
               </Link>
             ))}
+            <div className="pt-2 border-t border-gray-200">
+              <div className="px-1">
+                <WalletConnect />
+              </div>
+            </div>
           </div>
         </div>
       </div>

@@ -90,7 +90,7 @@ export function ClaimGrid() {
             <Button
               asChild
               size="sm"
-              className="rounded-full bg-emerald-600 text-white hover:bg-emerald-500"
+              className="rounded-full bg-gradient-to-r from-emerald-600 to-emerald-700 text-white font-semibold hover:from-emerald-700 hover:to-emerald-800 shadow-md hover:shadow-lg transition-all border-0"
             >
               <Link href="/badges">View badges</Link>
             </Button>
@@ -108,22 +108,26 @@ export function ClaimGrid() {
 
       {claimableBadges.length === 0 ? (
         <div className="rounded-2xl border border-dashed border-slate-200 bg-white p-6 text-center">
-          <h2 className="text-lg font-semibold text-slate-900">
+          <h2 className="text-lg font-semibold text-gray-900">
             No badges ready to claim
           </h2>
-          <p className="mt-2 text-sm text-slate-600">
+          <p className="mt-2 text-sm font-medium text-gray-700">
             Play more games to unlock new tiers, or review your current badge
             collection.
           </p>
           <div className="mt-4 flex flex-wrap justify-center gap-2">
-            <Button asChild size="sm">
+            <Button 
+              asChild 
+              size="sm"
+              className="bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white font-semibold shadow-md hover:shadow-lg transition-all border-0"
+            >
               <Link href="/play">Play now</Link>
             </Button>
             <Button
               asChild
               variant="outline"
               size="sm"
-              className="border-slate-300 text-slate-800 hover:bg-slate-100"
+              className="border-2 border-gray-300 bg-white text-gray-900 font-semibold hover:bg-gray-50 hover:border-gray-400 transition-all"
             >
               <Link href="/badges">View badges</Link>
             </Button>
@@ -132,13 +136,13 @@ export function ClaimGrid() {
       ) : (
         <>
           <div className="flex flex-wrap items-center justify-between gap-2">
-            <p className="text-sm text-slate-600">
+            <p className="text-sm font-medium text-gray-700">
               {claimableBadges.length} badge
               {claimableBadges.length > 1 ? 's' : ''} ready to claim.
             </p>
             <Link
               href="/badges"
-              className="text-xs font-semibold uppercase tracking-wide text-slate-500"
+              className="text-xs font-semibold uppercase tracking-wide text-gray-700 hover:text-gray-900 transition-colors"
             >
               View all badges
             </Link>
@@ -170,7 +174,7 @@ export function ClaimGrid() {
                         <p className={cn('text-lg font-semibold', meta.accent)}>
                           {meta.label}
                         </p>
-                        <p className="text-sm text-slate-600">{meta.description}</p>
+                        <p className="text-sm font-medium text-gray-700">{meta.description}</p>
                       </div>
                     </div>
                     <span className="rounded-full border border-emerald-200 bg-emerald-50 px-2.5 py-1 text-xs font-semibold uppercase tracking-wide text-emerald-700">
@@ -179,14 +183,14 @@ export function ClaimGrid() {
                   </div>
 
                   <div className="mt-4 flex items-center justify-between text-sm">
-                    <span className="text-slate-500">Score target</span>
+                    <span className="font-medium text-gray-600">Score target</span>
                     <span className={cn('font-semibold', meta.accent)}>
                       {badge.threshold.toLocaleString()}
                     </span>
                   </div>
 
                   <div className="mt-4 flex flex-wrap items-center justify-between gap-3">
-                    <p className="text-xs text-slate-600">
+                    <p className="text-xs font-medium text-gray-700">
                       Claim now to add it to your collection.
                     </p>
                     <Button
