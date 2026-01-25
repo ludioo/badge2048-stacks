@@ -576,8 +576,10 @@ interface Badge {
 
 4. **Deploy to Testnet**:
    ```bash
-   clarinet deploy --testnet
+   clarinet deployments generate --testnet --manual-cost
+   clarinet deployments apply --testnet
    ```
+   **Note**: Command yang benar adalah `clarinet deployments apply --testnet` (bukan `clarinet deploy --testnet`)
 
 5. **Verify Deployment**:
    - Check on Stacks Explorer
@@ -1234,7 +1236,7 @@ Review ini memvalidasi bahwa Phase 1 **sepenuhnya complete** sebelum lanjut Phas
 
 ## Phase 2: Smart Contract Deployment
 
-**Status**: [x] Not Started | [ ] In Progress | [ ] Complete
+**Status**: [ ] Not Started | [x] In Progress | [ ] Complete
 
 **Prerequisites**: ✅ **Phase 1 Complete** - All requirements met and validated
 
@@ -1244,33 +1246,40 @@ Review ini memvalidasi bahwa Phase 1 **sepenuhnya complete** sebelum lanjut Phas
 
 ### 2.1 Deploy to Testnet (🌐 External)
 
-- [ ] Prepare deployment account ✅ **READY**
+- [x] Prepare deployment account ✅ **COMPLETED**
   - **Your Testnet Wallet**: `ST22ZCY5GAH27T4CK3ATG4QTZJQV6FXPRBAQ0BRW5`
   - Ensure account has testnet STX (from faucet) - ✅ Already obtained 500 STX
-  - Save account mnemonic securely (stored in wallet extension)
+  - Save account mnemonic securely (stored in wallet extension) - ✅ Encrypted mnemonic configured
   - **Note**: Wallet address sudah dikonfigurasi untuk deployment
 
-- [ ] Configure Clarinet for testnet
-  - Update `Clarinet.toml` with testnet settings
-  - Set deployment account address: `ST22ZCY5GAH27T4CK3ATG4QTZJQV6FXPRBAQ0BRW5`
+- [x] Configure Clarinet for testnet ✅ **COMPLETED**
+  - Update `Clarinet.toml` with testnet settings - ✅ Configured
+  - Set deployment account address: `ST22ZCY5GAH27T4CK3ATG4QTZJQV6FXPRBAQ0BRW5` - ✅ Configured
+  - Encrypted mnemonic configured in `settings/Testnet.toml` - ✅ Completed
   - **Your Testnet Wallet**: `ST22ZCY5GAH27T4CK3ATG4QTZJQV6FXPRBAQ0BRW5` (configured and ready for deployment)
 
-- [ ] Deploy contract to testnet
+- [x] Deploy contract to testnet ✅ **COMPLETED**
   ```bash
   cd contracts/badge2048-contract
-  clarinet deploy --testnet
+  clarinet deployments generate --testnet --manual-cost
+  clarinet deployments apply --testnet
   ```
+  **Status**: ✅ Contract berhasil di-deploy ke testnet
+  **Transaction**: Confirmed
 
-- [ ] Save contract address
-  - Copy deployed contract address
-  - Format: `ST...`
-  - Save to: `.env.local` or config file
+- [x] Save contract address ✅ **COMPLETED**
+  - **Contract Address**: `ST22ZCY5GAH27T4CK3ATG4QTZJQV6FXPRBAQ0BRW5.badge2048`
+  - Format: `{deployer_address}.{contract_name}`
+  - Deployer: `ST22ZCY5GAH27T4CK3ATG4QTZJQV6FXPRBAQ0BRW5`
+  - Contract Name: `badge2048`
 
-- [ ] Verify deployment on Stacks Explorer
-  - Visit: https://explorer.stacks.co/?chain=testnet
-  - Search for contract address
-  - Verify contract code visible
-  - [ ] Contract verified on explorer
+- [x] Verify deployment on Stacks Explorer ✅ **COMPLETED**
+  - Visit: https://explorer.stacks.co/?chain=testnet&contract=ST22ZCY5GAH27T4CK3ATG4QTZJQV6FXPRBAQ0BRW5.badge2048
+  - Search for contract address: `ST22ZCY5GAH27T4CK3ATG4QTZJQV6FXPRBAQ0BRW5.badge2048`
+  - Verify contract code visible - ✅ Verified (contract code, functions, variables, maps visible)
+  - Transaction ID: `0xc9931700e2891cd98da25b2a03541b68339e656d57eb3df0ad3b1df04b9842a7`
+  - Status: Confirmed ✅
+  - Contract details verified: 13 functions, 11 variables, 4 maps, Clarity version 4
 
 ### 2.2 Test Contract Functions on Testnet (🌐 External)
 
@@ -1323,7 +1332,51 @@ Review ini memvalidasi bahwa Phase 1 **sepenuhnya complete** sebelum lanjut Phas
 
 **Phase 2 Deliverable**: Contract deployed to testnet, verified, and frontend configured.
 
-**Phase 2 Status**: [ ] Complete
+**Phase 2 Status**: [ ] Not Started | [x] In Progress | [ ] Complete
+
+**Phase 2 Progress Summary:**
+- ✅ **2.1 Deploy to Testnet: COMPLETED & VALIDATED** ✅
+  - ✅ Prepare deployment account
+    - Wallet: `ST22ZCY5GAH27T4CK3ATG4QTZJQV6FXPRBAQ0BRW5`
+    - Testnet STX: 500 STX obtained ✅
+    - Encrypted mnemonic: Configured securely ✅
+  - ✅ Configure Clarinet for testnet
+    - `settings/Testnet.toml`: Configured with encrypted mnemonic ✅
+    - Deployment account address: Set ✅
+    - Network settings: Configured ✅
+  - ✅ Deploy contract to testnet
+    - Command executed: `clarinet deployments apply --testnet` ✅
+    - Transaction status: Confirmed ✅
+    - Transaction ID: `0xc9931700e2891cd98da25b2a03541b68339e656d57eb3df0ad3b1df04b9842a7` ✅
+  - ✅ Save contract address
+    - Contract Address: `ST22ZCY5GAH27T4CK3ATG4QTZJQV6FXPRBAQ0BRW5.badge2048` ✅
+    - Saved in: `contracts/badge2048-contract/README.md` ✅
+  - ✅ Verify deployment on Stacks Explorer
+    - Contract verified on explorer ✅
+    - Contract code visible ✅
+    - Functions verified: 13 functions ✅
+    - Variables verified: 11 variables ✅
+    - Maps verified: 4 maps ✅
+    - Clarity version: 4 ✅
+  
+  **✅ Phase 2.1 Validation: ALL REQUIREMENTS MET - READY FOR PHASE 2.2**
+
+- ⏳ 2.2 Test Contract Functions on Testnet: **PENDING**
+  - [ ] Test `mint-badge` function
+  - [ ] Test `update-high-score` function
+  - [ ] Test read-only functions
+  - [ ] Verify NFT in wallet
+- ⏳ 2.3 Update Frontend Configuration: **PENDING**
+  - [ ] Create environment configuration file
+  - [ ] Update `.env.local`
+  - [ ] Create `.env.example` file
+
+**Current Phase**: **Phase 2** (In Progress)
+**Phase 2.1 Status**: ✅ **COMPLETED & VALIDATED** - Safe to proceed to Phase 2.2
+**Next Steps**: 
+1. Complete Phase 2.2 (Test Contract Functions on Testnet)
+2. Complete Phase 2.3 (Update Frontend Configuration)
+3. Then proceed to Phase 3 (Frontend Dependencies & Setup)
 
 ---
 

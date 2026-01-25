@@ -68,15 +68,20 @@ npm test
 
 ### Testnet
 ```bash
-clarinet deploy --testnet
+clarinet deployments generate --testnet --manual-cost
+clarinet deployments apply --testnet
 ```
 
 ### Mainnet
 ```bash
-clarinet deploy --mainnet
+clarinet deployments generate --mainnet --manual-cost
+clarinet deployments apply --mainnet
 ```
 
 ## Contract Address
 
-- Testnet: TBD (after deployment)
+- **Testnet**: `ST22ZCY5GAH27T4CK3ATG4QTZJQV6FXPRBAQ0BRW5.badge2048` ✅ **DEPLOYED**
 - Mainnet: TBD (after deployment)
+
+### Verify on Stacks Explorer
+- Testnet: https://explorer.stacks.co/?chain=testnet&contract=ST22ZCY5GAH27T4CK3ATG4QTZJQV6FXPRBAQ0BRW5.badge2048
