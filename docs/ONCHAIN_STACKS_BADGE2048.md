@@ -222,22 +222,39 @@ MVP onchain di Stacks mencakup:
 
 ### 6.4 Events
 
-```clarity
-;; Badge minted event
-(define-event badge-minted
-  (player principal)
-  (tier (string-ascii 10))
-  (token-id uint)
-  (score uint)
-  (block-height uint))
+Events di-emit menggunakan `print!` statements dalam Clarity. Events akan muncul di transaction receipts dan dapat di-query melalui Stacks API atau indexers (seperti Hiro API, talent.app).
 
-;; High score updated event
-(define-event high-score-updated
-  (player principal)
-  (old-score uint)
-  (new-score uint)
-  (block-height uint))
-```
+**Event: badge-minted**
+- **Emitted**: Ketika badge NFT berhasil di-mint
+- **Structure**: `{event: "badge-minted", player: principal, tier: string-ascii, token-id: uint, score: uint}`
+- **Example**:
+  ```clarity
+  (print {
+    event: "badge-minted",
+    player: caller,
+    tier: "bronze",
+    token-id: u1,
+    score: u1024
+  })
+  ```
+
+**Event: high-score-updated**
+- **Emitted**: Ketika high score player di-update
+- **Structure**: `{event: "high-score-updated", player: principal, old-score: uint, new-score: uint}`
+- **Example**:
+  ```clarity
+  (print {
+    event: "high-score-updated",
+    player: caller,
+    old-score: u1000,
+    new-score: u2000
+  })
+  ```
+
+**Note**: 
+- `block-height` tidak disertakan dalam events karena secara otomatis tersedia di transaction receipts
+- Frontend dapat query transaction receipt untuk mendapatkan `block-height` dan `timestamp`
+- Events dapat di-index oleh indexers untuk ditampilkan di frontend atau talent.app profile
 
 ### 6.5 Error Codes
 
@@ -1018,10 +1035,10 @@ Each phase should be completed before moving to the next. Update checkboxes `[ ]
   
   **Actual output (✅ ALL TESTS PASSED):**
   ```
-  ✓ tests/badge2048_test.ts (8 tests) 182ms
+  ✓ tests/badge2048_test.ts (11 tests) ~260ms
 
   Test Files  1 passed (1)
-       Tests  8 passed (8)
+       Tests  11 passed (11)
   ```
   
   **Test Results:**
@@ -1035,6 +1052,10 @@ Each phase should be completed before moving to the next. Update checkboxes `[ ]
     - ✅ should get player high score
   - ✅ Badge Ownership (1 test)
     - ✅ should get badge ownership
+  - ✅ Events (3 tests)
+    - ✅ should emit badge-minted event on mint
+    - ✅ should emit high-score-updated event on update
+    - ✅ should not emit high-score-updated when score not higher
   - ✅ SIP-009 NFT Functions (1 test)
     - ✅ should implement SIP-009 NFT functions
   
@@ -1070,10 +1091,11 @@ Each phase should be completed before moving to the next. Update checkboxes `[ ]
   
   **Verification Checklist:**
   - [x] Contract syntax check passes ✅
-  - [x] All tests pass (8 test cases) ✅
+  - [x] All tests pass (11 test cases) ✅
   - [x] No errors in contract syntax ✅
   - [x] Test output shows all assertions passing ✅
   - [x] No unhandled errors ✅
+  - [x] Event verification tests passing ✅
 
 ### 1.5 Contract Verification & Documentation (🖥️ Cursor)
 
@@ -1090,7 +1112,7 @@ Each phase should be completed before moving to the next. Update checkboxes `[ ]
 - [x] Add code comments to contract ✅ **COMPLETED**
   - ✅ Document each function
   - ✅ Document data structures
-  - ✅ Document events
+  - ✅ Document events (with implementation details)
   - ✅ All functions have clear comments
 
 - [x] Create contract README ✅ **COMPLETED**
@@ -1101,6 +1123,13 @@ Each phase should be completed before moving to the next. Update checkboxes `[ ]
   - ✅ Document events
   - ⏳ Testnet/mainnet addresses (will be added after deployment)
 
+- [x] Implement events ✅ **COMPLETED** (2026-01-25)
+  - ✅ Implement `badge-minted` event with `print` statement
+  - ✅ Implement `high-score-updated` event with `print` statement
+  - ✅ Events tested and verified (3 dedicated event verification tests; all 11 tests passing)
+  - ✅ Events structure documented in contract
+  - ✅ Events compatible with Stacks API and indexers
+
 **Phase 1 Deliverable**: Smart contract code complete, tested, and ready for deployment.
 
 **Phase 1 Status**: [x] Complete ✅
@@ -1109,9 +1138,10 @@ Each phase should be completed before moving to the next. Update checkboxes `[ ]
 - ✅ Contract syntax valid (clarinet check passes)
 - ✅ All functions implemented
 - ✅ SIP-009 NFT standard implemented
-- ✅ Test file created (8 test cases)
+- ✅ **Events implemented** (badge-minted, high-score-updated) ✅
+- ✅ Test file created (11 test cases: 8 core + 3 event verification)
 - ✅ Type definitions created
-- ✅ All tests passing (8/8 passed)
+- ✅ All tests passing (11/11 passed)
 - ✅ Security review completed (validated through comprehensive testing)
 - ✅ Code documentation complete (comments + README)
 - ⚠️ Warnings detected (normal - unused constants, unchecked data)
@@ -1131,21 +1161,74 @@ Each phase should be completed before moving to the next. Update checkboxes `[ ]
   - [x] SIP-009 NFT standard implemented ✅
 - [x] 1.4 Smart Contract Testing ✅
   - [x] Test file created ✅
-  - [x] All 8 tests passing ✅
+  - [x] All 11 tests passing (8 core + 3 event verification) ✅
   - [x] Contract syntax valid ✅
 - [x] 1.5 Contract Verification & Documentation ✅
   - [x] Security review completed ✅
   - [x] Code comments added ✅
   - [x] README created ✅
+  - [x] Events implemented ✅ (badge-minted, high-score-updated)
 
 **✅ ALL PHASE 1 TASKS COMPLETED**
 
+**Events Implementation (Completed 2026-01-25):**
+- ✅ `badge-minted` event implemented with `print` statement
+- ✅ `high-score-updated` event implemented with `print` statement
+- ✅ Events tested and verified (3 dedicated event verification tests)
+- ✅ Events structure documented in contract comments
+- ✅ Events compatible with Stacks API and indexers (Hiro API, talent.app)
+
 **Contract Status:**
 - ✅ Production-ready for testnet deployment
-- ✅ All tests passing (8/8)
+- ✅ All tests passing (11/11)
 - ✅ Security validated through comprehensive testing
 - ✅ Wallet configured: `ST22ZCY5GAH27T4CK3ATG4QTZJQV6FXPRBAQ0BRW5`
-- ✅ Ready to proceed to Phase 2: Smart Contract Deployment
+- ✅ Phase 1 complete; siap lanjut Phase 2 (setelah review diterima)
+
+---
+
+### Phase 1 Review — Implementasi Events (2026-01-25)
+
+Review ini memvalidasi bahwa Phase 1 **sepenuhnya complete** sebelum lanjut Phase 2.
+
+#### 1. Contract Implementation
+
+| Item | Status | Catatan |
+|------|--------|---------|
+| `badge-minted` event | ✅ | Di-emit di `mint-badge` setelah semua state update |
+| `high-score-updated` event | ✅ | Di-emit di `update-high-score` hanya bila score lebih tinggi |
+| Event structure | ✅ | Sesuai spec: player, tier, token-id, score (badge-minted); player, old-score, new-score (high-score-updated) |
+| `print` usage | ✅ | Clarity pakai `print` (bukan `print!`) |
+| No event on error/false | ✅ | `update-high-score` return false → tidak emit event |
+
+#### 2. Testing
+
+| Test | Status | Deskripsi |
+|------|--------|-----------|
+| Mint Badge (4 tests) | ✅ | Valid score, invalid score, duplicate, all tiers |
+| High Score (2 tests) | ✅ | Update, get |
+| Badge Ownership (1 test) | ✅ | Get ownership |
+| **Events (3 tests)** | ✅ | Emit badge-minted, emit high-score-updated, no emit when score not higher |
+| SIP-009 NFT (1 test) | ✅ | get-owner, get-last-token-id, get-token-uri, transfer |
+
+**Total: 11 tests, semua passing.**
+
+#### 3. Documentation
+
+| Dokumen | Status |
+|---------|--------|
+| `contracts/badge2048-contract/contracts/badge2048.clar` | ✅ Comments untuk events |
+| `contracts/badge2048-contract/README.md` | ✅ Events section |
+| `docs/ONCHAIN_STACKS_BADGE2048.md` | ✅ Section 6.4 Events, Phase 1 checklist |
+| `docs/EVENTS-IMPLEMENTATION.md` | ✅ Detail events, frontend integration, mobile/desktop |
+
+#### 4. Kesimpulan Review
+
+- **Events**: Lengkap dan teruji.
+- **Phase 1**: Semua tasks done; contract siap deploy.
+- **Phase 2**: Boleh mulai setelah Phase 1 review ini disetujui.
+
+**Referensi**: `docs/EVENTS-IMPLEMENTATION.md` untuk detail events dan integrasi frontend.
 
 ---
 

@@ -46,12 +46,14 @@ Contract ini memungkinkan:
 
 ## Events
 
+Events di-emit dengan `print` statements. Lihat `docs/EVENTS-IMPLEMENTATION.md` untuk detail.
+
 - `badge-minted` - Emitted when badge is minted
 - `high-score-updated` - Emitted when high score is updated
 
 ## Testing
 
-Run tests dengan:
+11 tests (8 core + 3 event verification). Run tests dengan:
 ```bash
 clarinet test
 ```

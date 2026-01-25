@@ -246,6 +246,54 @@ describe("Badge2048 Contract Tests", () => {
     });
   });
 
+  describe("Events", () => {
+    it("should emit badge-minted event on mint", () => {
+      const wallet1 = simnet.deployer;
+      const { result, events } = simnet.callPublicFn(
+        "badge2048",
+        "mint-badge",
+        [Cl.stringAscii("bronze"), Cl.uint(1024)],
+        wallet1
+      );
+      expect(result).toBeOk(Cl.uint(1));
+      expect(events.length).toBeGreaterThan(0);
+      const eventsStr = JSON.stringify(events);
+      expect(eventsStr).toContain("badge-minted");
+    });
+
+    it("should emit high-score-updated event on update", () => {
+      const wallet1 = simnet.deployer;
+      const { result, events } = simnet.callPublicFn(
+        "badge2048",
+        "update-high-score",
+        [Cl.uint(3000)],
+        wallet1
+      );
+      expect(result).toBeOk(Cl.bool(true));
+      expect(events.length).toBeGreaterThan(0);
+      const eventsStr = JSON.stringify(events);
+      expect(eventsStr).toContain("high-score-updated");
+    });
+
+    it("should not emit high-score-updated when score not higher", () => {
+      const wallet1 = simnet.deployer;
+      simnet.callPublicFn(
+        "badge2048",
+        "update-high-score",
+        [Cl.uint(5000)],
+        wallet1
+      );
+      const { result, events } = simnet.callPublicFn(
+        "badge2048",
+        "update-high-score",
+        [Cl.uint(4000)],
+        wallet1
+      );
+      expect(result).toBeOk(Cl.bool(false));
+      expect(events.length).toBe(0);
+    });
+  });
+
   describe("SIP-009 NFT Functions", () => {
     it("should implement SIP-009 NFT functions", () => {
       const wallet1 = simnet.deployer;

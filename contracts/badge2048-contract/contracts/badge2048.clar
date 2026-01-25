@@ -190,8 +190,17 @@
         )
       )
       
+      ;; Emit badge-minted event
+      ;; Event structure: {event: "badge-minted", player: principal, tier: string, token-id: uint, score: uint}
+      (print {
+        event: "badge-minted",
+        player: caller,
+        tier: tier,
+        token-id: new-token-id,
+        score: score
+      })
+      
       ;; Return token ID
-      ;; Note: Events are emitted automatically by the blockchain when function succeeds
       (ok new-token-id)
     )
   )
@@ -207,7 +216,16 @@
       (if (> score current-high-score)
         (begin
           (map-set player-high-score caller score)
-          ;; Note: Events are emitted automatically by the blockchain when function succeeds
+          
+          ;; Emit high-score-updated event
+          ;; Event structure: {event: "high-score-updated", player: principal, old-score: uint, new-score: uint}
+          (print {
+            event: "high-score-updated",
+            player: caller,
+            old-score: current-high-score,
+            new-score: score
+          })
+          
           (ok true)
         )
         (ok false)
@@ -244,10 +262,19 @@
 ;; Events
 ;; ============================================================================
 
-;; Note: In Clarity, events are defined using print! for debugging/logging
-;; For production, events are typically handled by the blockchain automatically
-;; when functions succeed. Event data can be queried from transaction receipts.
+;; Events are emitted using print statements in Clarity
+;; Events will appear in transaction receipts and can be queried via Stacks API
+;; Indexers (like Hiro API, talent.app) can index these events for frontend display
 
-;; Event structure (for documentation):
-;; badge-minted: player, tier, token-id, score, block-height
-;; high-score-updated: player, old-score, new-score, block-height
+;; Event: badge-minted
+;; Emitted when a badge NFT is successfully minted
+;; Structure: {event: "badge-minted", player: principal, tier: string-ascii, token-id: uint, score: uint}
+;; Example: {event: "badge-minted", player: ST..., tier: "bronze", token-id: u1, score: u1024}
+
+;; Event: high-score-updated
+;; Emitted when a player's high score is updated
+;; Structure: {event: "high-score-updated", player: principal, old-score: uint, new-score: uint}
+;; Example: {event: "high-score-updated", player: ST..., old-score: u1000, new-score: u2000}
+
+;; Note: block-height is not included in events as it's automatically available in transaction receipts
+;; Frontend can query transaction receipt to get block-height and timestamp
