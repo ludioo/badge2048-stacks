@@ -19,6 +19,14 @@ export interface Badge {
   unlocked: boolean;
   claimed: boolean;
   claimedAt?: string;
+  /** Onchain mint status — true when NFT minted via contract */
+  onchainMinted?: boolean;
+  /** NFT token ID from contract (if minted) */
+  tokenId?: number;
+  /** Transaction ID of mint (if minted) */
+  txId?: string;
+  /** ISO timestamp when badge was minted onchain */
+  mintedAt?: string;
 }
 
 export type BadgeState = Badge[];

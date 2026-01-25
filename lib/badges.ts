@@ -21,11 +21,16 @@ const isBadge = (value: unknown): value is Badge => {
     typeof candidate.threshold === 'number' &&
     typeof candidate.unlocked === 'boolean' &&
     typeof candidate.claimed === 'boolean' &&
-    (candidate.claimedAt === undefined || typeof candidate.claimedAt === 'string')
+    (candidate.claimedAt === undefined || typeof candidate.claimedAt === 'string') &&
+    // Optional onchain fields: validate type if present, allow undefined for backward compatibility
+    (candidate.onchainMinted === undefined || typeof candidate.onchainMinted === 'boolean') &&
+    (candidate.tokenId === undefined || typeof candidate.tokenId === 'number') &&
+    (candidate.txId === undefined || typeof candidate.txId === 'string') &&
+    (candidate.mintedAt === undefined || typeof candidate.mintedAt === 'string')
   )
 }
 
-const areBadgeStatesEqual = (left: BadgeState, right: BadgeState) => {
+export const areBadgeStatesEqual = (left: BadgeState, right: BadgeState) => {
   if (left.length !== right.length) return false
   for (let index = 0; index < left.length; index += 1) {
     const leftBadge = left[index]
@@ -36,7 +41,11 @@ const areBadgeStatesEqual = (left: BadgeState, right: BadgeState) => {
       leftBadge.threshold !== rightBadge.threshold ||
       leftBadge.unlocked !== rightBadge.unlocked ||
       leftBadge.claimed !== rightBadge.claimed ||
-      leftBadge.claimedAt !== rightBadge.claimedAt
+      leftBadge.claimedAt !== rightBadge.claimedAt ||
+      leftBadge.onchainMinted !== rightBadge.onchainMinted ||
+      leftBadge.tokenId !== rightBadge.tokenId ||
+      leftBadge.txId !== rightBadge.txId ||
+      leftBadge.mintedAt !== rightBadge.mintedAt
     ) {
       return false
     }
@@ -61,6 +70,11 @@ export const normalizeBadgeState = (badges: BadgeState): BadgeState => {
       unlocked: stored?.unlocked ?? defaultBadge.unlocked,
       claimed: stored?.claimed ?? defaultBadge.claimed,
       ...(claimedAt ? { claimedAt } : {}),
+      // Preserve onchain fields if present
+      ...(stored?.onchainMinted !== undefined ? { onchainMinted: stored.onchainMinted } : {}),
+      ...(stored?.tokenId !== undefined ? { tokenId: stored.tokenId } : {}),
+      ...(stored?.txId !== undefined ? { txId: stored.txId } : {}),
+      ...(stored?.mintedAt !== undefined ? { mintedAt: stored.mintedAt } : {}),
     }
   })
 }
@@ -202,4 +216,56 @@ export const emitBadgeUnlocked = (detail: { tiers: BadgeTier[]; score: number })
   } catch {
     // Ignore analytics event errors
   }
+}
+
+// --- Badge sync helpers (Step 7) ---
+
+/**
+ * Returns true if the badge is claimed but not yet minted onchain.
+ * Use this to show "Mint onchain" for claimed badges that need minting.
+ */
+export const badgeNeedsMinting = (badge: Badge): boolean =>
+  badge.claimed === true && badge.onchainMinted !== true
+
+export type OnchainBadgeData = {
+  tokenId: number
+  txId?: string
+  mintedAt?: string
+}
+
+/**
+ * Returns a new badge with onchain mint data set.
+ * Preserves all other fields. Use after successful mint transaction.
+ */
+export const updateBadgeWithOnchainData = (
+  badge: Badge,
+  data: { tokenId: number; txId: string; mintedAt: string }
+): Badge => ({
+  ...badge,
+  onchainMinted: true,
+  tokenId: data.tokenId,
+  txId: data.txId,
+  mintedAt: data.mintedAt,
+})
+
+/**
+ * Merges offchain badge state with onchain data per tier.
+ * Use when fetching ownership from contract/indexer and combining with localStorage.
+ */
+export const mergeOffchainAndOnchainBadges = (
+  offchain: BadgeState,
+  onchainByTier: Map<BadgeTier, OnchainBadgeData>
+): BadgeState => {
+  const normalized = normalizeBadgeState(offchain)
+  return normalized.map((badge) => {
+    const onchain = onchainByTier.get(badge.tier)
+    if (!onchain) return badge
+    return {
+      ...badge,
+      onchainMinted: true,
+      tokenId: onchain.tokenId,
+      ...(onchain.txId !== undefined ? { txId: onchain.txId } : {}),
+      ...(onchain.mintedAt !== undefined ? { mintedAt: onchain.mintedAt } : {}),
+    }
+  })
 }

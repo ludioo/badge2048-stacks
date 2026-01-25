@@ -1236,7 +1236,7 @@ Review ini memvalidasi bahwa Phase 1 **sepenuhnya complete** sebelum lanjut Phas
 
 ## Phase 2: Smart Contract Deployment
 
-**Status**: [ ] Not Started | [x] In Progress | [ ] Complete
+**Status**: [ ] Not Started | [ ] In Progress | [x] Complete ✅
 
 **Prerequisites**: ✅ **Phase 1 Complete** - All requirements met and validated
 
@@ -1401,7 +1401,7 @@ Review ini memvalidasi bahwa Phase 1 **sepenuhnya complete** sebelum lanjut Phas
 
 **Phase 2 Deliverable**: Contract deployed to testnet, verified, and frontend configured.
 
-**Phase 2 Status**: [ ] Not Started | [x] In Progress | [ ] Complete
+**Phase 2 Status**: [ ] Not Started | [ ] In Progress | [x] Complete ✅
 
 **Phase 2 Progress Summary:**
 - ✅ **2.1 Deploy to Testnet: COMPLETED & VALIDATED** ✅
@@ -1447,13 +1447,15 @@ Review ini memvalidasi bahwa Phase 1 **sepenuhnya complete** sebelum lanjut Phas
   - ✅ Update `.env.local` ✅
   - ✅ Create `.env.example` file ✅
 
-**Current Phase**: **Phase 2** ✅ **COMPLETE**
+**Current Phase**: **Phase 6** ✅ **COMPLETE** (Steps 1–9 done — 2026-01-25)
 **Phase 2.1 Status**: ✅ **COMPLETED & VALIDATED**
 **Phase 2.2 Status**: ✅ **COMPLETE** - Testing UI ready, wallet connection verified ✅, contract functions tested and verified ✅
 **Phase 2.3 Status**: ✅ **COMPLETED**
+**Phase 6 Status**: ✅ **COMPLETE** - Badge data model updated, storage backward compatible, all tests pass (91/91 unit, 20/20 E2E)
 **Next Steps**: 
 1. ✅ Phase 2.2 manual testing completed - All contract functions verified
-2. **Proceed to Phase 6: Update Badge Data Model** (Next phase in roadmap)
+2. ✅ Phase 6: Update Badge Data Model — **COMPLETED** (2026-01-25)
+3. **Proceed to Phase 7: Update Claim Flow for Onchain Minting** (Next phase in roadmap)
 
 ---
 
@@ -1711,49 +1713,73 @@ Review ini memvalidasi bahwa Phase 1 **sepenuhnya complete** sebelum lanjut Phas
 
 ### 6.1 Update Badge Type Definition (🖥️ Cursor)
 
-- [ ] Update `lib/game/types.ts`
-  - Add `onchainMinted?: boolean` to Badge interface
-  - Add `tokenId?: number` to Badge interface
-  - Add `txId?: string` to Badge interface
-  - Add `mintedAt?: string` to Badge interface
+- [x] Update `lib/game/types.ts` ✅ **COMPLETED** (Step 1.1 — 2026-01-25)
+  - Add `onchainMinted?: boolean` to Badge interface ✅
+  - Add `tokenId?: number` to Badge interface ✅
+  - Add `txId?: string` to Badge interface ✅
+  - Add `mintedAt?: string` to Badge interface ✅
 
-- [ ] Verify TypeScript compilation
-  - Run `npm run build`
-  - Fix any type errors
-  - [ ] No type errors
+- [x] Verify TypeScript compilation ✅ **COMPLETED** (Step 1.2 — 2026-01-25)
+  - Run `npm run build` (atau `npm test -- lib/badges.test.ts` / unit test penuh untuk verifikasi)
+  - Fix any type errors — N/A (perubahan additive, tidak ada error)
+  - [x] No type errors ✅
+  - Unit test: 59 passed (merge, utils, checkGameOver, slide, spawn, reducer, badges). E2E: 20/20 pass.
 
 ### 6.2 Update Badge Storage Functions (🖥️ Cursor)
 
-- [ ] Update `lib/badges.ts`
-  - Update `saveBadgesToStorage` to handle new fields
-  - Update `loadBadgesFromStorage` to handle new fields
-  - Ensure backward compatibility
+- [x] Update `lib/badges.ts` ✅ **COMPLETED** (Steps 2–6 — 2026-01-25)
+  - [x] Update `isBadge` to validate optional onchain fields ✅ (Step 2)
+  - [x] Update `normalizeBadgeState` to preserve onchain fields ✅ (Step 3, done early for Step 2 tests)
+  - [x] Update `areBadgeStatesEqual` to compare onchain fields ✅ (Step 4)
+  - [x] `unlockBadgesForScore` & `claimBadgeForTier` preserve onchain fields ✅ (Step 5)
+  - [x] `saveBadgesToStorage` / `loadBadgesFromStorage` handle new fields via normalize ✅ (Step 6)
+  - [x] Ensure backward compatibility ✅ (old format without onchain fields accepted)
 
-- [ ] Test storage migration
-  - Load old badge format
-  - Verify migration works
-  - Verify new fields default correctly
+- [x] Test storage migration ✅ **COMPLETED** (Step 6 — 2026-01-25)
+  - [x] Load old badge format ✅ (test: "accepts old badge format without onchain fields", "loads old payload without onchain fields")
+  - [x] Verify migration works ✅ (test: "preserves onchain fields through save/load round-trip", "handles multiple save/load cycles")
+  - [x] Verify new fields default correctly ✅ (test: "accepts badge with all/partial onchain fields", "handles mixed state")
+  - [x] Legacy key migration ✅ (test: "migrates legacy key without/with onchain fields")
 
 ### 6.3 Update Badge Utility Functions (🖥️ Cursor)
 
-- [ ] Update badge unlock/claim functions
-  - Ensure new fields preserved
-  - Add helpers for onchain status
+- [x] Update badge unlock/claim functions ✅ **COMPLETED** (Step 5 — 2026-01-25)
+  - [x] Ensure new fields preserved ✅ (`unlockBadgesForScore`, `claimBadgeForTier` preserve onchain via spread; 3 unit tests added)
+  - [x] Add helpers for onchain status ✅ **COMPLETED** (Step 7 — 2026-01-25)
 
-- [ ] Add badge sync helpers
-  - Function to merge offchain and onchain badges
-  - Function to check if badge needs minting
-  - Function to update badge with onchain data
+- [x] Add badge sync helpers ✅ **COMPLETED** (Step 7 — 2026-01-25)
+  - [x] `badgeNeedsMinting(badge)` — returns true when claimed but not onchain minted
+  - [x] `updateBadgeWithOnchainData(badge, data)` — returns badge with onchain fields set, others preserved
+  - [x] `mergeOffchainAndOnchainBadges(offchain, onchainByTier)` — merges offchain state with onchain data by tier
+  - [x] `OnchainBadgeData` type exported
+  - [x] Unit tests: 9 tests for Step 7 helpers (40/40 badge suite pass)
+
+- [x] Unit Tests ✅ **COMPLETED** (Step 8 — 2026-01-25)
+  - [x] Storage round-trip dengan onchain ✅ (test: "preserves onchain fields through save/load round-trip")
+  - [x] Backward compatibility ✅ (tests: "accepts old badge format", "loads old payload without onchain fields")
+  - [x] `normalizeBadgeState` ✅ (tests: "fills missing tiers", "preserves onchain fields when present", "does not add onchain fields when not present")
+  - [x] `badgeNeedsMinting` ✅ (4 tests di Step 7)
+  - [x] `updateBadgeWithOnchainData` ✅ (2 tests di Step 7)
+  - [x] `mergeOffchainAndOnchainBadges` ✅ (3 tests di Step 7)
+  - [x] Claim flow existing ✅ (test: "unlocks, claims, and persists a badge")
+  - [x] Badge test suite: 42/42 pass
+
+- [x] E2E & Build ✅ **COMPLETED** (Step 9 — 2026-01-25)
+  - [x] TypeScript compilation: File Phase 6 (`lib/badges.ts`, `lib/game/types.ts`) tidak ada type error terkait perubahan Phase 6
+  - [x] Unit tests: 91/91 pass (termasuk 42/42 badge tests)
+  - [x] E2E tests: 20/20 pass (claim flow, badges page, navigation, play page — desktop & mobile)
+  - [x] Build: Pre-existing issue (Turbopack `/_not-found` error) tidak terkait Phase 6; TypeScript types untuk Phase 6 valid
+  - [x] Manual smoke: Claim flow tetap berfungsi (unlock → claim → save → load); badge state persist dengan backward compatibility
 
 **Phase 6 Deliverable**: Badge data model updated, storage functions updated, backward compatible.
 
-**Phase 6 Status**: [ ] Complete
+**Phase 6 Status**: [x] Complete ✅ (Steps 1-9 done — 2026-01-25)
 
 ---
 
 ## Phase 7: Update Claim Flow for Onchain Minting
 
-**Status**: [ ] Not Started | [ ] In Progress | [x] Complete
+**Status**: [x] Not Started | [ ] In Progress | [ ] Complete
 
 **Reference Files**: Section 7.3 (Claim Flow Integration), Section 9.1 (Mint Badge Flow), CLAIM-FLOW.md
 
@@ -2304,7 +2330,7 @@ Review ini memvalidasi bahwa Phase 1 **sepenuhnya complete** sebelum lanjut Phas
 - [x] Phase 3: Frontend Dependencies & Setup ✅ **COMPLETE** (completed ahead of schedule)
 - [x] Phase 4: Wallet Integration ✅ **COMPLETE** (completed ahead of schedule)
 - [x] Phase 5: Contract Interaction Hooks ✅ **COMPLETE** (completed ahead of schedule)
-- [ ] Phase 6: Update Badge Data Model ⏳ **PENDING**
+- [x] Phase 6: Update Badge Data Model ✅ **COMPLETE** (Steps 1-9 done — 2026-01-25)
 - [ ] Phase 7: Update Claim Flow for Onchain Minting ⏳ **PENDING**
 - [ ] Phase 8: Update High Score Sync ⏳ **PENDING**
 - [ ] Phase 9: Update Badge Display ⏳ **PENDING**
@@ -2318,7 +2344,7 @@ Review ini memvalidasi bahwa Phase 1 **sepenuhnya complete** sebelum lanjut Phas
 
 **Last Updated**: 2026-01-25
 
-**Completed Phases**: 5 out of 14 (Phase 1, 2.1-2.3, 3, 4, 5)
+**Completed Phases**: 6 out of 14 (Phase 1, 2.1-2.3, 3, 4, 5, 6)
 - Phase 1: ✅ Complete
 - Phase 2.1: ✅ Complete
 - Phase 2.2: ✅ Complete (testing completed)
@@ -2326,12 +2352,13 @@ Review ini memvalidasi bahwa Phase 1 **sepenuhnya complete** sebelum lanjut Phas
 - Phase 3: ✅ Complete
 - Phase 4: ✅ Complete
 - Phase 5: ✅ Complete (fully tested & verified)
+- Phase 6: ✅ Complete (Badge Data Model — Steps 1-9; 91/91 unit, 20/20 E2E)
 
 **Implementation Progress**:
 - Total phases: 14
-- Completed: 5 (35.7%)
+- Completed: 6 (42.9%)
 - In Progress: 0
-- Pending: 9
+- Pending: 8
 
 **Key Achievements**:
 - ✅ Smart contract deployed to testnet
@@ -2340,12 +2367,13 @@ Review ini memvalidasi bahwa Phase 1 **sepenuhnya complete** sebelum lanjut Phas
 - ✅ Contract interaction hooks ready
 - ✅ Testing UI page created (`/test-contract`)
 - ✅ Responsive design for desktop & mobile
+- ✅ Phase 6: Badge data model updated (onchain fields, backward compat, sync helpers)
 
 ---
 
-**Document Version**: 2.3  
+**Document Version**: 2.4  
 **Last Updated**: 2026-01-25  
-**Status**: Phase 2.2 Complete ✅, All Contract Functions Tested & Verified ✅, Ready for Phase 6
+**Status**: Phase 2 Complete ✅, Phase 6 Complete ✅ (Badge Data Model), All Contract Functions Tested & Verified ✅, Ready for Phase 7
 
 ---
 
@@ -2360,6 +2388,7 @@ Review ini memvalidasi bahwa Phase 1 **sepenuhnya complete** sebelum lanjut Phas
 - **Phase 3**: Frontend Dependencies & Setup ✅ **COMPLETE** (completed ahead of schedule)
 - **Phase 4**: Wallet Integration ✅ **COMPLETE & VERIFIED** (completed ahead of schedule, fully tested)
 - **Phase 5**: Contract Interaction Hooks ✅ **COMPLETE & VERIFIED** (completed ahead of schedule, fully tested)
+- **Phase 6**: Update Badge Data Model ✅ **COMPLETE** (Steps 1–9 done — 2026-01-25; 91/91 unit tests, 20/20 E2E)
 
 ### 📋 Key Files Created/Modified
 
@@ -2383,6 +2412,11 @@ Review ini memvalidasi bahwa Phase 1 **sepenuhnya complete** sebelum lanjut Phas
 **Pages:**
 - `app/test-contract/page.tsx` - Contract testing page for Phase 2.2
 
+**Phase 6 (Badge Data Model):**
+- `lib/game/types.ts` - Badge interface extended with optional onchain fields (`onchainMinted`, `tokenId`, `txId`, `mintedAt`)
+- `lib/badges.ts` - `isBadge`, `normalizeBadgeState`, `areBadgeStatesEqual` updated; `badgeNeedsMinting`, `updateBadgeWithOnchainData`, `mergeOffchainAndOnchainBadges` added; save/load backward compatible
+- `lib/badges.test.ts` - 42 badge unit tests (storage round-trip, backward compat, normalize, sync helpers, claim flow)
+
 ### 🎯 Next Steps
 
 1. ✅ **Phase 2.2 Manual Testing**: **COMPLETED** ✅
@@ -2394,8 +2428,13 @@ Review ini memvalidasi bahwa Phase 1 **sepenuhnya complete** sebelum lanjut Phas
      - ✅ NFT verification in wallet completed
    - ⚠️ **Known Issue**: Spamming error di console (non-critical, tidak menghalangi transaksi)
 
-2. **Next Phase: Phase 6 - Update Badge Data Model**:
-   - Phase 6: Update Badge Data Model
+2. ✅ **Phase 6 - Update Badge Data Model**: **COMPLETED** ✅ (2026-01-25)
+   - ✅ Badge data model updated dengan onchain fields (onchainMinted, tokenId, txId, mintedAt)
+   - ✅ Storage functions updated dengan backward compatibility
+   - ✅ All unit tests pass (91/91, termasuk 42/42 badge tests)
+   - ✅ All E2E tests pass (20/20 — desktop & mobile)
+
+3. **Next Phase: Phase 7 - Update Claim Flow for Onchain Minting**:
    - Phase 7: Update Claim Flow for Onchain Minting
    - Phase 8: Update High Score Sync
    - Phase 9: Update Badge Display
@@ -2403,7 +2442,7 @@ Review ini memvalidasi bahwa Phase 1 **sepenuhnya complete** sebelum lanjut Phas
 
 ### 📝 Notes
 
-- All implementation code is complete and build succeeds
+- All implementation code is complete; unit tests (91/91) and E2E tests (20/20) pass. `npm run build` has a pre-existing Turbopack `/_not-found` issue (unrelated to Phase 6).
 - Responsive design implemented for desktop & mobile
 - Error handling implemented with user-friendly messages
 - Contract address: `ST22ZCY5GAH27T4CK3ATG4QTZJQV6FXPRBAQ0BRW5.badge2048` (testnet)

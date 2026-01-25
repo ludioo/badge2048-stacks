@@ -1,6 +1,7 @@
 # Data Models Specification
 
-**Application Name:** badge2048
+**Application Name:** badge2048  
+**Last updated:** 2026-01-25 (Phase 6: Badge optional onchain fields; backward compatible.)
 
 ## Game State
 
@@ -51,6 +52,14 @@ interface Badge {
   unlocked: boolean;
   claimed: boolean;
   claimedAt?: string;
+  /** Onchain mint status — true when NFT minted via contract (Phase 6+) */
+  onchainMinted?: boolean;
+  /** NFT token ID from contract (if minted) */
+  tokenId?: number;
+  /** Transaction ID of mint (if minted) */
+  txId?: string;
+  /** ISO timestamp when badge was minted onchain */
+  mintedAt?: string;
 }
 
 type BadgeState = Badge[];
@@ -63,6 +72,12 @@ type BadgeState = Badge[];
 * `unlocked`: Whether user has reached threshold
 * `claimed`: Whether user has claimed the badge
 * `claimedAt`: ISO timestamp when badge was claimed (optional)
+* `onchainMinted`: True when badge NFT has been minted onchain (optional; Phase 6+)
+* `tokenId`: NFT token ID from contract, if minted (optional)
+* `txId`: Transaction ID of mint (optional)
+* `mintedAt`: ISO timestamp when badge was minted onchain (optional)
+
+**Backward compatibility:** All onchain fields are optional. Legacy stored badges (without these fields) remain valid; see `ONCHAIN_STACKS_BADGE2048.md` Phase 6 and `lib/badges.ts` (`normalizeBadgeState`, save/load).
 
 ### Default Badge Configuration
 
@@ -86,6 +101,8 @@ const DEFAULT_BADGES: Badge[] = [
 
 ### Badge Storage Format
 
+Legacy format (no onchain fields) and Phase 6+ format (with optional onchain fields) are both supported. Example with onchain fields:
+
 ```json
 {
   "badges": [
@@ -100,11 +117,17 @@ const DEFAULT_BADGES: Badge[] = [
       "threshold": 2048,
       "unlocked": true,
       "claimed": true,
-      "claimedAt": "2026-01-24T10:15:30.000Z"
+      "claimedAt": "2026-01-24T10:15:30.000Z",
+      "onchainMinted": true,
+      "tokenId": 3,
+      "txId": "0xabc...",
+      "mintedAt": "2026-01-25T12:00:00.000Z"
     }
   ]
 }
 ```
+
+Storage key: `badges_v1` (legacy `badges` auto-migrated). See `lib/badges.ts` for save/load and migration.
 
 ## Action Types
 
