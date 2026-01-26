@@ -87,12 +87,50 @@ export function useBadgeOnchain(address?: string) {
       });
 
       const json = cvToJSON(result);
-      const tokenId = json.value?.value || null;
+      console.log('[useBadgeOnchain] Contract response for get-badge-ownership:', JSON.stringify(json, null, 2));
+      
+      // Handle different response formats from Clarity contract
+      // Contract returns: (ok (some u1)) or (ok none)
+      // cvToJSON format might be: { value: { value: 1 } } or { value: null } or { value: { value: "1" } }
+      let tokenId: number | null = null;
+      
+      if (json.value) {
+        if (typeof json.value === 'object' && json.value !== null) {
+          // Format: { value: { value: 1 } } or { value: { value: "1" } }
+          if ('value' in json.value) {
+            const rawValue = json.value.value;
+            if (rawValue !== null && rawValue !== undefined) {
+              if (typeof rawValue === 'number') {
+                tokenId = rawValue;
+              } else if (typeof rawValue === 'string') {
+                const parsed = parseInt(rawValue, 10);
+                tokenId = isNaN(parsed) ? null : parsed;
+              } else {
+                // Try to convert to number
+                tokenId = Number(rawValue);
+                if (isNaN(tokenId)) tokenId = null;
+              }
+            }
+          } else if (typeof json.value === 'number') {
+            // Format: { value: 1 }
+            tokenId = json.value;
+          }
+        } else if (typeof json.value === 'number') {
+          // Format: { value: 1 }
+          tokenId = json.value;
+        } else if (typeof json.value === 'string') {
+          // Format: { value: "1" }
+          const parsed = parseInt(json.value, 10);
+          tokenId = isNaN(parsed) ? null : parsed;
+        }
+      }
+      
+      console.log('[useBadgeOnchain] Extracted tokenId:', tokenId);
 
       setLoading(false);
       return {
         data: {
-          tokenId: tokenId ? Number(tokenId) : null,
+          tokenId,
           tier,
           owner: playerAddress,
         },

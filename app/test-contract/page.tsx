@@ -36,7 +36,7 @@ export default function TestContractPage() {
   // The hook already handles localStorage fallback internally
   const effectiveAddress = address;
 
-  const { mintBadge, updateHighScore, transactionResult, getTransactionUrl } = useBadgeContract();
+  const { mintBadge, updateHighScore, transferBadge, transactionResult, getTransactionUrl } = useBadgeContract();
   const { getHighScore, getBadgeOwnership, getBadgeMetadata, loading: queryLoading } = useBadgeOnchain(effectiveAddress);
 
   // State untuk testing
@@ -503,15 +503,27 @@ export default function TestContractPage() {
 
 /**
  * Badge Reset Utility Component
- * Allows resetting badge claimed state for testing purposes
+ * Allows resetting badge claimed state and onchain badges for testing purposes
  */
 function BadgeResetUtility() {
-  const { badges, unclaimBadge } = useBadges();
+  const { badges, unclaimBadge, replaceBadges } = useBadges();
+  const { isAuthenticated, address } = useStacksWallet();
+  const { transferBadge, getTransactionUrl } = useBadgeContract();
+  const { getBadgeOwnership } = useBadgeOnchain(address);
   const [selectedTier, setSelectedTier] = useState<BadgeTier>(BADGE_TIERS.BRONZE);
-  const [resetStatus, setResetStatus] = useState<{ success: boolean; message: string } | null>(null);
+  const [resetStatus, setResetStatus] = useState<{ success: boolean; message: string; txId?: string } | null>(null);
+  const [isResetting, setIsResetting] = useState(false);
+
+  // Burn address untuk testnet (address yang tidak digunakan)
+  // Note: Transfer ke address ini akan "menghapus" badge dari wallet user
+  const BURN_ADDRESS = 'ST00000000000000000000000000000000000000000';
 
   const claimedBadges = useMemo(() => {
     return badges.filter(badge => badge.claimed && badge.unlocked);
+  }, [badges]);
+  
+  const onchainMintedBadges = useMemo(() => {
+    return badges.filter(badge => badge.onchainMinted === true);
   }, [badges]);
 
   const handleUnclaim = (tier: BadgeTier) => {
@@ -539,7 +551,93 @@ function BadgeResetUtility() {
     }
   };
 
-  if (claimedBadges.length === 0) {
+  /**
+   * Reset badge onchain by transferring to burn address
+   * Note: This transfers the NFT but doesn't remove the ownership map entry
+   * The badge will be removed from wallet but contract will still show it as minted
+   * This is a limitation of the current contract design
+   */
+  const handleResetOnchain = async (tier: BadgeTier) => {
+    if (!isAuthenticated || !address) {
+      setResetStatus({
+        success: false,
+        message: 'Please connect your wallet first'
+      });
+      setTimeout(() => setResetStatus(null), 5000);
+      return;
+    }
+
+    setIsResetting(true);
+    setResetStatus(null);
+
+    try {
+      // Get token ID from badge ownership
+      const ownershipResult = await getBadgeOwnership(address, tier);
+      
+      if (!ownershipResult.data?.tokenId) {
+        setResetStatus({
+          success: false,
+          message: `Badge ${tier} is not minted onchain. Use "Unclaim" to reset offchain state.`
+        });
+        setIsResetting(false);
+        setTimeout(() => setResetStatus(null), 5000);
+        return;
+      }
+
+      const tokenId = ownershipResult.data.tokenId;
+      console.log(`[BadgeResetUtility] Transferring badge ${tier} (tokenId: ${tokenId}) to burn address`);
+
+      // Transfer badge to burn address
+      await transferBadge({
+        tokenId,
+        sender: address, // Current wallet address
+        recipient: BURN_ADDRESS,
+        onFinish: (data) => {
+          console.log('[BadgeResetUtility] Transfer successful:', data);
+          
+          // Update badge state to remove onchain data
+          const updatedBadges = badges.map((badge) =>
+            badge.tier === tier
+              ? {
+                  ...badge,
+                  onchainMinted: false,
+                  tokenId: undefined,
+                  txId: undefined,
+                  mintedAt: undefined,
+                }
+              : badge
+          );
+          replaceBadges(updatedBadges);
+
+          setResetStatus({
+            success: true,
+            message: `Badge ${tier} (Token ID: ${tokenId}) has been transferred to burn address. You can now mint it again.`,
+            txId: data.txId,
+          });
+          setIsResetting(false);
+          setTimeout(() => setResetStatus(null), 8000);
+        },
+        onCancel: () => {
+          setResetStatus({
+            success: false,
+            message: 'Transfer cancelled by user'
+          });
+          setIsResetting(false);
+          setTimeout(() => setResetStatus(null), 5000);
+        },
+      });
+    } catch (error: any) {
+      console.error('[BadgeResetUtility] Error resetting onchain badge:', error);
+      setResetStatus({
+        success: false,
+        message: `Error resetting badge: ${error?.message || 'Unknown error'}`
+      });
+      setIsResetting(false);
+      setTimeout(() => setResetStatus(null), 5000);
+    }
+  };
+
+  if (claimedBadges.length === 0 && onchainMintedBadges.length === 0) {
     return (
       <div className="bg-gradient-to-br from-gray-50 to-gray-100 border-2 border-gray-300 rounded-lg shadow-md p-4 sm:p-6">
         <h2 className="text-lg sm:text-xl font-bold text-gray-900 mb-2 flex items-center gap-2">
@@ -547,7 +645,7 @@ function BadgeResetUtility() {
           Badge Reset Utility (Testing)
         </h2>
         <p className="text-sm sm:text-base text-gray-600">
-          No claimed badges found. Claim a badge first to use this utility.
+          No claimed or minted badges found. Claim or mint a badge first to use this utility.
         </p>
       </div>
     );
@@ -559,10 +657,22 @@ function BadgeResetUtility() {
         <span className="text-orange-600">🔄</span>
         Badge Reset Utility (Testing Only)
       </h2>
-      <p className="text-xs sm:text-sm text-orange-800 mb-4 font-medium">
-        <span className="font-bold">⚠️ Warning:</span> This utility resets the claimed state of badges for testing purposes. 
-        Onchain mint data (if any) will be preserved, but the badge will appear as unclaimed again.
-      </p>
+      <div className="text-xs sm:text-sm text-orange-800 mb-4 space-y-2">
+        <p className="font-bold">⚠️ Warning: This utility resets badges for testing purposes.</p>
+        <div className="space-y-1 pl-2">
+          <p>
+            <span className="font-semibold">Offchain Reset:</span> Resets claimed state (badge will appear as unclaimed).
+          </p>
+          <p>
+            <span className="font-semibold">Onchain Reset:</span> Transfers badge NFT to burn address (removes from wallet).
+          </p>
+          <p className="text-red-700 font-bold">
+            ⚠️ Important Limitation: After onchain reset, the badge NFT is transferred but the contract's ownership map still shows you as the owner. 
+            This means you cannot mint the same tier again unless the contract is modified to support reset functionality.
+            For testing purposes, you can use a different wallet address or wait for contract upgrade.
+          </p>
+        </div>
+      </div>
       
       {resetStatus && (
         <div className={`mb-4 p-3 rounded-md border-2 ${
@@ -571,38 +681,110 @@ function BadgeResetUtility() {
             : 'bg-red-50 border-red-300 text-red-800'
         }`}>
           <p className="text-xs sm:text-sm font-medium">{resetStatus.message}</p>
+          {resetStatus.success && resetStatus.txId && (
+            <a
+              href={getTransactionUrl(resetStatus.txId) || '#'}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="mt-2 inline-block text-xs text-green-700 hover:text-green-900 underline font-semibold"
+            >
+              View transaction on Explorer
+            </a>
+          )}
         </div>
       )}
 
-      <div className="space-y-3">
-        <div>
-          <label className="block text-sm font-semibold text-orange-900 mb-2">
-            Select Badge to Unclaim:
-          </label>
-          <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
-            {claimedBadges.map((badge) => (
-              <Button
-                key={badge.tier}
-                variant="outline"
-                size="sm"
-                onClick={() => handleUnclaim(badge.tier)}
-                className={`text-xs sm:text-sm capitalize font-semibold transition-all border-2 ${
-                  selectedTier === badge.tier
-                    ? 'bg-orange-100 border-orange-500 text-orange-900'
-                    : 'border-orange-300 hover:border-orange-500 hover:bg-orange-50 text-orange-800'
-                }`}
-              >
-                {badge.tier}
-                {badge.onchainMinted && (
-                  <span className="ml-1 text-xs">(onchain)</span>
-                )}
-              </Button>
-            ))}
+      <div className="space-y-4">
+        {/* Offchain Reset Section */}
+        {claimedBadges.length > 0 && (
+          <div>
+            <label className="block text-sm font-semibold text-orange-900 mb-2">
+              Reset Offchain State (Unclaim):
+            </label>
+            <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
+              {claimedBadges.map((badge) => (
+                <Button
+                  key={badge.tier}
+                  variant="outline"
+                  size="sm"
+                  onClick={() => handleUnclaim(badge.tier)}
+                  disabled={isResetting}
+                  className={`text-xs sm:text-sm capitalize font-semibold transition-all border-2 ${
+                    selectedTier === badge.tier
+                      ? 'bg-orange-100 border-orange-500 text-orange-900'
+                      : 'border-orange-300 hover:border-orange-500 hover:bg-orange-50 text-orange-800'
+                  } disabled:opacity-50`}
+                >
+                  {badge.tier}
+                  {badge.onchainMinted && (
+                    <span className="ml-1 text-xs">(onchain)</span>
+                  )}
+                </Button>
+              ))}
+            </div>
+            <p className="text-xs text-orange-700 mt-2">
+              Click to unclaim badge (resets offchain state only)
+            </p>
           </div>
-        </div>
-        <div className="text-xs sm:text-sm text-orange-700 font-medium">
-          <p>Claimed badges: {claimedBadges.length}</p>
-          <p className="mt-1">Click a badge tier above to unclaim it and test the claim flow again.</p>
+        )}
+
+        {/* Onchain Reset Section */}
+        {onchainMintedBadges.length > 0 && (
+          <div>
+            <label className="block text-sm font-semibold text-orange-900 mb-2">
+              Reset Onchain State (Transfer to Burn Address):
+            </label>
+            {!isAuthenticated ? (
+              <div className="p-3 bg-yellow-50 border border-yellow-300 rounded-md">
+                <p className="text-xs text-yellow-800 font-medium">
+                  Please connect your wallet to reset onchain badges
+                </p>
+              </div>
+            ) : (
+              <>
+                <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
+                  {onchainMintedBadges.map((badge) => (
+                    <Button
+                      key={badge.tier}
+                      variant="outline"
+                      size="sm"
+                      onClick={() => handleResetOnchain(badge.tier)}
+                      disabled={isResetting}
+                      className={`text-xs sm:text-sm capitalize font-semibold transition-all border-2 ${
+                        isResetting
+                          ? 'bg-gray-100 border-gray-300 text-gray-500 cursor-not-allowed'
+                          : 'border-red-300 hover:border-red-500 hover:bg-red-50 text-red-800'
+                      }`}
+                    >
+                      {isResetting ? (
+                        <span className="flex items-center gap-1">
+                          <span className="w-3 h-3 border-2 border-red-500 border-t-transparent rounded-full animate-spin"></span>
+                          Resetting...
+                        </span>
+                      ) : (
+                        <>
+                          {badge.tier}
+                          {badge.tokenId && (
+                            <span className="ml-1 text-xs">(#{badge.tokenId})</span>
+                          )}
+                        </>
+                      )}
+                    </Button>
+                  ))}
+                </div>
+                <p className="text-xs text-orange-700 mt-2">
+                  Click to transfer badge NFT to burn address (removes from wallet).
+                  <br />
+                  <span className="text-red-700 font-semibold">Note:</span> Contract ownership map will still show you as owner (contract limitation).
+                </p>
+              </>
+            )}
+          </div>
+        )}
+
+        <div className="text-xs sm:text-sm text-orange-700 font-medium pt-2 border-t border-orange-300">
+          <p>Claimed badges (offchain): {claimedBadges.length}</p>
+          <p>Minted badges (onchain): {onchainMintedBadges.length}</p>
         </div>
       </div>
     </div>

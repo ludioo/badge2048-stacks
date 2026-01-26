@@ -8,7 +8,7 @@
 
 import { useConnect } from '@stacks/connect-react';
 import { useState } from 'react';
-import { stringAsciiCV, uintCV } from '@stacks/transactions';
+import { stringAsciiCV, uintCV, principalCV } from '@stacks/transactions';
 import { network, contractConfig, getExplorerUrl } from '@/lib/stacks/config';
 import { CONTRACT_FUNCTIONS, ERROR_MESSAGES } from '@/lib/stacks/constants';
 import type { TransactionResult, MintBadgeOptions, UpdateHighScoreOptions, BadgeTier } from '@/lib/stacks/types';
@@ -133,6 +133,70 @@ export function useBadgeContract() {
   };
 
   /**
+   * Transfer badge NFT
+   * @param options.tokenId - Token ID to transfer
+   * @param options.sender - Sender address (must match tx-sender)
+   * @param options.recipient - Recipient address
+   */
+  const transferBadge = async (options: {
+    tokenId: number;
+    sender: string;
+    recipient: string;
+    onFinish?: (data: any) => void;
+    onCancel?: () => void;
+  }): Promise<TransactionResult> => {
+    const { tokenId, sender, recipient, onFinish, onCancel } = options;
+
+    setTransactionResult({ status: 'pending' });
+
+    try {
+      await doContractCall({
+        network,
+        contractAddress: contractConfig.address.split('.')[0],
+        contractName: contractConfig.name,
+        functionName: CONTRACT_FUNCTIONS.TRANSFER,
+        functionArgs: [
+          uintCV(tokenId),
+          principalCV(sender), // sender (must match tx-sender)
+          principalCV(recipient), // recipient
+        ],
+        onFinish: (data) => {
+          const txId = data.txId;
+          setTransactionResult({
+            status: 'success',
+            txId,
+          });
+          onFinish?.(data);
+        },
+        onCancel: () => {
+          setTransactionResult({
+            status: 'error',
+            error: 'Transaction cancelled by user',
+          });
+          onCancel?.();
+        },
+      });
+
+      return transactionResult;
+    } catch (error: any) {
+      const errorMessage = error?.message || 'Transaction failed';
+      const errorCode = extractErrorCode(errorMessage);
+      
+      setTransactionResult({
+        status: 'error',
+        error: errorCode ? ERROR_MESSAGES[errorCode] || errorMessage : errorMessage,
+        errorCode,
+      });
+
+      return {
+        status: 'error',
+        error: errorCode ? ERROR_MESSAGES[errorCode] || errorMessage : errorMessage,
+        errorCode,
+      };
+    }
+  };
+
+  /**
    * Get explorer URL for transaction
    */
   const getTransactionUrl = (txId?: string) => {
@@ -142,6 +206,7 @@ export function useBadgeContract() {
   return {
     mintBadge,
     updateHighScore,
+    transferBadge,
     transactionResult,
     getTransactionUrl,
   };

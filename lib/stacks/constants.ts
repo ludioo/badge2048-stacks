@@ -55,7 +55,7 @@ export const ERROR_CODES = {
 export const ERROR_MESSAGES: Record<number, string> = {
   [ERROR_CODES.ERR_INVALID_TIER]: 'Invalid badge tier',
   [ERROR_CODES.ERR_SCORE_TOO_LOW]: 'Score is too low for this badge tier',
-  [ERROR_CODES.ERR_ALREADY_MINTED]: 'Badge already minted for this wallet',
+  [ERROR_CODES.ERR_ALREADY_MINTED]: 'Badge already minted for this wallet. You can only mint each badge tier once.',
   [ERROR_CODES.ERR_UNAUTHORIZED]: 'Unauthorized operation',
   [ERROR_CODES.ERR_INSUFFICIENT_FUNDS]: 'Insufficient STX for transaction',
   [ERROR_CODES.ERR_NOT_FOUND]: 'Resource not found',

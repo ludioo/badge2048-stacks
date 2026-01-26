@@ -319,6 +319,7 @@ export const updateBadgeWithOnchainData = (
   data: { tokenId: number; txId: string; mintedAt: string }
 ): Badge => ({
   ...badge,
+  unlocked: badge.unlocked, // Explicitly preserve unlocked status
   onchainMinted: true,
   tokenId: data.tokenId,
   txId: data.txId,
