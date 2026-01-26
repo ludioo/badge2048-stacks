@@ -1779,22 +1779,27 @@ Review ini memvalidasi bahwa Phase 1 **sepenuhnya complete** sebelum lanjut Phas
 
 ## Phase 7: Update Claim Flow for Onchain Minting
 
-**Status**: [x] Not Started | [ ] In Progress | [ ] Complete
+**Status**: [x] Not Started | [x] In Progress | [ ] Complete
 
 **Reference Files**: Section 7.3 (Claim Flow Integration), Section 9.1 (Mint Badge Flow), CLAIM-FLOW.md
 
 ### 7.1 Update Claim Page (🖥️ Cursor)
 
-- [ ] Update `app/claim/page.tsx`
-  - Import useStacksWallet hook
-  - Import useBadgeContract hook
-  - Add wallet connection check
-  - Show connect prompt if not connected
+- [x] Update `app/claim/page.tsx` ✅ **COMPLETED** (2026-01-25)
+  - ✅ Import useStacksWallet hook
+  - ✅ Add wallet connection check
+  - ✅ Show connect prompt if not connected (responsive Alert component)
+  - ✅ Show wallet connected status when authenticated
+  - ✅ Responsive design for desktop & mobile (flex-col sm:flex-row, text-sm sm:text-base, etc.)
 
-- [ ] Update claim button logic
-  - Check wallet connection
-  - If not connected, show connect modal
-  - If connected, proceed with mint
+- [x] Update claim button logic ✅ **COMPLETED** (2026-01-25)
+  - ✅ Check wallet connection in `ClaimGrid.tsx`
+  - ✅ If not connected, show wallet connect dialog with explanation
+  - ✅ If connected, proceed with claim confirmation dialog
+  - ✅ Auto-close wallet connect dialog and open claim dialog when wallet connects
+  - ✅ Responsive dialog design (sm:max-w-md, flex-col sm:flex-row)
+
+**Manual Testing Guide**: See `docs/PHASE7-1-MANUAL-TESTING.md` for complete testing checklist.
 
 ### 7.2 Update Claim Grid Component (🖥️ Cursor)
 
@@ -2331,7 +2336,8 @@ Review ini memvalidasi bahwa Phase 1 **sepenuhnya complete** sebelum lanjut Phas
 - [x] Phase 4: Wallet Integration ✅ **COMPLETE** (completed ahead of schedule)
 - [x] Phase 5: Contract Interaction Hooks ✅ **COMPLETE** (completed ahead of schedule)
 - [x] Phase 6: Update Badge Data Model ✅ **COMPLETE** (Steps 1-9 done — 2026-01-25)
-- [ ] Phase 7: Update Claim Flow for Onchain Minting ⏳ **PENDING**
+- [x] Phase 7.1: Update Claim Page ✅ **COMPLETE** (2026-01-25)
+- [ ] Phase 7: Update Claim Flow for Onchain Minting ⏳ **IN PROGRESS** (7.1 ✅, 7.2-7.5 pending)
 - [ ] Phase 8: Update High Score Sync ⏳ **PENDING**
 - [ ] Phase 9: Update Badge Display ⏳ **PENDING**
 - [ ] Phase 10: Transaction Status UI & Error Handling ⏳ **PENDING**
@@ -2344,7 +2350,7 @@ Review ini memvalidasi bahwa Phase 1 **sepenuhnya complete** sebelum lanjut Phas
 
 **Last Updated**: 2026-01-25
 
-**Completed Phases**: 6 out of 14 (Phase 1, 2.1-2.3, 3, 4, 5, 6)
+**Completed Phases**: 6.5 out of 14 (Phase 1, 2.1-2.3, 3, 4, 5, 6, 7.1)
 - Phase 1: ✅ Complete
 - Phase 2.1: ✅ Complete
 - Phase 2.2: ✅ Complete (testing completed)
@@ -2353,12 +2359,13 @@ Review ini memvalidasi bahwa Phase 1 **sepenuhnya complete** sebelum lanjut Phas
 - Phase 4: ✅ Complete
 - Phase 5: ✅ Complete (fully tested & verified)
 - Phase 6: ✅ Complete (Badge Data Model — Steps 1-9; 91/91 unit, 20/20 E2E)
+- Phase 7.1: ✅ Complete (Update Claim Page — wallet check & connect prompt; responsive design)
 
 **Implementation Progress**:
 - Total phases: 14
-- Completed: 6 (42.9%)
-- In Progress: 0
-- Pending: 8
+- Completed: 6.5 (46.4%) — Phase 7.1 complete
+- In Progress: 1 (Phase 7.2-7.5)
+- Pending: 6.5
 
 **Key Achievements**:
 - ✅ Smart contract deployed to testnet
@@ -2368,12 +2375,13 @@ Review ini memvalidasi bahwa Phase 1 **sepenuhnya complete** sebelum lanjut Phas
 - ✅ Testing UI page created (`/test-contract`)
 - ✅ Responsive design for desktop & mobile
 - ✅ Phase 6: Badge data model updated (onchain fields, backward compat, sync helpers)
+- ✅ Phase 7.1: Claim page updated with wallet check & connect prompt (responsive design)
 
 ---
 
-**Document Version**: 2.4  
+**Document Version**: 2.5  
 **Last Updated**: 2026-01-25  
-**Status**: Phase 2 Complete ✅, Phase 6 Complete ✅ (Badge Data Model), All Contract Functions Tested & Verified ✅, Ready for Phase 7
+**Status**: Phase 2 Complete ✅, Phase 6 Complete ✅ (Badge Data Model), Phase 7.1 Complete ✅ (Update Claim Page), All Contract Functions Tested & Verified ✅, Ready for Phase 7.2
 
 ---
 
@@ -2389,6 +2397,7 @@ Review ini memvalidasi bahwa Phase 1 **sepenuhnya complete** sebelum lanjut Phas
 - **Phase 4**: Wallet Integration ✅ **COMPLETE & VERIFIED** (completed ahead of schedule, fully tested)
 - **Phase 5**: Contract Interaction Hooks ✅ **COMPLETE & VERIFIED** (completed ahead of schedule, fully tested)
 - **Phase 6**: Update Badge Data Model ✅ **COMPLETE** (Steps 1–9 done — 2026-01-25; 91/91 unit tests, 20/20 E2E)
+- **Phase 7.1**: Update Claim Page ✅ **COMPLETE** (2026-01-25; wallet check, connect prompt, responsive design)
 
 ### 📋 Key Files Created/Modified
 
@@ -2417,6 +2426,11 @@ Review ini memvalidasi bahwa Phase 1 **sepenuhnya complete** sebelum lanjut Phas
 - `lib/badges.ts` - `isBadge`, `normalizeBadgeState`, `areBadgeStatesEqual` updated; `badgeNeedsMinting`, `updateBadgeWithOnchainData`, `mergeOffchainAndOnchainBadges` added; save/load backward compatible
 - `lib/badges.test.ts` - 42 badge unit tests (storage round-trip, backward compat, normalize, sync helpers, claim flow)
 
+**Phase 7.1 (Update Claim Page):**
+- `app/claim/page.tsx` - Converted to client component, added wallet check, wallet connection prompt (Alert), wallet connected status display, responsive design
+- `components/badge/ClaimGrid.tsx` - Added wallet connection check in claim button logic, wallet connect dialog, auto-transition from wallet connect to claim dialog when wallet connects, responsive dialog design
+- `components/ui/alert.tsx` - New Alert component for wallet connection prompt (shadcn pattern)
+
 ### 🎯 Next Steps
 
 1. ✅ **Phase 2.2 Manual Testing**: **COMPLETED** ✅
@@ -2434,7 +2448,16 @@ Review ini memvalidasi bahwa Phase 1 **sepenuhnya complete** sebelum lanjut Phas
    - ✅ All unit tests pass (91/91, termasuk 42/42 badge tests)
    - ✅ All E2E tests pass (20/20 — desktop & mobile)
 
-3. **Next Phase: Phase 7 - Update Claim Flow for Onchain Minting**:
+3. ✅ **Phase 7.1 - Update Claim Page**: **COMPLETED** ✅ (2026-01-25)
+   - ✅ Claim page updated dengan wallet check
+   - ✅ Wallet connection prompt (Alert component) dengan responsive design
+   - ✅ Wallet connected status display
+   - ✅ Claim button logic updated dengan wallet check
+   - ✅ Wallet connect dialog dengan explanation
+   - ✅ Auto-transition dari wallet connect ke claim dialog
+   - ✅ Responsive design untuk desktop & mobile
+
+4. **Next Phase: Phase 7.2 - Update Claim Grid Component**:
    - Phase 7: Update Claim Flow for Onchain Minting
    - Phase 8: Update High Score Sync
    - Phase 9: Update Badge Display

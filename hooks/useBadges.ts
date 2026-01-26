@@ -8,6 +8,7 @@ import {
   emitBadgeUnlocked,
   loadBadgesFromStorage,
   saveBadgesToStorage,
+  unclaimBadgeForTier,
   unlockBadgesForScore,
 } from '@/lib/badges'
 
@@ -80,10 +81,29 @@ export function useBadges() {
     return { badges: nextBadges, claimedBadge }
   }, [])
 
+  const unclaimBadge = useCallback((tier: BadgeTier) => {
+    const { badges: updated, didChange, unclaimedBadge } = unclaimBadgeForTier(
+      tier,
+      badgesRef.current
+    )
+
+    let nextBadges = badgesRef.current
+
+    if (didChange) {
+      nextBadges = updated
+      badgesRef.current = updated
+      setBadges(updated)
+      saveBadgesToStorage(updated)
+    }
+
+    return { badges: nextBadges, unclaimedBadge }
+  }, [])
+
   return {
     badges,
     unlockBadges,
     replaceBadges,
     claimBadge,
+    unclaimBadge,
   }
 }

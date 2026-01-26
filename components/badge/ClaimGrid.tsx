@@ -4,6 +4,7 @@ import Link from 'next/link'
 import { useEffect, useMemo, useRef, useState } from 'react'
 import type { Badge, BadgeTier } from '@/lib/game/types'
 import { useBadges } from '@/hooks/useBadges'
+import { useStacksWallet } from '@/hooks/useStacksWallet'
 import { badgeTierMeta } from '@/components/badge/badgeMeta'
 import { Button } from '@/components/ui/button'
 import {
@@ -14,11 +15,14 @@ import {
   DialogHeader,
   DialogTitle,
 } from '@/components/ui/dialog'
+import { WalletConnect } from '@/components/ui/wallet-connect'
 import { cn } from '@/lib/utils'
 
 export function ClaimGrid() {
   const { badges, claimBadge } = useBadges()
+  const { isAuthenticated, connectWallet } = useStacksWallet()
   const [dialogOpen, setDialogOpen] = useState(false)
+  const [walletConnectDialogOpen, setWalletConnectDialogOpen] = useState(false)
   const [selectedBadge, setSelectedBadge] = useState<Badge | null>(null)
   const [lastClaimedTier, setLastClaimedTier] = useState<BadgeTier | null>(null)
   const [isClaiming, setIsClaiming] = useState(false)
@@ -43,6 +47,20 @@ export function ClaimGrid() {
     }
   }, [])
 
+  // Close wallet connect dialog when wallet connects
+  useEffect(() => {
+    if (isAuthenticated && walletConnectDialogOpen) {
+      // Wallet connected, close wallet connect dialog and open claim dialog
+      setWalletConnectDialogOpen(false)
+      if (selectedBadge) {
+        // Small delay to ensure smooth transition
+        setTimeout(() => {
+          setDialogOpen(true)
+        }, 300)
+      }
+    }
+  }, [isAuthenticated, walletConnectDialogOpen, selectedBadge])
+
   const handleDialogChange = (open: boolean) => {
     if (!open && isClaiming) return
     setDialogOpen(open)
@@ -52,8 +70,29 @@ export function ClaimGrid() {
   }
 
   const handleOpenDialog = (badge: Badge) => {
+    // Check wallet connection first
+    if (!isAuthenticated) {
+      // Show wallet connect dialog instead
+      setSelectedBadge(badge)
+      setWalletConnectDialogOpen(true)
+      return
+    }
+    
+    // Wallet connected, proceed with claim dialog
     setSelectedBadge(badge)
     setDialogOpen(true)
+  }
+
+  const handleWalletConnect = () => {
+    connectWallet()
+    // Dialog will close when wallet connects (via effect)
+  }
+
+  const handleWalletConnectDialogChange = (open: boolean) => {
+    setWalletConnectDialogOpen(open)
+    if (!open) {
+      setSelectedBadge(null)
+    }
   }
 
   const handleConfirmClaim = () => {
@@ -208,14 +247,15 @@ export function ClaimGrid() {
         </>
       )}
 
-      <Dialog open={dialogOpen} onOpenChange={handleDialogChange}>
+      {/* Wallet Connect Dialog */}
+      <Dialog open={walletConnectDialogOpen} onOpenChange={handleWalletConnectDialogChange}>
         {selectedBadge && selectedMeta && (
           <DialogContent className="sm:max-w-md">
             <DialogHeader>
-              <DialogTitle>Confirm badge claim</DialogTitle>
+              <DialogTitle>Connect wallet to mint badge</DialogTitle>
               <DialogDescription>
-                This action adds the badge to your collection and marks it as
-                claimed.
+                To mint this badge as an NFT on the Stacks blockchain, please
+                connect your wallet first.
               </DialogDescription>
             </DialogHeader>
             <div
@@ -251,6 +291,84 @@ export function ClaimGrid() {
                 </span>
               </div>
             </div>
+            <div className="rounded-lg border border-amber-200 bg-amber-50 p-4">
+              <p className="text-sm font-medium text-amber-900 mb-3">
+                Why connect your wallet?
+              </p>
+              <ul className="text-xs sm:text-sm text-amber-800 space-y-1.5 list-disc list-inside">
+                <li>Mint badge as NFT on Stacks blockchain</li>
+                <li>Verify your achievement onchain</li>
+                <li>Showcase your badge in your wallet</li>
+                <li>Make your achievement permanent and verifiable</li>
+              </ul>
+            </div>
+            <DialogFooter className="flex-col sm:flex-row gap-2">
+              <Button
+                variant="outline"
+                onClick={() => setWalletConnectDialogOpen(false)}
+                className="w-full sm:w-auto rounded-full border-slate-300 bg-white text-slate-700 hover:bg-slate-100"
+              >
+                Cancel
+              </Button>
+              <div className="w-full sm:w-auto">
+                <WalletConnect />
+              </div>
+            </DialogFooter>
+          </DialogContent>
+        )}
+      </Dialog>
+
+      {/* Claim Confirmation Dialog */}
+      <Dialog open={dialogOpen} onOpenChange={handleDialogChange}>
+        {selectedBadge && selectedMeta && (
+          <DialogContent className="sm:max-w-md">
+            <DialogHeader>
+              <DialogTitle>Confirm badge claim</DialogTitle>
+              <DialogDescription>
+                This action adds the badge to your collection and marks it as
+                claimed. {isAuthenticated && 'Your wallet is connected, so the badge will be minted as an NFT onchain.'}
+              </DialogDescription>
+            </DialogHeader>
+            <div
+              className={cn(
+                'rounded-xl border p-4',
+                selectedMeta.softBackground,
+                selectedMeta.border
+              )}
+            >
+              <div className="flex items-center gap-3">
+                <div
+                  className={cn(
+                    'flex h-10 w-10 items-center justify-center rounded-full ring-1 ring-white/60',
+                    selectedMeta.icon
+                  )}
+                  aria-hidden="true"
+                >
+                  {selectedMeta.iconSvg}
+                </div>
+                <div>
+                  <p className={cn('font-semibold', selectedMeta.accent)}>
+                    {selectedMeta.label} badge
+                  </p>
+                  <p className="text-sm text-slate-600">
+                    {selectedMeta.description}
+                  </p>
+                </div>
+              </div>
+              <div className="mt-3 flex items-center justify-between text-sm">
+                <span className="text-slate-500">Score target</span>
+                <span className={cn('font-semibold', selectedMeta.accent)}>
+                  {selectedBadge.threshold.toLocaleString()}
+                </span>
+              </div>
+            </div>
+            {isAuthenticated && (
+              <div className="rounded-lg border border-green-200 bg-green-50 p-3">
+                <p className="text-xs sm:text-sm text-green-800">
+                  <span className="font-semibold">Wallet connected:</span> This badge will be minted as an NFT on the Stacks blockchain.
+                </p>
+              </div>
+            )}
             <DialogFooter>
               <Button
                 variant="outline"

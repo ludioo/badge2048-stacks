@@ -14,6 +14,7 @@ import { useState, useEffect, useMemo } from 'react';
 import { useStacksWallet } from '@/hooks/useStacksWallet';
 import { useBadgeContract } from '@/hooks/useBadgeContract';
 import { useBadgeOnchain } from '@/hooks/useBadgeOnchain';
+import { useBadges } from '@/hooks/useBadges';
 import { Button } from '@/components/ui/button';
 import { BADGE_TIERS, BADGE_THRESHOLDS, CONTRACT_FUNCTIONS } from '@/lib/stacks/constants';
 import { contractConfig, getContractExplorerUrl, getExplorerUrl } from '@/lib/stacks/config';
@@ -477,6 +478,9 @@ export default function TestContractPage() {
         </div>
       </div>
 
+      {/* Badge State Reset Utility (for Testing) */}
+      <BadgeResetUtility />
+
       {/* Instructions */}
       <div className="bg-gradient-to-br from-blue-50 to-blue-100 border-2 border-blue-400 rounded-lg shadow-md p-4 sm:p-6">
         <h3 className="text-sm sm:text-base font-bold text-blue-900 mb-3 flex items-center gap-2">
@@ -490,7 +494,116 @@ export default function TestContractPage() {
           <li className="pl-2">Test read-only functions: Click buttons to query contract state</li>
           <li className="pl-2">Verify NFT in wallet: Check your Leather/Hiro wallet for minted badges</li>
           <li className="pl-2">Check transaction on Stacks Explorer using the transaction links</li>
+          <li className="pl-2">Reset badge state: Use the utility below to unclaim badges for testing claim flow again</li>
         </ol>
+      </div>
+    </div>
+  );
+}
+
+/**
+ * Badge Reset Utility Component
+ * Allows resetting badge claimed state for testing purposes
+ */
+function BadgeResetUtility() {
+  const { badges, unclaimBadge } = useBadges();
+  const [selectedTier, setSelectedTier] = useState<BadgeTier>(BADGE_TIERS.BRONZE);
+  const [resetStatus, setResetStatus] = useState<{ success: boolean; message: string } | null>(null);
+
+  const claimedBadges = useMemo(() => {
+    return badges.filter(badge => badge.claimed && badge.unlocked);
+  }, [badges]);
+
+  const handleUnclaim = (tier: BadgeTier) => {
+    try {
+      const result = unclaimBadge(tier);
+      if (result.unclaimedBadge) {
+        setResetStatus({
+          success: true,
+          message: `Badge ${tier} has been unclaimed. You can now test the claim flow again.`
+        });
+        setTimeout(() => setResetStatus(null), 5000);
+      } else {
+        setResetStatus({
+          success: false,
+          message: `Badge ${tier} is not claimed or not unlocked.`
+        });
+        setTimeout(() => setResetStatus(null), 5000);
+      }
+    } catch (error) {
+      setResetStatus({
+        success: false,
+        message: `Error resetting badge: ${error instanceof Error ? error.message : 'Unknown error'}`
+      });
+      setTimeout(() => setResetStatus(null), 5000);
+    }
+  };
+
+  if (claimedBadges.length === 0) {
+    return (
+      <div className="bg-gradient-to-br from-gray-50 to-gray-100 border-2 border-gray-300 rounded-lg shadow-md p-4 sm:p-6">
+        <h2 className="text-lg sm:text-xl font-bold text-gray-900 mb-2 flex items-center gap-2">
+          <span className="text-gray-600">🔄</span>
+          Badge Reset Utility (Testing)
+        </h2>
+        <p className="text-sm sm:text-base text-gray-600">
+          No claimed badges found. Claim a badge first to use this utility.
+        </p>
+      </div>
+    );
+  }
+
+  return (
+    <div className="bg-gradient-to-br from-orange-50 to-orange-100 border-2 border-orange-400 rounded-lg shadow-md p-4 sm:p-6">
+      <h2 className="text-lg sm:text-xl font-bold text-orange-900 mb-4 flex items-center gap-2">
+        <span className="text-orange-600">🔄</span>
+        Badge Reset Utility (Testing Only)
+      </h2>
+      <p className="text-xs sm:text-sm text-orange-800 mb-4 font-medium">
+        <span className="font-bold">⚠️ Warning:</span> This utility resets the claimed state of badges for testing purposes. 
+        Onchain mint data (if any) will be preserved, but the badge will appear as unclaimed again.
+      </p>
+      
+      {resetStatus && (
+        <div className={`mb-4 p-3 rounded-md border-2 ${
+          resetStatus.success 
+            ? 'bg-green-50 border-green-300 text-green-800' 
+            : 'bg-red-50 border-red-300 text-red-800'
+        }`}>
+          <p className="text-xs sm:text-sm font-medium">{resetStatus.message}</p>
+        </div>
+      )}
+
+      <div className="space-y-3">
+        <div>
+          <label className="block text-sm font-semibold text-orange-900 mb-2">
+            Select Badge to Unclaim:
+          </label>
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
+            {claimedBadges.map((badge) => (
+              <Button
+                key={badge.tier}
+                variant="outline"
+                size="sm"
+                onClick={() => handleUnclaim(badge.tier)}
+                className={`text-xs sm:text-sm capitalize font-semibold transition-all border-2 ${
+                  selectedTier === badge.tier
+                    ? 'bg-orange-100 border-orange-500 text-orange-900'
+                    : 'border-orange-300 hover:border-orange-500 hover:bg-orange-50 text-orange-800'
+                }`}
+              >
+                {badge.tier}
+                {badge.onchainMinted && (
+                  <span className="ml-1 text-xs">(onchain)</span>
+                )}
+              </Button>
+            ))}
+          </div>
+        </div>
+        <div className="text-xs sm:text-sm text-orange-700 font-medium">
+          <p>Claimed badges: {claimedBadges.length}</p>
+          <p className="mt-1">Click a badge tier above to unclaim it and test the claim flow again.</p>
+        </div>
       </div>
     </div>
   );

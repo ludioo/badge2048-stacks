@@ -19,8 +19,7 @@ export function useStacksWallet() {
     network: isTestnet ? 'testnet' : 'mainnet',
   });
   const [isConnecting, setIsConnecting] = useState(false);
-  // Ref to track if disconnect was explicitly called
-  // This prevents re-detection after disconnect
+  // Ref to track if disconnect was explicitly called (for preventing re-detection)
   const isDisconnectedRef = useRef(false);
 
   // Function to extract address from userSession or localStorage
@@ -90,13 +89,25 @@ export function useStacksWallet() {
   useEffect(() => {
     // Don't check if disconnect was explicitly called
     if (isDisconnectedRef.current) {
+      // Ensure state is cleared if disconnect flag is set
+      setWalletState(prev => {
+        if (prev.isAuthenticated || prev.address) {
+          console.log('[useStacksWallet] Mount check: Disconnect flag active, clearing state');
+          return {
+            isAuthenticated: false,
+            address: undefined,
+            network: isTestnet ? 'testnet' : 'mainnet',
+          };
+        }
+        return prev;
+      });
       return;
     }
 
     // Try to get address immediately on mount
     try {
       const address = extractAddress();
-      if (address) {
+      if (address && !isDisconnectedRef.current) {
         console.log('[useStacksWallet] Address found on mount:', address);
         setWalletState(prev => {
           // Don't update if disconnect was explicitly called
@@ -126,21 +137,61 @@ export function useStacksWallet() {
     }
   }, [extractAddress, isTestnet]); // Run on mount and when extractAddress changes
 
+  // CRITICAL: Watch for authData/userSession changes to handle disconnect
+  // This effect ensures state is cleared immediately when authData/userSession disappear
+  useEffect(() => {
+    // CRITICAL: If disconnect flag is set, ALWAYS clear state and skip all updates
+    if (isDisconnectedRef.current) {
+      console.log('[useStacksWallet] Effect triggered with disconnect flag active');
+      setWalletState(prev => {
+        if (prev.isAuthenticated || prev.address) {
+          console.log('[useStacksWallet] Disconnect flag active, clearing state');
+          return {
+            isAuthenticated: false,
+            address: undefined,
+            network: isTestnet ? 'testnet' : 'mainnet',
+          };
+        }
+        console.log('[useStacksWallet] State already clear');
+        return prev;
+      });
+      return; // Skip all other checks when disconnected
+    }
+    
+    // If authData/userSession disappear, clear state
+    // This handles cases where wallet extension disconnects externally
+    if (!authData && !userSession) {
+      setWalletState(prev => {
+        if (prev.isAuthenticated || prev.address) {
+          console.log('[useStacksWallet] authData/userSession disappeared, clearing state');
+          return {
+            isAuthenticated: false,
+            address: undefined,
+            network: isTestnet ? 'testnet' : 'mainnet',
+          };
+        }
+        return prev;
+      });
+    }
+  }, [authData, userSession, isTestnet]);
+
   // Update wallet state when authentication changes
   // This effect syncs state with authData/userSession from useConnect
   useEffect(() => {
     const isAuthenticated = !!authData && !!userSession;
     
-    // If authData/userSession become available, reset disconnect flag
-    // This handles natural connection (not through connectWallet button)
-    if (isAuthenticated && isDisconnectedRef.current) {
-      console.log('[useStacksWallet] authData/userSession available, resetting disconnect flag');
-      isDisconnectedRef.current = false;
-    }
-    
-    // Don't update if disconnect was explicitly called and no authData/userSession
-    if (isDisconnectedRef.current && !isAuthenticated) {
-      return;
+    // CRITICAL: If disconnect flag is set, skip ALL updates
+    // This ensures disconnect state is respected even if authData/userSession still exist
+    if (isDisconnectedRef.current) {
+      // Only reset flag if we have new authData/userSession (user reconnected)
+      if (isAuthenticated) {
+        console.log('[useStacksWallet] authData/userSession available after disconnect, resetting disconnect flag');
+        isDisconnectedRef.current = false;
+        // Continue to update state below
+      } else {
+        // Disconnect flag is set and no authData/userSession - skip all updates
+        return; // Skip all updates when disconnected
+      }
     }
     let address: string | undefined;
 
@@ -157,11 +208,22 @@ export function useStacksWallet() {
             }
             // Only update if address changed to prevent unnecessary re-renders
             if (prev.address !== address || !prev.isAuthenticated) {
-              return {
+              const newState: WalletState = {
                 isAuthenticated: true,
                 address,
-                network: isTestnet ? 'testnet' : 'mainnet',
+                network: (isTestnet ? 'testnet' : 'mainnet') as 'testnet' | 'mainnet',
               };
+              
+              // Broadcast connect event when state changes to connected
+              if (typeof window !== 'undefined' && (!prev.isAuthenticated || !prev.address)) {
+                const event = new CustomEvent('wallet-connected', {
+                  detail: { address, timestamp: Date.now() }
+                });
+                window.dispatchEvent(event);
+                console.log('[useStacksWallet] Connect event dispatched (state update)');
+              }
+              
+              return newState;
             }
             return prev;
           });
@@ -221,13 +283,19 @@ export function useStacksWallet() {
               network: isTestnet ? 'testnet' : 'mainnet',
             };
           });
-        } else if (!isAuthenticated && !isConnecting && !walletState.address) {
-          // Only clear if truly not connected and no address exists
-          setWalletState(prev => ({
-            isAuthenticated: false,
-            address: undefined,
-            network: isTestnet ? 'testnet' : 'mainnet',
-          }));
+        } else if (!isAuthenticated && !isConnecting && !walletState.address && !isDisconnectedRef.current) {
+          // Only clear if truly not connected and no address exists and not explicitly disconnected
+          setWalletState(prev => {
+            // Only update if state is not already cleared
+            if (prev.isAuthenticated || prev.address) {
+              return {
+                isAuthenticated: false,
+                address: undefined,
+                network: isTestnet ? 'testnet' : 'mainnet',
+              };
+            }
+            return prev;
+          });
         }
       } catch (error) {
         // Silently handle errors
@@ -275,16 +343,25 @@ export function useStacksWallet() {
       // Debounce focus events to prevent spamming
       clearTimeout(focusTimeout);
       focusTimeout = setTimeout(() => {
+        // Don't check if disconnect was explicitly called
+        if (isDisconnectedRef.current) {
+          return;
+        }
         if (authData && userSession && !walletState.address) {
           console.log('[useStacksWallet] Window focused, checking for address...');
           try {
             const address = extractAddress();
-            if (address) {
-              setWalletState(prev => ({
-                ...prev,
-                isAuthenticated: true,
-                address,
-              }));
+            if (address && !isDisconnectedRef.current) {
+              setWalletState(prev => {
+                if (isDisconnectedRef.current) {
+                  return prev;
+                }
+                return {
+                  ...prev,
+                  isAuthenticated: true,
+                  address,
+                };
+              });
             }
           } catch (error) {
             console.error('[useStacksWallet] Error checking address on focus:', error);
@@ -298,7 +375,7 @@ export function useStacksWallet() {
       window.removeEventListener('focus', handleFocus);
       clearTimeout(focusTimeout);
     };
-  }, [authData, userSession, walletState.address, extractAddress]);
+  }, [authData, userSession, walletState.address, extractAddress, isDisconnectedRef]);
 
   // Continuous polling to detect address changes and ensure state sync
   // This helps sync state across all components using the hook
@@ -421,6 +498,16 @@ export function useStacksWallet() {
               address,
             }));
             setIsConnecting(false);
+            
+            // Broadcast connect event to ALL components using this hook
+            if (typeof window !== 'undefined') {
+              const event = new CustomEvent('wallet-connected', {
+                detail: { address, timestamp: Date.now() }
+              });
+              window.dispatchEvent(event);
+              console.log('[useStacksWallet] Connect event dispatched');
+            }
+            
             return; // Stop checking once address is found
           } else if (checkCount < maxChecks) {
             // Continue checking if address not found yet
@@ -521,15 +608,31 @@ export function useStacksWallet() {
       console.error('[useStacksWallet] Error clearing localStorage:', e);
     }
     
-    // Clear local state - this must be done AFTER clearing localStorage
-    // to ensure state is explicitly set to disconnected
-    // Always return new object to ensure React detects the change
+    // Clear local state IMMEDIATELY - this must be done AFTER clearing localStorage
+    // IMPORTANT: Use synchronous state update to ensure immediate re-render
+    console.log('[useStacksWallet] Clearing wallet state immediately');
+    console.log('[useStacksWallet] State before clear:', {
+      isAuthenticated: walletState.isAuthenticated,
+      address: walletState.address,
+    });
+    
     setWalletState({
       isAuthenticated: false,
       address: undefined,
       network: isTestnet ? 'testnet' : 'mainnet',
     });
     setIsConnecting(false);
+    
+    console.log('[useStacksWallet] State cleared, dispatching disconnect event...');
+    
+    // Broadcast disconnect event to ALL components using this hook
+    if (typeof window !== 'undefined') {
+      const event = new CustomEvent('wallet-disconnected', {
+        detail: { timestamp: Date.now() }
+      });
+      window.dispatchEvent(event);
+      console.log('[useStacksWallet] Disconnect event dispatched');
+    }
     
     // Try to sign out from userSession if available
     if (userSession) {
@@ -558,6 +661,86 @@ export function useStacksWallet() {
       setIsConnecting(false);
     }
   }, [isAuthenticating, isConnecting]);
+
+  // CRITICAL: Listen to connect/disconnect events from other hook instances
+  // This ensures ALL components using this hook sync when wallet status changes
+  useEffect(() => {
+    const handleConnect = (event: Event) => {
+      const customEvent = event as CustomEvent<{ address: string; timestamp: number }>;
+      console.log('[useStacksWallet] Received connect event:', customEvent.detail);
+      
+      // Reset disconnect flag
+      isDisconnectedRef.current = false;
+      
+      // Update state immediately if not already connected
+      if (customEvent.detail?.address) {
+        setWalletState(prev => {
+          if (prev.address === customEvent.detail.address && prev.isAuthenticated) {
+            return prev; // Already connected with same address
+          }
+          console.log('[useStacksWallet] Updating state due to connect event');
+          return {
+            isAuthenticated: true,
+            address: customEvent.detail.address,
+            network: isTestnet ? 'testnet' : 'mainnet',
+          };
+        });
+        setIsConnecting(false);
+      }
+    };
+
+    const handleDisconnect = (event: Event) => {
+      const customEvent = event as CustomEvent;
+      console.log('[useStacksWallet] Received disconnect event:', customEvent.detail);
+      
+      // Set disconnect flag
+      isDisconnectedRef.current = true;
+      
+      // Clear state immediately
+      console.log('[useStacksWallet] Clearing state due to disconnect event');
+      setWalletState({
+        isAuthenticated: false,
+        address: undefined,
+        network: isTestnet ? 'testnet' : 'mainnet',
+      });
+      setIsConnecting(false);
+    };
+
+    if (typeof window !== 'undefined') {
+      window.addEventListener('wallet-connected', handleConnect);
+      window.addEventListener('wallet-disconnected', handleDisconnect);
+      console.log('[useStacksWallet] Listening for wallet connect/disconnect events');
+    }
+
+    return () => {
+      if (typeof window !== 'undefined') {
+        window.removeEventListener('wallet-connected', handleConnect);
+        window.removeEventListener('wallet-disconnected', handleDisconnect);
+      }
+    };
+  }, [isTestnet]);
+
+  // CRITICAL: Watch disconnect flag and force state clear when needed
+  // This effect runs when wallet state changes to ensure disconnect state is respected
+  useEffect(() => {
+    if (isDisconnectedRef.current && (walletState.isAuthenticated || walletState.address)) {
+      // Force clear state if disconnect flag is set but state not cleared yet
+      console.log('[useStacksWallet] ⚠️ CRITICAL: Disconnect flag active but state not clear!');
+      console.log('[useStacksWallet] Current state:', {
+        isAuthenticated: walletState.isAuthenticated,
+        address: walletState.address,
+      });
+      console.log('[useStacksWallet] Forcing immediate clear...');
+      
+      setWalletState({
+        isAuthenticated: false,
+        address: undefined,
+        network: isTestnet ? 'testnet' : 'mainnet',
+      });
+      
+      console.log('[useStacksWallet] State cleared via watchdog effect');
+    }
+  }, [walletState.isAuthenticated, walletState.address, isTestnet]); // Run when wallet state changes
 
   // Return state values directly (not spread) to ensure React detects changes
   // This ensures components re-render when state changes

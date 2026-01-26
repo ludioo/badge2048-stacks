@@ -202,6 +202,83 @@ export const claimBadgeForTier = (
   }
 }
 
+/**
+ * Unclaim a badge for a specific tier (for testing purposes).
+ * Resets the badge to unlocked but not claimed state.
+ * Note: This does NOT remove onchain mint data - only resets claimed state.
+ * Use with caution - this is primarily for testing/development.
+ */
+export const unclaimBadgeForTier = (
+  tier: BadgeTier,
+  badges: BadgeState
+): { badges: BadgeState; didChange: boolean; unclaimedBadge?: Badge } => {
+  const normalized = normalizeBadgeState(badges)
+  let unclaimedBadge: Badge | undefined
+
+  const updated = normalized.map((badge) => {
+    if (badge.tier !== tier) return badge
+    if (!badge.unlocked || !badge.claimed) return badge
+    // Reset claimed state but preserve unlocked state and onchain data
+    unclaimedBadge = {
+      ...badge,
+      claimed: false,
+      claimedAt: undefined,
+      // Note: onchainMinted, tokenId, txId, mintedAt are preserved
+      // This allows testing claim flow again even if badge was minted onchain
+    }
+    return unclaimedBadge
+  })
+
+  const normalizedChanged = !areBadgeStatesEqual(normalized, badges)
+  const unclaimChanged = !areBadgeStatesEqual(updated, normalized)
+
+  return {
+    badges: updated,
+    didChange: normalizedChanged || unclaimChanged,
+    unclaimedBadge,
+  }
+}
+
+/**
+ * Fully reset a badge (unclaim and clear onchain data).
+ * Useful for testing purposes to completely reset badge state.
+ * 
+ * @param tier - Badge tier to reset
+ * @param badges - Current badge state
+ * @returns Updated badge state with claimed and onchain data cleared
+ */
+export const resetBadgeForTier = (
+  tier: BadgeTier,
+  badges: BadgeState
+): { badges: BadgeState; didChange: boolean; resetBadge?: Badge } => {
+  const normalized = normalizeBadgeState(badges)
+  let resetBadge: Badge | undefined
+
+  const updated = normalized.map((badge) => {
+    if (badge.tier !== tier) return badge
+    // Fully reset: unclaim and clear all onchain data
+    resetBadge = {
+      ...badge,
+      claimed: false,
+      claimedAt: undefined,
+      onchainMinted: undefined,
+      tokenId: undefined,
+      txId: undefined,
+      mintedAt: undefined,
+    }
+    return resetBadge
+  })
+
+  const normalizedChanged = !areBadgeStatesEqual(normalized, badges)
+  const resetChanged = !areBadgeStatesEqual(updated, normalized)
+
+  return {
+    badges: updated,
+    didChange: normalizedChanged || resetChanged,
+    resetBadge,
+  }
+}
+
 export const emitBadgeUnlocked = (detail: { tiers: BadgeTier[]; score: number }) => {
   if (typeof window === 'undefined') return
   try {
