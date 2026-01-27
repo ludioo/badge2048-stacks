@@ -2,8 +2,14 @@
 
 /**
  * Badge Onchain Query Hook
- * 
- * Hook untuk query data dari Badge2048 smart contract (read-only)
+ *
+ * Hook untuk query data dari Badge2048 smart contract (read-only).
+ *
+ * ⚠️ For badge ownership reads: prefer GET /api/badge-ownership via
+ *    fetchBadgeOwnership() from @/lib/stacks/badgeOwnershipClient.
+ *    BadgesGrid & ClaimGrid use the backend API to avoid CORS/429.
+ *    This hook remains for test-contract page and future read-only calls
+ *    (e.g. high score, metadata) that don't yet have a backend proxy.
  */
 
 import { useState } from 'react';
@@ -89,42 +95,32 @@ export function useBadgeOnchain(address?: string) {
       const json = cvToJSON(result);
       console.log('[useBadgeOnchain] Contract response for get-badge-ownership:', JSON.stringify(json, null, 2));
       
-      // Handle different response formats from Clarity contract
+      // Handle different response formats from Clarity / Stacks API
       // Contract returns: (ok (some u1)) or (ok none)
-      // cvToJSON format might be: { value: { value: 1 } } or { value: null } or { value: { value: "1" } }
+      // cvToJSON can produce:
+      // - { value: null } for (ok none)
+      // - { value: { value: 1 } } or { value: { value: "1" } } (one level)
+      // - { value: { type: "(optional uint)", value: { type: "uint", value: "1" } } } (nested, from Stacks API)
       let tokenId: number | null = null;
-      
-      if (json.value) {
-        if (typeof json.value === 'object' && json.value !== null) {
-          // Format: { value: { value: 1 } } or { value: { value: "1" } }
-          if ('value' in json.value) {
-            const rawValue = json.value.value;
-            if (rawValue !== null && rawValue !== undefined) {
-              if (typeof rawValue === 'number') {
-                tokenId = rawValue;
-              } else if (typeof rawValue === 'string') {
-                const parsed = parseInt(rawValue, 10);
-                tokenId = isNaN(parsed) ? null : parsed;
-              } else {
-                // Try to convert to number
-                tokenId = Number(rawValue);
-                if (isNaN(tokenId)) tokenId = null;
-              }
-            }
-          } else if (typeof json.value === 'number') {
-            // Format: { value: 1 }
-            tokenId = json.value;
-          }
-        } else if (typeof json.value === 'number') {
-          // Format: { value: 1 }
-          tokenId = json.value;
-        } else if (typeof json.value === 'string') {
-          // Format: { value: "1" }
-          const parsed = parseInt(json.value, 10);
-          tokenId = isNaN(parsed) ? null : parsed;
+
+      const extractNumber = (v: unknown): number | null => {
+        if (v == null) return null;
+        if (typeof v === 'number' && !Number.isNaN(v)) return v;
+        if (typeof v === 'string') {
+          const n = parseInt(v, 10);
+          return Number.isNaN(n) ? null : n;
         }
+        if (typeof v === 'object' && v !== null && 'value' in v) {
+          return extractNumber((v as { value: unknown }).value);
+        }
+        const n = Number(v);
+        return Number.isNaN(n) ? null : n;
+      };
+
+      if (json.value != null) {
+        tokenId = extractNumber(json.value);
       }
-      
+
       console.log('[useBadgeOnchain] Extracted tokenId:', tokenId);
 
       setLoading(false);

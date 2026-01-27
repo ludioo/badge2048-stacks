@@ -6,7 +6,6 @@ import type { Badge, BadgeTier } from '@/lib/game/types'
 import { useBadges } from '@/hooks/useBadges'
 import { useStacksWallet } from '@/hooks/useStacksWallet'
 import { useBadgeContract } from '@/hooks/useBadgeContract'
-import { useBadgeOnchain } from '@/hooks/useBadgeOnchain'
 import { badgeTierMeta } from '@/components/badge/badgeMeta'
 import { Button } from '@/components/ui/button'
 import {
@@ -21,6 +20,7 @@ import { WalletConnect } from '@/components/ui/wallet-connect'
 import { cn } from '@/lib/utils'
 import { updateBadgeWithOnchainData } from '@/lib/badges'
 import { loadHighScore } from '@/lib/highScore'
+import { fetchBadgeOwnership, getOwnershipForTier } from '@/lib/stacks/badgeOwnershipClient'
 import { getExplorerUrl } from '@/lib/stacks/config'
 import { ERROR_MESSAGES } from '@/lib/stacks/constants'
 
@@ -30,7 +30,6 @@ export function ClaimGrid() {
   const { badges, claimBadge, replaceBadges } = useBadges()
   const { isAuthenticated, connectWallet, address } = useStacksWallet()
   const { mintBadge, getTransactionUrl } = useBadgeContract()
-  const { getBadgeOwnership } = useBadgeOnchain(address)
   
   const [dialogOpen, setDialogOpen] = useState(false)
   const [walletConnectDialogOpen, setWalletConnectDialogOpen] = useState(false)
@@ -52,13 +51,28 @@ export function ClaimGrid() {
   // Onchain sync state
   const [isSyncingOnchain, setIsSyncingOnchain] = useState(false)
   const [onchainSyncError, setOnchainSyncError] = useState<string | null>(null)
+  // Pre-check pending: avoid double-click when user clicks "Claim badge" (fetch ownership before opening dialog)
+  const [isPreCheckPending, setIsPreCheckPending] = useState(false)
+  // Gate claimable list until sync has completed once when wallet connected.
+  // Prevents "already minted" badges from localStorage appearing as claimable
+  // before we've checked the blockchain (avoids useless tx + 1003).
+  const [onchainSyncCompletedOnce, setOnchainSyncCompletedOnce] = useState(false)
 
+  // When wallet is disconnected: show 0 claimable badges. Stale offchain state in
+  // localStorage (e.g. from previous play) must not appear as "claimable", since
+  // we can't mint without a wallet. Avoids confusion where hard refresh keeps
+  // old data (localStorage survives Ctrl+Shift+R) but incognito shows clean state.
+  // When wallet connected: don't show claimable until onchain sync has completed
+  // at least once, so we never show "claimable" for tiers already minted onchain.
   const claimableBadges = useMemo(
-    () =>
-      badges
+    () => {
+      if (!isAuthenticated || !address) return []
+      if (!onchainSyncCompletedOnce) return []
+      return badges
         .filter((badge) => badge.unlocked && !badge.claimed && !badge.onchainMinted)
-        .sort((left, right) => left.threshold - right.threshold),
-    [badges]
+        .sort((left, right) => left.threshold - right.threshold)
+    },
+    [badges, isAuthenticated, address, onchainSyncCompletedOnce]
   )
   
   // Badges that are already minted onchain
@@ -101,7 +115,7 @@ export function ClaimGrid() {
 
   /**
    * Sync badge state with onchain data
-   * Check ownership for all badge tiers and update badge state
+   * Fetch ownership untuk semua tier via backend API (satu call), lalu update state
    */
   const syncBadgeStateWithOnchain = async () => {
     if (!address || !isAuthenticated) {
@@ -114,55 +128,41 @@ export function ClaimGrid() {
 
     try {
       console.log('[ClaimGrid] Starting onchain badge sync for address:', address)
-      
-      // Get all badge tiers
-      const allTiers: BadgeTier[] = ['bronze', 'silver', 'gold', 'elite']
-      const onchainData = new Map<BadgeTier, { tokenId: number | null }>()
-      
-      // Check ownership for each tier
-      for (const tier of allTiers) {
-        try {
-          const result = await getBadgeOwnership(address, tier)
-          if (result.data?.tokenId) {
-            onchainData.set(tier, { tokenId: result.data.tokenId })
-            console.log(`[ClaimGrid] Badge ${tier} already minted, tokenId: ${result.data.tokenId}`)
-          } else {
-            console.log(`[ClaimGrid] Badge ${tier} not minted yet`)
-          }
-        } catch (error: any) {
-          console.warn(`[ClaimGrid] Error checking ownership for ${tier}:`, error)
-          // Continue with other tiers even if one fails
-        }
-      }
+      const ownershipByTier = await fetchBadgeOwnership(address)
 
-      // Update badge state with onchain data
-      // IMPORTANT: Preserve unlocked status and other existing fields
-      if (onchainData.size > 0) {
-        const updatedBadges = badges.map((badge) => {
-          const onchain = onchainData.get(badge.tier)
-          if (onchain && onchain.tokenId !== null && onchain.tokenId !== undefined) {
-            // Badge already minted onchain
-            // Preserve unlocked status and all existing fields
-            return {
-              ...badge,
-              unlocked: badge.unlocked, // Explicitly preserve unlocked status
-              onchainMinted: true,
-              tokenId: onchain.tokenId,
-              claimed: true, // If minted onchain, consider it claimed
-            }
+      // Onchain is source of truth: set each tier from API. When tokenId is null,
+      // clear onchainMinted/claimed so badge can appear claimable if unlocked by score.
+      const updatedBadges = badges.map((badge) => {
+        const tokenId = getOwnershipForTier(ownershipByTier, badge.tier)
+        if (tokenId != null) {
+          return {
+            ...badge,
+            unlocked: badge.unlocked,
+            onchainMinted: true,
+            claimed: true,
+            tokenId,
           }
-          return badge
-        })
-        
-        replaceBadges(updatedBadges)
-        console.log('[ClaimGrid] Badge state synced with onchain data')
-      } else {
-        console.log('[ClaimGrid] No onchain badges found')
-      }
-    } catch (error: any) {
-      const errorMessage = error?.message || 'Failed to sync badge state with onchain data'
-      console.error('[ClaimGrid] Error syncing badge state:', error)
-      setOnchainSyncError(errorMessage)
+        }
+        // Not minted onchain: clear onchain/claimed state so tier is claimable when unlocked
+        return {
+          ...badge,
+          unlocked: badge.unlocked,
+          onchainMinted: false,
+          claimed: false,
+          claimedAt: undefined,
+          tokenId: undefined,
+          txId: undefined,
+          mintedAt: undefined,
+        }
+      })
+
+      replaceBadges(updatedBadges)
+      setOnchainSyncCompletedOnce(true)
+      console.log('[ClaimGrid] Badge state synced with onchain data')
+    } catch (err) {
+      const message = err instanceof Error ? err.message : 'Failed to sync badge state with onchain data'
+      setOnchainSyncError(message)
+      console.error('[ClaimGrid] Sync error:', err)
     } finally {
       setIsSyncingOnchain(false)
     }
@@ -171,12 +171,15 @@ export function ClaimGrid() {
   // Sync badge state when wallet connects or address changes
   useEffect(() => {
     if (isAuthenticated && address) {
+      setOnchainSyncCompletedOnce(false)
       // Small delay to ensure wallet is fully connected
       const syncTimer = setTimeout(() => {
         syncBadgeStateWithOnchain()
       }, 500)
       
       return () => clearTimeout(syncTimer)
+    } else {
+      setOnchainSyncCompletedOnce(false)
     }
   }, [isAuthenticated, address])
 
@@ -209,45 +212,53 @@ export function ClaimGrid() {
       console.log(`[ClaimGrid] Badge ${badge.tier} already minted, skipping dialog`)
       return
     }
-    
-    // If wallet connected, do a quick ownership check before opening dialog
-    if (isAuthenticated && address) {
-      try {
-        const result = await getBadgeOwnership(address, badge.tier)
-        if (result.data && result.data.tokenId !== null && result.data.tokenId !== undefined) {
-          // Badge already minted, update state and don't open dialog
-          // IMPORTANT: Preserve unlocked status
-          console.log(`[ClaimGrid] Badge ${badge.tier} already minted onchain, tokenId: ${result.data.tokenId}`)
-          const updatedBadges = badges.map((b) =>
-            b.tier === badge.tier
-              ? { 
-                  ...b, 
-                  unlocked: b.unlocked, // Explicitly preserve unlocked status
-                  onchainMinted: true, 
-                  tokenId: result.data!.tokenId!, 
-                  claimed: true 
-                }
-              : b
-          )
-          replaceBadges(updatedBadges)
-          return
+
+    setIsPreCheckPending(true)
+    try {
+      // If wallet connected, do a quick ownership check via backend API before opening dialog
+      if (isAuthenticated && address) {
+        try {
+          const ownershipByTier = await fetchBadgeOwnership(address)
+          const tokenId = getOwnershipForTier(ownershipByTier, badge.tier)
+
+          if (tokenId != null) {
+            // Badge already minted, refresh badge state for all tiers (onchain = source of truth) and don't open dialog
+            console.log(`[ClaimGrid] Badge ${badge.tier} already minted onchain, tokenId: ${tokenId}`)
+            const updatedBadges = badges.map((b) => {
+              const tid = getOwnershipForTier(ownershipByTier, b.tier)
+              if (tid != null) {
+                return { ...b, unlocked: b.unlocked, onchainMinted: true, claimed: true, tokenId: tid }
+              }
+              return {
+                ...b,
+                unlocked: b.unlocked,
+                onchainMinted: false,
+                claimed: false,
+                claimedAt: undefined,
+                tokenId: undefined,
+                txId: undefined,
+                mintedAt: undefined,
+              }
+            })
+            replaceBadges(updatedBadges)
+            return
+          }
+        } catch (err) {
+          console.warn('[ClaimGrid] Pre-check error:', err)
+          // Continue to dialog (user can retry)
         }
-      } catch (error) {
-        console.warn(`[ClaimGrid] Error checking ownership before dialog:`, error)
-        // Continue to open dialog even if check fails
       }
-    }
-    // Check wallet connection first
-    if (!isAuthenticated) {
-      // Show wallet connect dialog instead
+      // Check wallet connection first
+      if (!isAuthenticated) {
+        setSelectedBadge(badge)
+        setWalletConnectDialogOpen(true)
+        return
+      }
       setSelectedBadge(badge)
-      setWalletConnectDialogOpen(true)
-      return
+      setDialogOpen(true)
+    } finally {
+      setIsPreCheckPending(false)
     }
-    
-    // Wallet connected, proceed with claim dialog
-    setSelectedBadge(badge)
-    setDialogOpen(true)
   }
 
   const handleWalletConnect = () => {
@@ -489,17 +500,17 @@ export function ClaimGrid() {
             console.log('[ClaimGrid] Waiting 2 seconds before querying token ID...')
             await new Promise(resolve => setTimeout(resolve, 2000))
             
-            // Retry logic for token ID query (max 3 attempts)
-            let ownershipResult = await getBadgeOwnership(address, selectedBadge.tier)
-            let tokenId: number | null = ownershipResult.data?.tokenId || null
+            // Retry logic for token ID query via backend API (max 3 attempts)
+            let ownershipByTier = await fetchBadgeOwnership(address)
+            let tokenId: number | null = getOwnershipForTier(ownershipByTier, selectedBadge.tier)
             let retryCount = 0
             const maxRetries = 3
-            
+
             while (!tokenId && retryCount < maxRetries) {
               console.log(`[ClaimGrid] Token ID not found, retrying... (attempt ${retryCount + 1}/${maxRetries})`)
               await new Promise(resolve => setTimeout(resolve, 2000))
-              ownershipResult = await getBadgeOwnership(address, selectedBadge.tier)
-              tokenId = ownershipResult.data?.tokenId || null
+              ownershipByTier = await fetchBadgeOwnership(address)
+              tokenId = getOwnershipForTier(ownershipByTier, selectedBadge.tier)
               retryCount++
             }
             
@@ -663,6 +674,11 @@ export function ClaimGrid() {
           setTransactionStatus('error')
           setTransactionError(errorMessage)
           setIsClaiming(false)
+          // When contract says "already minted" (1003), refresh onchain state so
+          // this tier no longer appears as claimable and user sees correct list.
+          if (errorCode === 1003) {
+            syncBadgeStateWithOnchain()
+          }
         } else if (txStatus === 'pending') {
           console.log(`[ClaimGrid] Transaction still pending (attempt ${pollCountRef.current})`)
           // Continue polling
@@ -897,7 +913,19 @@ export function ClaimGrid() {
         </div>
       )}
 
-      {claimableBadges.length === 0 ? (
+      {isAuthenticated && address && !onchainSyncCompletedOnce ? (
+        <div className="rounded-2xl border border-dashed border-slate-200 bg-white p-6 text-center">
+          <h2 className="text-lg font-semibold text-gray-900">
+            Checking badge status
+          </h2>
+          <p className="mt-2 text-sm font-medium text-gray-700">
+            Syncing with the blockchain to see which badges you can claim…
+          </p>
+          <div className="mt-4 flex justify-center">
+            <div className="h-6 w-6 animate-spin rounded-full border-2 border-blue-500 border-t-transparent" aria-hidden />
+          </div>
+        </div>
+      ) : claimableBadges.length === 0 ? (
         <div className="rounded-2xl border border-dashed border-slate-200 bg-white p-6 text-center">
           <h2 className="text-lg font-semibold text-gray-900">
             No badges ready to claim
@@ -1102,9 +1130,10 @@ export function ClaimGrid() {
                       size="sm"
                       onClick={() => handleOpenDialog(badge)}
                       className={cn('rounded-full', meta.button)}
-                      disabled={isSyncingOnchain}
+                      disabled={isSyncingOnchain || isPreCheckPending}
+                      aria-busy={isPreCheckPending}
                     >
-                      {isSyncingOnchain ? 'Checking...' : 'Claim badge'}
+                      {isSyncingOnchain || isPreCheckPending ? 'Checking...' : 'Claim badge'}
                     </Button>
                   </div>
                 </div>

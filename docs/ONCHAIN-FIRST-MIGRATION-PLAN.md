@@ -160,6 +160,65 @@ Query Blockchain → Update Cache
 
 ---
 
+### Phase 1 — Bug fix: “Already minted” badge still shown as claimable ✅ **FIXED**
+
+**Issue (from manual testing)**:
+- User had already minted a tier (e.g. silver) onchain.
+- On `/claim` with wallet connected, that tier still appeared as “ready to claim” and they could click Claim → tx submitted → contract returned **1003 (already minted)**.
+- Root cause (UI): claimable list was built from **localStorage** before onchain sync finished (or sync hadn’t run yet), so `onchainMinted` was false for that tier and it stayed in the claimable list.
+- **Root cause (data)** — token ID extraction in `useBadgeOnchain` returned `null` for the nested [Stacks Blockchain API](https://docs.hiro.so/en/apis/stacks-blockchain-api) format (`{ value: { value: { value: "1" } } }`). Fixed in `hooks/useBadgeOnchain.ts` with an `extractNumber` helper that recursively unwraps `{ value: ... }`.
+
+**Fixes implemented** (in `ClaimGrid.tsx`):
+
+1. **Gate claimable list until sync has completed once**  
+   - New state: `onchainSyncCompletedOnce`.  
+   - When wallet is connected, `claimableBadges` stays **empty** until the first `syncBadgeStateWithOnchain()` run has completed.  
+   - Only after that do we show badges that are `unlocked && !claimed && !onchainMinted`.  
+   - Prevents “already minted” tiers from appearing as claimable before we’ve checked the chain.
+
+2. **“Checking badge status” while syncing**  
+   - When `(isAuthenticated && address) && !onchainSyncCompletedOnce`, we show “Checking badge status” + spinner instead of “No badges ready to claim”.  
+   - User sees that we’re syncing, not that there are zero claimable badges.
+
+3. **On tx error 1003 (already minted), refresh onchain state**  
+   - In the `abort_by_response` handler, when `errorCode === 1003`, we call `syncBadgeStateWithOnchain()`.  
+   - That run updates badge state from the chain so that tier gets `onchainMinted: true` and is removed from the claimable list.  
+   - Next time the list is shown, that tier no longer appears as claimable.
+
+4. **Reset sync gate when wallet disconnects**  
+   - When `!isAuthenticated || !address`, we set `onchainSyncCompletedOnce = false` so that after reconnect we wait for a fresh sync before showing claimable badges again.
+
+**Manual testing after this fix**:
+- With wallet connected, open `/claim`. You should see “Checking badge status…” briefly, then either “No badges ready to claim” or only tiers that are **not** minted onchain.
+- If you already minted silver, silver must **not** appear as claimable after sync.
+- If a tx ever returns 1003, the UI should show the error and, after sync runs, that tier should disappear from the claimable list (and appear in minted if that section is shown).
+
+---
+
+### Phase 1 — Bug fix: Badges page shows previous wallet's badges (new wallet) ✅ **FIXED**
+
+**Issue**: On `/badges`, a **new wallet** (never minted) still showed "2 badges owned" etc. because the page used localStorage, which is per-origin, not per-wallet.
+
+**Fix** (in `BadgesGrid.tsx`): When wallet is connected, we fetch onchain ownership for this address and use it as the source of truth for owned/claimed/onchainMinted/unlocked. New wallet → 0 owned, 0 unlocked, 4 locked. "Checking badge status with blockchain…" is shown while syncing.
+
+---
+
+### Phase 1 — Bug fix: 429 / CORS → read ownership lewat backend ✅ **FIXED**
+
+**Issue**: Setelah throttle + cache di client, error 429 Too Many Requests dan CORS dari Hiro API masih sering muncul saat buka `/badges` (browser memanggil `get-badge-ownership` per tier ke Hiro).
+
+**Fix**: Semua **read ownership** dipindah ke backend:
+- **API route**: `GET /api/badge-ownership?address=SP...` memanggil Hiro dari server (Next.js API route) dan mengembalikan `{ data: { bronze, silver, gold, elite } }` (tokenId per tier atau `null`).
+- **Server module**: `lib/stacks/badgeOwnershipServer.ts` — `getBadgeOwnershipAllTiers(address)` memakai `fetchCallReadOnlyFunction` untuk keempat tier dengan throttle 120 ms antar tier (server-side).
+- **BadgesGrid**: Tidak lagi memanggil `getBadgeOwnership` dari `useBadgeOnchain` per tier di browser; memanggil `fetch('/api/badge-ownership?address=...')` dan memakai respons untuk `onchainByTier` / effectiveBadges. Cache 60 s per address tetap di client untuk navigasi ulang.
+- **ClaimGrid** ✅ **Migrated** (BE-FE-SEPARATION-PLAN): Tidak lagi memakai `useBadgeOnchain.getBadgeOwnership`. Semua ownership reads (sync, pre-check, post-mint token ID) lewat `fetchBadgeOwnership()` dari `lib/stacks/badgeOwnershipClient.ts` → `/api/badge-ownership`. Satu pola untuk BadgesGrid & ClaimGrid.
+
+**Manfaat**: Satu request dari browser ke app kita; Hiro hanya dipanggil dari backend → CORS hilang di browser, dan rate limit Hiro diperlakukan per server bukan per user.
+
+**Pattern**: Untuk badge ownership reads, selalu pakai `fetchBadgeOwnership(address)` / `getOwnershipForTier(ownershipByTier, tier)` dari `@/lib/stacks/badgeOwnershipClient`. Jangan panggil `getBadgeOwnership` dari `useBadgeOnchain` di production UI (hook tetap dipakai di `app/test-contract/page.tsx` untuk testing).
+
+---
+
 ### Phase 1a: Badge State Model (Prep) ✅ **READY**
 
 **Status**: ✅ **READY** — Badge interface already supports onchain fields (from Phase 6).
@@ -191,35 +250,29 @@ Query Blockchain → Update Cache
 - `loadBadgeStateWithSync(address: string)` → Load dari cache, lalu sync dengan blockchain
 - `getBadgeEligibility(highScore: number)` → Compute eligible badges dari high score
 
-**Implementation**:
+**Implementation** (use backend API — see BE-FE-SEPARATION-PLAN):
 ```typescript
+import { fetchBadgeOwnership, getOwnershipForTier } from '@/lib/stacks/badgeOwnershipClient'
+
 export function useBadgeState() {
   const { address, isAuthenticated } = useStacksWallet()
-  const { getBadgeOwnership } = useBadgeOnchain()
   const [badges, setBadges] = useState<BadgeState>([])
   const [loading, setLoading] = useState(false)
   const [syncing, setSyncing] = useState(false)
   
-  // Query all badge tiers from blockchain
+  // Query all badge tiers via backend API (GET /api/badge-ownership)
   const queryBadgeStateFromBlockchain = async (walletAddress: string) => {
-    const results = await Promise.all(
-      BADGE_TIERS.map(tier => getBadgeOwnership(walletAddress, tier))
-    )
+    const ownershipByTier = await fetchBadgeOwnership(walletAddress)
     
-    // Convert to badge state
-    const badgeState = results.map((result, index) => {
-      const tier = BADGE_TIERS[index]
+    const badgeState = BADGE_TIERS.map((tier) => {
       const threshold = BADGE_THRESHOLDS[tier]
-      const onchainData = result.data
-      
+      const tokenId = getOwnershipForTier(ownershipByTier, tier)
       return {
         tier,
         threshold,
-        onchainMinted: onchainData !== null,
-        tokenId: onchainData?.tokenId,
-        txId: onchainData?.txId,
-        mintedAt: onchainData?.mintedAt,
-        _cachedAt: new Date().toISOString(), // Cache timestamp
+        onchainMinted: tokenId != null,
+        tokenId: tokenId ?? undefined,
+        _cachedAt: new Date().toISOString(),
       }
     })
     
@@ -1005,24 +1058,101 @@ interface Badge {
 
 ## Manual Testing Guide
 
-### After Phase 1 (Setup & Preparation)
+### Phase 1 — Manual Testing Checklist
 
-**What you can test now** (on branch `feature/onchain-first-migration`):
+**Scope**: Phase 1 is setup (branches, plan doc, fixes) plus the **“already minted”** fix. Use this checklist to confirm existing flows and that already-minted tiers never appear as claimable.  
+**Target**: Desktop. Mobile refinement later.
 
-1. **Existing flows** — Same as before Phase 1:
-   - Play game, unlock badge (offchain), go to `/claim`, connect wallet, claim → mint onchain.
-   - `/badges`: badges still load from localStorage + onchain data.
-   - Confirm the **ClaimGrid catch-block fix**: if “transaction success but token ID query fails,” the badge still keeps `unlocked: true` and uses the correct `originalTxId`; no “locked” or wrong txId.
+**After the Phase 1 “already minted” fix**: Steps 4 and **4b** are the main checks — step 4 for normal Play → Claim → Mint, step 4b for “already minted not shown as claimable”.
 
-2. **How to run**:
-   ```bash
-   git checkout feature/onchain-first-migration
-   npm run dev
-   ```
-   Then test on desktop (mobile refinement is later).
+---
 
-**What is not available yet**:
-- Onchain-first flow (blockchain as source of truth, cache-only badges) — that will be testable after **Phase 2–3** (blockchain query hook + badge/claim UI updates).
-- No new manual test checklist for “onchain-first” until Phase 2–3 are done.
+#### 1. Prepare environment
 
-**When to run manual “onchain-first” tests**: After Phase 2–3 implementation, the plan will be updated with a clear **Manual testing for onchain-first** checklist.
+```bash
+git checkout feature/onchain-first-migration
+npm run dev
+```
+
+Open `http://localhost:3000` in your browser (desktop).
+
+---
+
+#### 2. Wallet disconnected — clean state (Claim page)
+
+**Goal**: With wallet disconnected, no stale “claimable” badges from localStorage.
+
+| Step | Action | Expected |
+|------|--------|----------|
+| 2.1 | Ensure wallet is **disconnected** (navbar shows Connect, not address). | — |
+| 2.2 | Go to **`/claim`**. | “No badges ready to claim” (or empty claimable list). |
+| 2.3 | Do **Ctrl+Shift+R** (hard refresh). Stay on `/claim`, wallet still disconnected. | Still “No badges ready to claim.” No “1 badge ready to claim” from old play. |
+
+If you see “X badge(s) ready to claim” while wallet is disconnected, the claim-page fix is not working.
+
+---
+
+#### 3. Wallet disconnected — clean state (Badges page)
+
+**Goal**: With wallet disconnected, no stale unlocked/claimable/owned counts from localStorage.
+
+| Step | Action | Expected |
+|------|--------|----------|
+| 3.1 | Wallet **disconnected**. Go to **`/badges`**. | “0 of 4 badges unlocked”, “No badges ready to claim”, Owned: 0, Claimable: 0, Locked: 4. All four cards show **Locked**. |
+| 3.2 | **Ctrl+Shift+R** on `/badges`, wallet still disconnected. | Same as 3.1. No progress bar, no “Go to Claim,” no “1 unlocked” from old play. |
+
+If you see unlocked/claimable/owned > 0 or “Go to Claim” while wallet is disconnected, the badges-page fix is not working.
+
+---
+
+#### 4. Wallet connected — existing flow (Play → Claim → Mint)
+
+**Goal**: Play → unlock → claim → mint onchain still works; no regression.
+
+| Step | Action | Expected |
+|------|--------|----------|
+| 4.1 | Connect wallet (navbar). | Wallet shows as connected. |
+| 4.2 | Go to **`/claim`**. | Brief “Checking badge status…” then either “No badges ready to claim” or the claimable list. |
+| 4.3 | Go to **`/play`**, play until score ≥ 1024 (e.g. bronze). | Game over, badge unlocked (offchain). |
+| 4.4 | Go to **`/claim`** again. | At least one badge “ready to claim” (after sync, only tiers **not** already minted onchain). |
+| 4.5 | Click “Claim badge” → Confirm → Approve in wallet. | Transaction submitted, then “Badge minted successfully!” (or clear error). |
+| 4.6 | Open **`/badges`**. | That badge shows as owned/minted. |
+
+---
+
+#### 4b. Wallet connected — already-minted not shown as claimable ✅ **New**
+
+**Goal**: Tiers you already minted onchain must never appear as “ready to claim”; you must not be able to trigger error 1003 from the UI.
+
+| Step | Action | Expected |
+|------|--------|----------|
+| 4b.1 | Ensure you have at least one tier **already minted** onchain (e.g. silver) for the connected wallet. | — |
+| 4b.2 | Go to **`/claim`** with that wallet connected. | Brief “Checking badge status…”, then “No badges ready to claim” **or** only tiers that are **not** minted (e.g. gold/elite if you only minted bronze/silver). |
+| 4b.3 | Confirm that the **already-minted** tier (e.g. silver) does **not** appear in “ready to claim” and that there is no “Claim” action for it. | You cannot click “Claim” on that tier; it must not be in the claimable list. |
+| 4b.4 | *(Optional)* If a tx ever returns 1003 (e.g. from an old tab or race): after the error is shown, refresh or re-open `/claim`. | That tier no longer appears as claimable; list matches onchain after sync. |
+
+If an already-minted tier still appears as claimable after “Checking badge status…” has finished, the “gate claimable until sync” / “already-minted” fix is not working.
+
+---
+
+#### 5. ClaimGrid catch-block behaviour (optional, hard to trigger)
+
+**Goal**: If “transaction success but token ID query fails,” badge stays unlocked and uses correct `originalTxId`.
+
+This only applies when the token-ID query throws (e.g. network/contract issue right after a successful mint). You don’t need to force this for Phase 1 sign-off. If it happens, check: badge does not become locked, and stored `txId` matches the real tx (e.g. in Stacks Explorer).
+
+---
+
+#### 6. Branch / doc sanity check
+
+| Step | Action | Expected |
+|------|--------|----------|
+| 6.1 | `git branch` | Current branch is `feature/onchain-first-migration`. |
+| 6.2 | Open **`docs/ONCHAIN-FIRST-MIGRATION-PLAN.md`** | Phase 1 marked complete; “Manual Testing Guide” section matches this checklist. |
+
+---
+
+### What is *not* testable in Phase 1
+
+- **Onchain-first flow** (blockchain as single source of truth, cache-only badges) — available after **Phase 2–3** (blockchain query hook + badge/claim UI).
+- A separate **“Manual testing for onchain-first”** checklist will be added when Phase 2–3 are done.

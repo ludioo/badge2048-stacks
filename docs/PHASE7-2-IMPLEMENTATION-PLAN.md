@@ -163,9 +163,9 @@
 
 1. ✅ **Onchain Badge Sync Function**:
    - Function `syncBadgeStateWithOnchain()` untuk check ownership semua badge tiers
-   - Query `get-badge-ownership` untuk setiap tier (bronze, silver, gold, elite)
+   - **Uses backend API**: `fetchBadgeOwnership(address)` dari `@/lib/stacks/badgeOwnershipClient` → `GET /api/badge-ownership` (satu call untuk 4 tier). Lihat BE-FE-SEPARATION-PLAN.
    - Update badge state dengan onchain data (onchainMinted, tokenId)
-   - Graceful error handling (continue dengan other tiers jika satu fail)
+   - Graceful error handling
 
 2. ✅ **Auto-sync on Wallet Connect**:
    - Auto-sync saat wallet connect atau address berubah
@@ -173,9 +173,9 @@
    - Re-sync setelah successful mint transaction
 
 3. ✅ **Pre-check Before Dialog**:
-   - Check ownership sebelum open claim dialog
+   - Check ownership via `fetchBadgeOwnership(address)` + `getOwnershipForTier(ownershipByTier, tier)` (backend API) sebelum open claim dialog
    - Prevent dialog open jika badge sudah di-mint
-   - Auto-update badge state jika ditemukan sudah di-mint
+   - Auto-update badge state untuk semua tier jika ditemukan sudah di-mint
 
 4. ✅ **UI Improvements**:
    - **Minted Badges Section**: 
@@ -394,13 +394,19 @@ const pollTransactionStatus = async (txId: string) => {
 
 #### Implementation Notes:
 
-**Getting Token ID**:
+**Getting Token ID** (via backend API — BE-FE-SEPARATION-PLAN):
 ```typescript
-// After transaction confirmed
-const { getBadgeOwnership } = useBadgeOnchain()
-const ownership = await getBadgeOwnership(selectedBadge.tier)
-if (ownership.data?.tokenId) {
-  const tokenId = ownership.data.tokenId
+// After transaction confirmed — use backend API, not useBadgeOnchain
+import { fetchBadgeOwnership, getOwnershipForTier } from '@/lib/stacks/badgeOwnershipClient'
+
+let ownershipByTier = await fetchBadgeOwnership(address)
+let tokenId = getOwnershipForTier(ownershipByTier, selectedBadge.tier)
+if (tokenId == null) {
+  await new Promise(r => setTimeout(r, 2000))
+  ownershipByTier = await fetchBadgeOwnership(address)
+  tokenId = getOwnershipForTier(ownershipByTier, selectedBadge.tier)
+}
+if (tokenId != null) {
   // Update badge with tokenId
 }
 ```
