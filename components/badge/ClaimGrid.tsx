@@ -580,16 +580,18 @@ export function ClaimGrid() {
             console.error('Error getting token ID:', error)
             // Transaction succeeded but couldn't get token ID
             // Update badge with onchain data (without tokenId) and claimed state
+            // IMPORTANT: Preserve unlocked status to avoid badge appearing locked
             if (!selectedBadge) return
             
-              const updatedBadge: Badge = {
-                ...selectedBadge,
-                claimed: true,
-                claimedAt: new Date().toISOString(),
-                onchainMinted: true,
-                txId: txId, // Use original txId (without 0x) for storage
-                mintedAt: new Date().toISOString(),
-              }
+            const updatedBadge: Badge = {
+              ...selectedBadge,
+              unlocked: true, // Explicitly preserve unlocked status
+              claimed: true,
+              claimedAt: new Date().toISOString(),
+              onchainMinted: true,
+              txId: originalTxId, // Use original txId (without 0x) for storage
+              mintedAt: new Date().toISOString(),
+            }
             
             const updatedBadges = badges.map((badge) =>
               badge.tier === selectedBadge.tier ? updatedBadge : badge
