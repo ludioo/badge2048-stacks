@@ -30,5 +30,8 @@ test.describe('navigation', () => {
     await expect(
       page.getByRole('heading', { name: 'Claim Badges' })
     ).toBeVisible()
+
+    await navigateFromHeader(page, 'Leaderboard')
+    await expect(page.getByRole('heading', { name: 'Leaderboard' })).toBeVisible()
   })
 })

@@ -27,7 +27,7 @@ export function BadgeCard({ badge }: BadgeCardProps) {
   )
 
   const cardClassName = cn(
-    'relative overflow-hidden rounded-2xl border p-5 shadow-sm transition-shadow',
+    'relative overflow-hidden rounded-2xl border p-4 sm:p-5 shadow-sm transition-shadow',
     isLocked
       ? 'border-slate-200 bg-slate-50 text-slate-500'
       : isClaimed

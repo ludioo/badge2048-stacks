@@ -39,7 +39,6 @@ Updated and finalized:
 - `PERFORMANCE-BASELINE.md`
 - `POLISH-CHECKLIST.md`
 - `PRD-MASTER.md`
-- `prd.md`
 
 ## Out of Scope (MVP)
 

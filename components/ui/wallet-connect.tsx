@@ -51,7 +51,7 @@ export function WalletConnect() {
         </div>
         <button
           onClick={handleDisconnect}
-          className="w-full sm:w-auto text-xs sm:text-sm bg-gradient-to-r from-red-500 to-red-600 hover:from-red-600 hover:to-red-700 active:from-red-700 active:to-red-800 text-white font-semibold shadow-md hover:shadow-lg active:shadow-xl transition-all duration-200 border-0 px-4 sm:px-3 py-2 sm:py-1.5 rounded-md inline-flex items-center justify-center gap-2 whitespace-nowrap focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-red-500 focus-visible:ring-offset-2"
+          className="w-full sm:w-auto min-h-[44px] text-xs sm:text-sm bg-gradient-to-r from-red-500 to-red-600 hover:from-red-600 hover:to-red-700 active:from-red-700 active:to-red-800 text-white font-semibold shadow-md hover:shadow-lg active:shadow-xl transition-all duration-200 border-0 px-4 sm:px-3 py-2.5 sm:py-1.5 rounded-md inline-flex items-center justify-center gap-2 whitespace-nowrap focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-red-500 focus-visible:ring-offset-2"
         >
           Disconnect
         </button>
@@ -63,7 +63,7 @@ export function WalletConnect() {
     <button
       onClick={handleConnect}
       disabled={isAuthenticating}
-      className="w-full sm:w-auto text-xs sm:text-sm bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 active:from-blue-800 active:to-blue-900 text-white font-semibold shadow-md hover:shadow-lg active:shadow-xl transition-all duration-200 disabled:opacity-60 disabled:cursor-not-allowed border-0 px-4 sm:px-3 py-2 sm:py-1.5 rounded-md inline-flex items-center justify-center gap-2 whitespace-nowrap focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2"
+      className="w-full sm:w-auto min-h-[44px] text-xs sm:text-sm bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 active:from-blue-800 active:to-blue-900 text-white font-semibold shadow-md hover:shadow-lg active:shadow-xl transition-all duration-200 disabled:opacity-60 disabled:cursor-not-allowed border-0 px-4 sm:px-3 py-2.5 sm:py-1.5 rounded-md inline-flex items-center justify-center gap-2 whitespace-nowrap focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2"
     >
       {isAuthenticating ? (
         <>

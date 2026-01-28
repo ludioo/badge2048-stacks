@@ -39,6 +39,16 @@ Public display of all badge tiers and user's owned badges.
 * Show locked badges (greyed out)
 * Badge descriptions/thresholds
 
+### `/leaderboard`
+
+Public leaderboard of top scores by wallet.
+
+**Features:**
+* Top scores table (Rank, Address, Score)
+* "Your rank" block when wallet is connected
+* Submit score to leaderboard on game over when wallet connected (auto-submit)
+* Connect-wallet message when not connected
+
 ## Optional Future Pages
 
 * `/profile` - User profile page
@@ -57,8 +67,10 @@ app/
   │   └── page.tsx      # Game page
   ├── claim/
   │   └── page.tsx      # Claim page
-  └── badges/
-      └── page.tsx      # Badges display page
+  ├── badges/
+  │   └── page.tsx      # Badges display page
+  └── leaderboard/
+      └── page.tsx      # Leaderboard page
 ```
 
 ## Navigation

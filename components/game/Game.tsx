@@ -3,8 +3,12 @@
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { AnimatePresence, motion, useReducedMotion } from 'framer-motion'
 import { cn } from '@/lib/utils'
+import Link from 'next/link'
 import { useGame } from '@/hooks/useGame'
 import { useBadges } from '@/hooks/useBadges'
+import { useStacksWallet } from '@/hooks/useStacksWallet'
+import { useSubmitScore } from '@/hooks/useSubmitScore'
+import { useLeaderboardRank } from '@/hooks/useLeaderboardRank'
 import type { BadgeState, BadgeTier } from '@/lib/game/types'
 import { updateHighScore } from '@/lib/highScore'
 import { GameBoard } from './GameBoard'
@@ -21,7 +25,11 @@ import { Button } from '@/components/ui/button'
 export function Game() {
   const { state, tiles, move, restart, lastMoveEffects, invalidMoveTick } = useGame()
   const { unlockBadges } = useBadges()
+  const { address } = useStacksWallet()
+  const { submitScore, status: submitStatus, error: submitError } = useSubmitScore()
+  const { data: rankData, refetch: refetchRank } = useLeaderboardRank(address)
   const prefersReducedMotion = useReducedMotion()
+  const gameOverSubmitRef = useRef(false)
   const touchStartRef = useRef<{ x: number; y: number } | null>(null)
   const mouseStartRef = useRef<{ x: number; y: number } | null>(null)
   const gestureHandledRef = useRef(false)
@@ -98,6 +106,17 @@ export function Game() {
     const timeout = setTimeout(() => setBadgeToast(null), 4200)
     return () => clearTimeout(timeout)
   }, [badgeToast])
+
+  // Auto-submit score to leaderboard on game over when wallet connected (once per game over)
+  useEffect(() => {
+    if (state.status !== 'gameover') {
+      gameOverSubmitRef.current = false
+      return
+    }
+    if (!address || gameOverSubmitRef.current) return
+    gameOverSubmitRef.current = true
+    submitScore(address, state.score).then(() => refetchRank()).catch(() => {})
+  }, [state.status, state.score, address, submitScore, refetchRank])
 
   // Keyboard controls
   useEffect(() => {
@@ -306,7 +325,7 @@ export function Game() {
           aria-pressed={soundEnabled}
           onClick={() => setSoundEnabled((value) => !value)}
           className={cn(
-            'min-w-[96px] rounded-full',
+            'min-w-[96px] min-h-[44px] rounded-full',
             soundEnabled
               ? 'bg-slate-900 text-white hover:bg-slate-800'
               : 'bg-white text-slate-700 border-slate-300 hover:bg-slate-100'
@@ -321,7 +340,7 @@ export function Game() {
           disabled={!canVibrate}
           onClick={() => setHapticsEnabled((value) => !value)}
           className={cn(
-            'min-w-[96px] rounded-full',
+            'min-w-[96px] min-h-[44px] rounded-full',
             !canVibrate && 'opacity-60',
             hapticsEnabled
               ? 'bg-emerald-600 text-white hover:bg-emerald-500'
@@ -457,6 +476,29 @@ export function Game() {
                 </div>
               </div>
             )}
+            <div className="w-full rounded-xl border border-slate-200 bg-white px-4 py-3 text-center">
+              {!address ? (
+                <p className="text-sm text-slate-600">
+                  Connect your wallet to submit your score to the leaderboard.
+                </p>
+              ) : submitStatus === 'submitting' ? (
+                <p className="text-sm text-slate-600">Submitting score…</p>
+              ) : submitStatus === 'error' ? (
+                <p className="text-sm text-amber-700">{submitError ?? 'Failed to submit score'}</p>
+              ) : rankData ? (
+                <p className="text-sm font-semibold text-slate-800">
+                  Your rank: <span className="text-emerald-700">#{rankData.rank}</span> of {rankData.total}
+                </p>
+              ) : (
+                <p className="text-sm text-slate-600">Score submitted.</p>
+              )}
+              <Link
+                href="/leaderboard"
+                className="mt-2 inline-block text-sm font-medium text-slate-700 underline hover:no-underline"
+              >
+                View Leaderboard
+              </Link>
+            </div>
             <Button
               onClick={restart}
               size="lg"

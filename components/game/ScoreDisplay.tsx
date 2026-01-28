@@ -38,9 +38,9 @@ export function ScoreDisplay({ score, className }: ScoreDisplayProps) {
       </div>
       <div className="relative">
         <div className={cn(
-          'px-5 py-2.5 bg-white rounded-xl border border-slate-200',
-          'text-2xl font-bold text-slate-800',
-          'min-w-[128px] text-center',
+          'px-4 sm:px-5 py-2.5 bg-white rounded-xl border border-slate-200',
+          'text-xl sm:text-2xl font-bold text-slate-800',
+          'min-w-[120px] sm:min-w-[128px] text-center',
           'shadow-[0_10px_20px_rgba(15,23,42,0.08)]'
         )}>
           {score.toLocaleString()}

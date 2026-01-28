@@ -20,6 +20,12 @@ export const metadata: Metadata = {
   description: "Play the classic 2048 game and collect badges by achieving high scores",
 };
 
+export const viewport = {
+  width: 'device-width',
+  initialScale: 1,
+  maximumScale: 5,
+}
+
 export default function RootLayout({
   children,
 }: Readonly<{
@@ -34,7 +40,7 @@ export default function RootLayout({
         <StacksProvider>
           <div className="min-h-screen bg-gray-50 flex flex-col">
             <Navigation />
-            <main className="flex-1 flex-col">
+            <main className="flex flex-1 flex-col">
               <div className="container mx-auto w-full flex-1 px-4 py-8 sm:py-10">
                 {children}
               </div>

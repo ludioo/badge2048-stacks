@@ -121,8 +121,8 @@ export function BadgesGrid() {
           <p className="font-medium">Checking badge status with blockchain…</p>
         </div>
       )}
-      <div className="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm">
-        <div className="flex flex-wrap items-center justify-between gap-3">
+      <div className="rounded-2xl border border-slate-200 bg-white p-3 sm:p-4 shadow-sm">
+        <div className="flex flex-wrap items-center justify-between gap-2 sm:gap-3">
           <div>
             <p className="text-sm font-medium text-slate-500">Unlocked progress</p>
             <p className="text-lg font-semibold text-slate-900">
@@ -132,7 +132,7 @@ export function BadgesGrid() {
           {claimableCount > 0 ? (
             <Link
               href="/claim"
-              className="rounded-full border border-emerald-200 bg-emerald-50 px-4 py-2 text-xs font-semibold uppercase tracking-wide text-emerald-700"
+              className="rounded-full border border-emerald-200 bg-emerald-50 px-4 py-2.5 min-h-[44px] inline-flex items-center text-xs font-semibold uppercase tracking-wide text-emerald-700"
             >
               Go to Claim
             </Link>

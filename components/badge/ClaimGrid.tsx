@@ -1129,7 +1129,7 @@ export function ClaimGrid() {
                     <Button
                       size="sm"
                       onClick={() => handleOpenDialog(badge)}
-                      className={cn('rounded-full', meta.button)}
+                      className={cn('rounded-full min-h-[44px]', meta.button)}
                       disabled={isSyncingOnchain || isPreCheckPending}
                       aria-busy={isPreCheckPending}
                     >
