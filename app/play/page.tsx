@@ -2,7 +2,7 @@ import type { Metadata } from 'next'
 import { Game } from '@/components/game/Game'
 
 export const metadata: Metadata = {
-  title: 'badge2048 - Play',
+  title: 'badge2048-stacks - Play',
   description: 'Play the 2048 game and unlock badges with high scores.',
 }
 

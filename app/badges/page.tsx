@@ -2,7 +2,7 @@ import type { Metadata } from 'next'
 import { BadgesGrid } from '@/components/badge/BadgesGrid'
 
 export const metadata: Metadata = {
-  title: 'badge2048 - Badges',
+  title: 'badge2048-stacks - Badges',
   description: 'View all badge tiers and your unlock progress.',
 }
 

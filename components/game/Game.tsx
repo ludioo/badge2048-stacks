@@ -11,6 +11,7 @@ import { useSubmitScore } from '@/hooks/useSubmitScore'
 import { useLeaderboardRank } from '@/hooks/useLeaderboardRank'
 import type { BadgeState, BadgeTier } from '@/lib/game/types'
 import { updateHighScore } from '@/lib/highScore'
+import { BOARD_SIZE } from '@/lib/game/constants'
 import { GameBoard } from './GameBoard'
 import { ScoreDisplay } from './ScoreDisplay'
 import {
@@ -44,6 +45,7 @@ export function Game() {
   const [gameOverUnlocks, setGameOverUnlocks] = useState<BadgeTier[]>([])
   const [gameOverBadges, setGameOverBadges] = useState<BadgeState>([])
   const [gameOverBestTile, setGameOverBestTile] = useState(0)
+  const [mounted, setMounted] = useState(false)
   const audioRef = useRef<AudioContext | null>(null)
   const lastGameOverScoreRef = useRef<number | null>(null)
 
@@ -61,6 +63,10 @@ export function Game() {
     move(direction)
   }, [move, showHint])
 
+
+  useEffect(() => {
+    setMounted(true)
+  }, [])
 
   useEffect(() => {
     const hasVibrate = typeof navigator !== 'undefined' && 'vibrate' in navigator
@@ -365,30 +371,55 @@ export function Game() {
         )}
       </AnimatePresence>
 
-      <div
-        className="touch-none select-none"
-        onTouchStart={handleTouchStart}
-        onTouchMove={handleTouchMove}
-        onTouchEnd={handleTouchEnd}
-        onTouchCancel={handleTouchEnd}
-        onMouseDown={handleMouseDown}
-        onMouseMove={handleMouseMove}
-        onMouseUp={handleMouseUp}
-        onMouseLeave={handleMouseUp}
-      >
-        <motion.div
-          animate={{
-            scale: prefersReducedMotion ? 1 : pulseBoard ? 1.01 : 1,
-            x: prefersReducedMotion ? 0 : shakeBoard ? [0, -6, 6, -4, 4, 0] : 0,
-          }}
-          transition={{
-            scale: prefersReducedMotion ? { duration: 0 } : { duration: 0.16, ease: 'easeOut' },
-            x: prefersReducedMotion ? { duration: 0 } : { duration: 0.24, ease: 'easeInOut' },
-          }}
+      {mounted ? (
+        <div
+          className="touch-none select-none"
+          onTouchStart={handleTouchStart}
+          onTouchMove={handleTouchMove}
+          onTouchEnd={handleTouchEnd}
+          onTouchCancel={handleTouchEnd}
+          onMouseDown={handleMouseDown}
+          onMouseMove={handleMouseMove}
+          onMouseUp={handleMouseUp}
+          onMouseLeave={handleMouseUp}
         >
-          <GameBoard tiles={tiles} />
-        </motion.div>
-      </div>
+          <motion.div
+            animate={{
+              scale: prefersReducedMotion ? 1 : pulseBoard ? 1.01 : 1,
+              x: prefersReducedMotion ? 0 : shakeBoard ? [0, -6, 6, -4, 4, 0] : 0,
+            }}
+            transition={{
+              scale: prefersReducedMotion ? { duration: 0 } : { duration: 0.16, ease: 'easeOut' },
+              x: prefersReducedMotion ? { duration: 0 } : { duration: 0.24, ease: 'easeInOut' },
+            }}
+          >
+            <GameBoard tiles={tiles} />
+          </motion.div>
+        </div>
+      ) : (
+        <div className="touch-none select-none">
+          <div className="w-fit mx-auto">
+            <div className="relative w-fit mx-auto" data-testid="game-board" aria-label="2048 game board">
+              <div
+                className="inline-grid rounded-xl bg-gradient-to-br from-white via-[#FD9E7F]/20 to-[#FD9E7F]/30 ring-1 ring-[#FD9E7F]/30 shadow-[0_16px_30px_rgba(244,98,47,0.12)]"
+                style={{
+                  gridTemplateColumns: `repeat(${BOARD_SIZE}, clamp(56px, 17vw, 96px))`,
+                  gridTemplateRows: `repeat(${BOARD_SIZE}, clamp(56px, 17vw, 96px))`,
+                  gap: 'clamp(8px, 2.2vw, 14px)',
+                  padding: 'clamp(12px, 2.6vw, 20px)',
+                }}
+              >
+                {Array.from({ length: BOARD_SIZE * BOARD_SIZE }).map((_, index) => (
+                  <div
+                    key={`cell-${index}`}
+                    className="w-full h-full rounded-md border border-[#FD9E7F]/40 bg-white/80 shadow-[inset_0_1px_0_rgba(255,255,255,0.7)]"
+                  />
+                ))}
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
 
       <Dialog open={state.status === 'gameover'}>
         <DialogContent

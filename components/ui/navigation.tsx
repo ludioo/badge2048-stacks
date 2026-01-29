@@ -32,7 +32,7 @@ export default function Navigation() {
       <div className="container mx-auto px-4 py-4">
         <div className="flex items-center justify-between">
           <Link href="/" className="text-xl font-bold text-[#F4622F]">
-            badge2048
+            badge2048-stacks
           </Link>
           <div className="flex items-center gap-3 sm:gap-4">
             <div className="hidden md:flex gap-2">

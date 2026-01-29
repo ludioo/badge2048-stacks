@@ -2,7 +2,7 @@ import type { Metadata } from 'next'
 import { LeaderboardView } from '@/components/leaderboard/LeaderboardView'
 
 export const metadata: Metadata = {
-  title: 'badge2048 - Leaderboard',
+  title: 'badge2048-stacks - Leaderboard',
   description: 'Top scores by wallet. Connect your wallet and play to submit your score.',
 }
 
