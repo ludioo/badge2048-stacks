@@ -10,14 +10,6 @@ interface MyRankCardProps {
 export function MyRankCard({ address }: MyRankCardProps) {
   const { data, status, error } = useLeaderboardRank(address)
 
-  if (!address) {
-    return (
-      <div className="rounded-xl border border-[#FD9E7F] bg-[#FD9E7F]/10 px-4 py-3 text-center text-sm text-[#4B5563]">
-        <p>Connect your wallet to see your rank.</p>
-      </div>
-    )
-  }
-
   if (status === 'loading') {
     return (
       <div className="rounded-xl border border-[#FD9E7F] bg-white px-4 py-3 text-center text-sm text-[#4B5563]">
@@ -26,13 +18,9 @@ export function MyRankCard({ address }: MyRankCardProps) {
     )
   }
 
+  // Don't show error state - if address is not on leaderboard, it will be visible in Top Score section
   if (status === 'error') {
-    return (
-      <div className="rounded-xl border border-[#FB6331] bg-[#FD9E7F]/20 px-4 py-3 text-center text-sm text-[#E8552A]">
-        <p>{error ?? 'Failed to load rank'}</p>
-        <p className="mt-1 text-xs">Play a game and submit your score to appear on the leaderboard.</p>
-      </div>
-    )
+    return null
   }
 
   if (status === 'success' && data) {

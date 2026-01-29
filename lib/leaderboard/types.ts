@@ -1,6 +1,9 @@
 /**
  * Leaderboard domain types.
- * Leaderboard is 100% off-chain; no localStorage for leaderboard data.
+ * 
+ * Hybrid architecture:
+ * - Onchain: High scores stored via contract (source of truth)
+ * - Offchain: Leaderboard computed from cached data for performance
  */
 
 export interface LeaderboardEntry {

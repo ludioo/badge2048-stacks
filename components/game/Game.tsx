@@ -396,14 +396,15 @@ export function Game() {
             'w-[92vw] max-w-sm sm:max-w-md',
             'rounded-2xl border border-[#FD9E7F]/40',
             'bg-gradient-to-br from-white via-[#FD9E7F]/10 to-[#FD9E7F]/20',
-            'shadow-[0_24px_60px_rgba(244,98,47,0.18)]'
+            'shadow-[0_24px_60px_rgba(244,98,47,0.18)]',
+            '[&>button]:!hidden'
           )}
         >
           <DialogHeader>
             <DialogTitle className="text-center text-2xl sm:text-3xl text-[#F4622F]">
               Game Over
             </DialogTitle>
-            <DialogDescription className="text-center text-sm sm:text-base text-[#4B5563]">
+            <DialogDescription className="text-center text-sm sm:text-base text-white font-medium">
               Final Score
             </DialogDescription>
           </DialogHeader>
@@ -412,7 +413,7 @@ export function Game() {
               {state.score.toLocaleString()}
             </div>
             {gameOverBestTile > 0 && (
-              <div className="text-xs font-medium uppercase tracking-wide text-[#6B7280]">
+              <div className="text-xs font-medium uppercase tracking-wide text-white">
                 Best Tile: <span className="text-[#F4622F]">{gameOverBestTile.toLocaleString()}</span>
               </div>
             )}

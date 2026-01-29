@@ -44,7 +44,7 @@ export function LeaderboardView() {
             </div>
           )}
           {status === 'success' && data && (
-            <LeaderboardTable entries={data.entries} total={data.total} />
+            <LeaderboardTable entries={data.entries} total={data.total} currentAddress={address} />
           )}
         </div>
 

@@ -1,6 +1,14 @@
 /**
  * Client for leaderboard API. All reads go through backend /api/leaderboard.
- * No localStorage; submit requires wallet. Data is server in-memory only.
+ * 
+ * Hybrid architecture:
+ * - Onchain: Scores submitted via `update-high-score` contract call (source of truth)
+ * - Offchain: Backend caches leaderboard data for fast queries
+ * 
+ * Submit flow:
+ * 1. Frontend calls `update-high-score` onchain (via useSubmitScore hook)
+ * 2. After onchain success, also submits to backend for immediate cache update
+ * 3. Backend periodically syncs with onchain to ensure consistency
  */
 
 import type {
