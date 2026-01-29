@@ -41,8 +41,8 @@ export function GameBoard({ tiles, className }: GameBoardProps) {
       {/* Fixed 4x4 grid = 16 cells (background) */}
       <div
         className={cn(
-          'inline-grid rounded-xl bg-gradient-to-br from-slate-50 via-slate-100 to-slate-200',
-          'ring-1 ring-slate-200/70 shadow-[0_16px_30px_rgba(15,23,42,0.12)]'
+          'inline-grid rounded-xl bg-gradient-to-br from-white via-[#FD9E7F]/20 to-[#FD9E7F]/30',
+          'ring-1 ring-[#FD9E7F]/30 shadow-[0_16px_30px_rgba(244,98,47,0.12)]'
         )}
         style={gridTemplateStyle}
       >
@@ -50,8 +50,8 @@ export function GameBoard({ tiles, className }: GameBoardProps) {
           <div
             key={`cell-${index}`}
             className={cn(
-              'w-full h-full rounded-md border border-slate-200/80',
-              'bg-white/70 shadow-[inset_0_1px_0_rgba(255,255,255,0.7)]'
+              'w-full h-full rounded-md border border-[#FD9E7F]/40',
+              'bg-white/80 shadow-[inset_0_1px_0_rgba(255,255,255,0.7)]'
             )}
           />
         ))}

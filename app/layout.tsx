@@ -38,7 +38,7 @@ export default function RootLayout({
       >
         <GlobalErrorHandler />
         <StacksProvider>
-          <div className="min-h-screen bg-gray-50 flex flex-col">
+          <div className="min-h-screen bg-white flex flex-col">
             <Navigation />
             <main className="flex flex-1 flex-col">
               <div className="container mx-auto w-full flex-1 px-4 py-8 sm:py-10">

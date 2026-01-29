@@ -22,16 +22,16 @@ export default function Navigation() {
     return cn(
       'rounded-md px-3 py-2 text-sm font-medium transition-colors min-h-[44px] flex items-center md:min-h-0',
       isActive
-        ? 'bg-slate-900 text-white'
-        : 'text-slate-600 hover:bg-slate-100 hover:text-slate-900'
+        ? 'bg-[#F4622F] text-white'
+        : 'text-[#4B5563] hover:bg-[#FD9E7F]/10 hover:text-[#F4622F]'
     )
   }
 
   return (
-    <nav className="w-full border-b border-gray-200 bg-white">
+    <nav className="w-full border-b border-[#FD9E7F]/30 bg-white">
       <div className="container mx-auto px-4 py-4">
         <div className="flex items-center justify-between">
-          <Link href="/" className="text-xl font-bold text-gray-900">
+          <Link href="/" className="text-xl font-bold text-[#F4622F]">
             badge2048
           </Link>
           <div className="flex items-center gap-3 sm:gap-4">
@@ -51,7 +51,7 @@ export default function Navigation() {
           </div>
           <button
             type="button"
-            className="md:hidden inline-flex items-center justify-center min-w-[44px] min-h-[44px] rounded-md border border-slate-200 bg-white p-2 text-slate-700 hover:bg-slate-100"
+            className="md:hidden inline-flex items-center justify-center min-w-[44px] min-h-[44px] rounded-md border border-[#FD9E7F] bg-white p-2 text-[#F4622F] hover:bg-[#FD9E7F]/10"
             aria-label="Toggle navigation menu"
             aria-expanded={isOpen}
             aria-controls="mobile-navigation"
@@ -84,7 +84,7 @@ export default function Navigation() {
                 {link.label}
               </Link>
             ))}
-            <div className="pt-2 border-t border-gray-200">
+            <div className="pt-2 border-t border-[#FD9E7F]/30">
               <div className="px-1">
                 <WalletConnect />
               </div>

@@ -137,52 +137,52 @@ export default function TestContractPage() {
   return (
     <div className="max-w-4xl mx-auto space-y-6 sm:space-y-8">
       <div>
-        <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-2">
+        <h1 className="text-2xl sm:text-3xl font-bold text-[#F4622F] mb-2">
           Contract Testing (Phase 2.2)
         </h1>
-        <p className="text-sm sm:text-base text-gray-600">
+        <p className="text-sm sm:text-base text-[#4B5563]">
           Test Badge2048 smart contract functions on testnet
         </p>
       </div>
 
       {/* Wallet Status */}
-      <div className="bg-gradient-to-br from-white to-gray-50 rounded-lg border-2 border-gray-300 shadow-md p-4 sm:p-6">
-        <h2 className="text-lg sm:text-xl font-bold text-gray-900 mb-4 flex items-center gap-2">
-          <span className="w-2 h-2 rounded-full bg-gray-400"></span>
+      <div className="bg-gradient-to-br from-white to-[#FD9E7F]/10 rounded-lg border-2 border-[#FD9E7F] shadow-md p-4 sm:p-6">
+        <h2 className="text-lg sm:text-xl font-bold text-[#F4622F] mb-4 flex items-center gap-2">
+          <span className="w-2 h-2 rounded-full bg-[#FB6331]"></span>
           Wallet Status
         </h2>
         <div className="space-y-3">
           <div className="flex items-center gap-3 flex-wrap">
-            <span className="text-sm sm:text-base font-medium text-gray-700">Status:</span>
+            <span className="text-sm sm:text-base font-medium text-[#4B5563]">Status:</span>
             <div className="flex items-center gap-2">
-              <div className={`w-3 h-3 rounded-full ${walletConnected ? 'bg-green-500 animate-pulse' : 'bg-red-500'}`}></div>
-              <span className={`text-sm sm:text-base font-semibold ${walletConnected ? 'text-green-700' : 'text-red-700'}`}>
+              <div className={`w-3 h-3 rounded-full ${walletConnected ? 'bg-[#F4622F] animate-pulse' : 'bg-[#E8552A]'}`}></div>
+              <span className={`text-sm sm:text-base font-semibold ${walletConnected ? 'text-[#F4622F]' : 'text-[#E8552A]'}`}>
                 {walletConnected ? 'Connected' : 'Not Connected'}
               </span>
             </div>
           </div>
           {!walletConnected && (
-            <div className="p-3 bg-yellow-50 border border-yellow-300 rounded-md">
-              <p className="text-xs sm:text-sm text-yellow-800 font-medium">
+            <div className="p-3 bg-[#FD9E7F]/20 border border-[#FB6331] rounded-md">
+              <p className="text-xs sm:text-sm text-[#E8552A] font-medium">
                 <span className="font-bold">ℹ️ Info:</span> Please connect your wallet using the <span className="font-semibold">"Connect Wallet"</span> button in the navigation bar above to test contract functions.
               </p>
             </div>
           )}
           {effectiveAddress && (
-            <div className="flex flex-col sm:flex-row sm:items-center gap-2 p-3 bg-green-50 border border-green-200 rounded-md">
-              <span className="text-sm sm:text-base font-medium text-gray-700">Address:</span>
-              <span className="text-xs sm:text-sm font-mono text-green-800 font-semibold break-all">
+            <div className="flex flex-col sm:flex-row sm:items-center gap-2 p-3 bg-[#FD9E7F]/20 border border-[#FB6331] rounded-md">
+              <span className="text-sm sm:text-base font-medium text-[#4B5563]">Address:</span>
+              <span className="text-xs sm:text-sm font-mono text-[#F4622F] font-semibold break-all">
                 {effectiveAddress}
               </span>
             </div>
           )}
-          <div className="flex flex-col sm:flex-row sm:items-center gap-2 p-3 bg-blue-50 border border-blue-200 rounded-md">
-            <span className="text-sm sm:text-base font-medium text-gray-700">Contract:</span>
+          <div className="flex flex-col sm:flex-row sm:items-center gap-2 p-3 bg-[#FD9E7F]/20 border border-[#FB6331] rounded-md">
+            <span className="text-sm sm:text-base font-medium text-[#4B5563]">Contract:</span>
             <a
               href={getContractExplorerUrl()}
               target="_blank"
               rel="noopener noreferrer"
-              className="text-xs sm:text-sm font-mono text-blue-700 hover:text-blue-900 hover:underline break-all font-semibold"
+              className="text-xs sm:text-sm font-mono text-[#F4622F] hover:text-[#E8552A] hover:underline break-all font-semibold"
             >
               {contractConfig.address}
             </a>
@@ -194,32 +194,32 @@ export default function TestContractPage() {
       {transactionResult.status !== 'idle' && (
         <div className={`rounded-lg border-2 shadow-md p-4 sm:p-6 ${
           transactionResult.status === 'success' 
-            ? 'bg-gradient-to-br from-green-50 to-green-100 border-green-400' 
+            ? 'bg-gradient-to-br from-[#FD9E7F]/20 to-[#FD9E7F]/30 border-[#FB6331]' 
             : transactionResult.status === 'error' 
-            ? 'bg-gradient-to-br from-red-50 to-red-100 border-red-400'
-            : 'bg-gradient-to-br from-yellow-50 to-yellow-100 border-yellow-400'
+            ? 'bg-gradient-to-br from-[#E8552A]/20 to-[#E8552A]/30 border-[#E8552A]'
+            : 'bg-gradient-to-br from-[#FD9E7F]/20 to-[#FD9E7F]/30 border-[#FB6331]'
         }`}>
           <div className="flex items-center gap-2 mb-3">
             <div className={`w-3 h-3 rounded-full ${
-              transactionResult.status === 'success' ? 'bg-green-500 animate-pulse' :
-              transactionResult.status === 'error' ? 'bg-red-500' :
-              'bg-yellow-500 animate-pulse'
+              transactionResult.status === 'success' ? 'bg-[#F4622F] animate-pulse' :
+              transactionResult.status === 'error' ? 'bg-[#E8552A]' :
+              'bg-[#FB6331] animate-pulse'
             }`}></div>
             <h3 className={`font-bold text-sm sm:text-base ${
-              transactionResult.status === 'success' ? 'text-green-800' :
-              transactionResult.status === 'error' ? 'text-red-800' :
-              'text-yellow-800'
+              transactionResult.status === 'success' ? 'text-[#F4622F]' :
+              transactionResult.status === 'error' ? 'text-[#E8552A]' :
+              'text-[#F4622F]'
             }`}>
               Transaction Status: {transactionResult.status.toUpperCase()}
             </h3>
           </div>
           {transactionResult.txId && (
-            <div className="mt-3 p-2 bg-white rounded-md border border-gray-300">
+            <div className="mt-3 p-2 bg-white rounded-md border border-[#FD9E7F]">
               <a
                 href={getTransactionUrl(transactionResult.txId) || '#'}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="text-xs sm:text-sm text-blue-700 hover:text-blue-900 font-semibold hover:underline break-all inline-flex items-center gap-1"
+                className="text-xs sm:text-sm text-[#F4622F] hover:text-[#E8552A] font-semibold hover:underline break-all inline-flex items-center gap-1"
               >
                 <span>🔗</span>
                 <span>View on Explorer: {transactionResult.txId.slice(0, 16)}...</span>
@@ -227,8 +227,8 @@ export default function TestContractPage() {
             </div>
           )}
           {transactionResult.error && (
-            <div className="mt-3 p-3 bg-red-100 border border-red-300 rounded-md">
-              <p className="text-xs sm:text-sm text-red-800 font-medium">
+            <div className="mt-3 p-3 bg-[#E8552A]/20 border border-[#E8552A] rounded-md">
+              <p className="text-xs sm:text-sm text-[#E8552A] font-medium">
                 <span className="font-bold">Error:</span> {transactionResult.error}
               </p>
             </div>
@@ -237,9 +237,9 @@ export default function TestContractPage() {
       )}
 
       {/* Test Mint Badge */}
-      <div className="bg-gradient-to-br from-white to-gray-50 rounded-lg border-2 border-gray-300 shadow-md p-4 sm:p-6">
-        <h2 className="text-lg sm:text-xl font-bold text-gray-900 mb-4 flex items-center gap-2">
-          <span className="text-purple-600">🎖️</span>
+      <div className="bg-gradient-to-br from-white to-[#FD9E7F]/10 rounded-lg border-2 border-[#FD9E7F] shadow-md p-4 sm:p-6">
+        <h2 className="text-lg sm:text-xl font-bold text-[#F4622F] mb-4 flex items-center gap-2">
+          <span className="text-[#F4622F]">🎖️</span>
           Test {CONTRACT_FUNCTIONS.MINT_BADGE}
         </h2>
         <div className="space-y-4">
@@ -256,8 +256,8 @@ export default function TestContractPage() {
                   onClick={() => handleTierChange(tier)}
                   className={`text-xs sm:text-sm capitalize font-semibold transition-all ${
                     selectedTier === tier 
-                      ? 'bg-gradient-to-r from-purple-600 to-purple-700 hover:from-purple-700 hover:to-purple-800 text-white shadow-md' 
-                      : 'border-gray-300 hover:border-purple-400 hover:bg-purple-50'
+                      ? 'bg-gradient-to-r from-[#F4622F] to-[#FB6331] hover:from-[#FB6331] hover:to-[#F4622F] text-white shadow-md' 
+                      : 'border-[#FD9E7F] hover:border-[#FB6331] hover:bg-[#FD9E7F]/20'
                   }`}
                 >
                   {tier}
@@ -267,13 +267,13 @@ export default function TestContractPage() {
           </div>
           <div>
             <label className="block text-sm font-semibold text-gray-700 mb-2">
-              Score (Threshold: <span className="text-purple-600 font-bold">{BADGE_THRESHOLDS[selectedTier]}</span>)
+              Score (Threshold: <span className="text-[#F4622F] font-bold">{BADGE_THRESHOLDS[selectedTier]}</span>)
             </label>
             <input
               type="number"
               value={testScore}
               onChange={(e) => setTestScore(Number(e.target.value))}
-              className="w-full px-3 py-2 border-2 border-gray-300 rounded-md text-sm sm:text-base text-gray-900 font-medium bg-white focus:border-purple-500 focus:ring-2 focus:ring-purple-200 transition-all placeholder:text-gray-400"
+              className="w-full px-3 py-2 border-2 border-[#FD9E7F] rounded-md text-sm sm:text-base text-[#F4622F] font-medium bg-white focus:border-[#F4622F] focus:ring-2 focus:ring-[#FD9E7F]/30 transition-all placeholder:text-[#6B7280]"
               min={0}
             />
           </div>
@@ -282,8 +282,8 @@ export default function TestContractPage() {
             disabled={!walletConnected || transactionResult.status === 'pending'}
             className={`w-full sm:w-auto font-semibold shadow-md hover:shadow-lg transition-all ${
               !walletConnected 
-                ? 'bg-gray-400 cursor-not-allowed' 
-                : 'bg-gradient-to-r from-purple-600 to-purple-700 hover:from-purple-700 hover:to-purple-800 text-white'
+                ? 'bg-[#6B7280] cursor-not-allowed' 
+                : 'bg-gradient-to-r from-[#F4622F] to-[#FB6331] hover:from-[#FB6331] hover:to-[#F4622F] text-white'
             }`}
           >
             {transactionResult.status === 'pending' ? (
@@ -299,21 +299,21 @@ export default function TestContractPage() {
       </div>
 
       {/* Test Update High Score */}
-      <div className="bg-gradient-to-br from-white to-gray-50 rounded-lg border-2 border-gray-300 shadow-md p-4 sm:p-6">
-        <h2 className="text-lg sm:text-xl font-bold text-gray-900 mb-4 flex items-center gap-2">
-          <span className="text-blue-600">📊</span>
+      <div className="bg-gradient-to-br from-white to-[#FD9E7F]/10 rounded-lg border-2 border-[#FD9E7F] shadow-md p-4 sm:p-6">
+        <h2 className="text-lg sm:text-xl font-bold text-[#F4622F] mb-4 flex items-center gap-2">
+          <span className="text-[#F4622F]">📊</span>
           Test {CONTRACT_FUNCTIONS.UPDATE_HIGH_SCORE}
         </h2>
         <div className="space-y-4">
           <div>
-            <label className="block text-sm font-semibold text-gray-700 mb-2">
+            <label className="block text-sm font-semibold text-[#4B5563] mb-2">
               Score
             </label>
             <input
               type="number"
               value={testScore}
               onChange={(e) => setTestScore(Number(e.target.value))}
-              className="w-full px-3 py-2 border-2 border-gray-300 rounded-md text-sm sm:text-base text-gray-900 font-medium bg-white focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition-all placeholder:text-gray-400"
+              className="w-full px-3 py-2 border-2 border-[#FD9E7F] rounded-md text-sm sm:text-base text-[#F4622F] font-medium bg-white focus:border-[#F4622F] focus:ring-2 focus:ring-[#FD9E7F]/30 transition-all placeholder:text-[#6B7280]"
               min={0}
             />
           </div>
@@ -322,8 +322,8 @@ export default function TestContractPage() {
             disabled={!walletConnected || transactionResult.status === 'pending'}
             className={`w-full sm:w-auto font-semibold shadow-md hover:shadow-lg transition-all ${
               !walletConnected 
-                ? 'bg-gray-400 cursor-not-allowed border-gray-400' 
-                : 'bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white border-0'
+                ? 'bg-[#6B7280] cursor-not-allowed border-[#6B7280]' 
+                : 'bg-gradient-to-r from-[#F4622F] to-[#FB6331] hover:from-[#FB6331] hover:to-[#F4622F] text-white border-0'
             }`}
           >
             {transactionResult.status === 'pending' ? (
@@ -339,9 +339,9 @@ export default function TestContractPage() {
       </div>
 
       {/* Test Read-Only Functions */}
-      <div className="bg-gradient-to-br from-white to-gray-50 rounded-lg border-2 border-gray-300 shadow-md p-4 sm:p-6">
-        <h2 className="text-lg sm:text-xl font-bold text-gray-900 mb-4 flex items-center gap-2">
-          <span className="text-green-600">🔍</span>
+      <div className="bg-gradient-to-br from-white to-[#FD9E7F]/10 rounded-lg border-2 border-[#FD9E7F] shadow-md p-4 sm:p-6">
+        <h2 className="text-lg sm:text-xl font-bold text-[#F4622F] mb-4 flex items-center gap-2">
+          <span className="text-[#F4622F]">🔍</span>
           Test Read-Only Functions
         </h2>
         <div className="space-y-6">
@@ -356,8 +356,8 @@ export default function TestContractPage() {
               disabled={!effectiveAddress || queryLoading}
               className={`mb-3 font-semibold shadow-md hover:shadow-lg transition-all ${
                 !effectiveAddress || queryLoading
-                  ? 'bg-gray-400 cursor-not-allowed'
-                  : 'bg-gradient-to-r from-green-600 to-green-700 hover:from-green-700 hover:to-green-800 text-white'
+                  ? 'bg-[#6B7280] cursor-not-allowed'
+                  : 'bg-gradient-to-r from-[#F4622F] to-[#FB6331] hover:from-[#FB6331] hover:to-[#F4622F] text-white'
               }`}
               size="sm"
             >
@@ -371,8 +371,8 @@ export default function TestContractPage() {
               )}
             </Button>
             {highScoreData && (
-              <div className="mt-3 p-4 bg-green-50 border-2 border-green-200 rounded-md shadow-sm">
-                <pre className="text-xs sm:text-sm overflow-auto text-green-900 font-mono">
+              <div className="mt-3 p-4 bg-[#FD9E7F]/20 border-2 border-[#FB6331] rounded-md shadow-sm">
+                <pre className="text-xs sm:text-sm overflow-auto text-[#F4622F] font-mono">
                   {JSON.stringify(highScoreData, null, 2)}
                 </pre>
               </div>
@@ -406,8 +406,8 @@ export default function TestContractPage() {
               disabled={!effectiveAddress || queryLoading}
               className={`mb-3 font-semibold shadow-md hover:shadow-lg transition-all ${
                 !effectiveAddress || queryLoading
-                  ? 'bg-gray-400 cursor-not-allowed'
-                  : 'bg-gradient-to-r from-purple-600 to-purple-700 hover:from-purple-700 hover:to-purple-800 text-white'
+                  ? 'bg-[#6B7280] cursor-not-allowed'
+                  : 'bg-gradient-to-r from-[#F4622F] to-[#FB6331] hover:from-[#FB6331] hover:to-[#F4622F] text-white'
               }`}
               size="sm"
             >
@@ -421,8 +421,8 @@ export default function TestContractPage() {
               )}
             </Button>
             {badgeOwnershipData && (
-              <div className="mt-3 p-4 bg-purple-50 border-2 border-purple-200 rounded-md shadow-sm">
-                <pre className="text-xs sm:text-sm overflow-auto text-purple-900 font-mono">
+              <div className="mt-3 p-4 bg-[#FD9E7F]/20 border-2 border-[#FB6331] rounded-md shadow-sm">
+                <pre className="text-xs sm:text-sm overflow-auto text-[#F4622F] font-mono">
                   {JSON.stringify(badgeOwnershipData, null, 2)}
                 </pre>
               </div>
@@ -453,8 +453,8 @@ export default function TestContractPage() {
               disabled={queryLoading}
               className={`mb-3 font-semibold shadow-md hover:shadow-lg transition-all ${
                 queryLoading
-                  ? 'bg-gray-400 cursor-not-allowed'
-                  : 'bg-gradient-to-r from-indigo-600 to-indigo-700 hover:from-indigo-700 hover:to-indigo-800 text-white'
+                  ? 'bg-[#6B7280] cursor-not-allowed'
+                  : 'bg-gradient-to-r from-[#F4622F] to-[#FB6331] hover:from-[#FB6331] hover:to-[#F4622F] text-white'
               }`}
               size="sm"
             >
@@ -468,8 +468,8 @@ export default function TestContractPage() {
               )}
             </Button>
             {badgeMetadataData && (
-              <div className="mt-3 p-4 bg-indigo-50 border-2 border-indigo-200 rounded-md shadow-sm">
-                <pre className="text-xs sm:text-sm overflow-auto text-indigo-900 font-mono">
+              <div className="mt-3 p-4 bg-[#FD9E7F]/20 border-2 border-[#FB6331] rounded-md shadow-sm">
+                <pre className="text-xs sm:text-sm overflow-auto text-[#F4622F] font-mono">
                   {JSON.stringify(badgeMetadataData, null, 2)}
                 </pre>
               </div>
@@ -482,12 +482,12 @@ export default function TestContractPage() {
       <BadgeResetUtility />
 
       {/* Instructions */}
-      <div className="bg-gradient-to-br from-blue-50 to-blue-100 border-2 border-blue-400 rounded-lg shadow-md p-4 sm:p-6">
-        <h3 className="text-sm sm:text-base font-bold text-blue-900 mb-3 flex items-center gap-2">
-          <span className="text-blue-600">📖</span>
+      <div className="bg-gradient-to-br from-[#FD9E7F]/20 to-[#FD9E7F]/30 border-2 border-[#FB6331] rounded-lg shadow-md p-4 sm:p-6">
+        <h3 className="text-sm sm:text-base font-bold text-[#F4622F] mb-3 flex items-center gap-2">
+          <span className="text-[#F4622F]">📖</span>
           Testing Instructions
         </h3>
-        <ol className="list-decimal list-inside space-y-2 text-xs sm:text-sm text-blue-900 font-medium">
+        <ol className="list-decimal list-inside space-y-2 text-xs sm:text-sm text-[#F4622F] font-medium">
           <li className="pl-2">Connect your wallet using the button in the navigation or the "Connect Wallet" button above</li>
           <li className="pl-2">Test mint-badge: Select a tier, set score ≥ threshold, click Mint Badge</li>
           <li className="pl-2">Test update-high-score: Set a score, click Update High Score</li>
@@ -639,12 +639,12 @@ function BadgeResetUtility() {
 
   if (claimedBadges.length === 0 && onchainMintedBadges.length === 0) {
     return (
-      <div className="bg-gradient-to-br from-gray-50 to-gray-100 border-2 border-gray-300 rounded-lg shadow-md p-4 sm:p-6">
-        <h2 className="text-lg sm:text-xl font-bold text-gray-900 mb-2 flex items-center gap-2">
-          <span className="text-gray-600">🔄</span>
+      <div className="bg-gradient-to-br from-[#FD9E7F]/10 to-[#FD9E7F]/20 border-2 border-[#FD9E7F] rounded-lg shadow-md p-4 sm:p-6">
+        <h2 className="text-lg sm:text-xl font-bold text-[#F4622F] mb-2 flex items-center gap-2">
+          <span className="text-[#F4622F]">🔄</span>
           Badge Reset Utility (Testing)
         </h2>
-        <p className="text-sm sm:text-base text-gray-600">
+        <p className="text-sm sm:text-base text-[#4B5563]">
           No claimed or minted badges found. Claim or mint a badge first to use this utility.
         </p>
       </div>
@@ -652,12 +652,12 @@ function BadgeResetUtility() {
   }
 
   return (
-    <div className="bg-gradient-to-br from-orange-50 to-orange-100 border-2 border-orange-400 rounded-lg shadow-md p-4 sm:p-6">
-      <h2 className="text-lg sm:text-xl font-bold text-orange-900 mb-4 flex items-center gap-2">
-        <span className="text-orange-600">🔄</span>
+    <div className="bg-gradient-to-br from-[#FD9E7F]/20 to-[#FD9E7F]/30 border-2 border-[#FB6331] rounded-lg shadow-md p-4 sm:p-6">
+      <h2 className="text-lg sm:text-xl font-bold text-[#F4622F] mb-4 flex items-center gap-2">
+        <span className="text-[#F4622F]">🔄</span>
         Badge Reset Utility (Testing Only)
       </h2>
-      <div className="text-xs sm:text-sm text-orange-800 mb-4 space-y-2">
+      <div className="text-xs sm:text-sm text-[#E8552A] mb-4 space-y-2">
         <p className="font-bold">⚠️ Warning: This utility resets badges for testing purposes.</p>
         <div className="space-y-1 pl-2">
           <p>
@@ -666,7 +666,7 @@ function BadgeResetUtility() {
           <p>
             <span className="font-semibold">Onchain Reset:</span> Transfers badge NFT to burn address (removes from wallet).
           </p>
-          <p className="text-red-700 font-bold">
+          <p className="text-[#E8552A] font-bold">
             ⚠️ Important Limitation: After onchain reset, the badge NFT is transferred but the contract's ownership map still shows you as the owner. 
             This means you cannot mint the same tier again unless the contract is modified to support reset functionality.
             For testing purposes, you can use a different wallet address or wait for contract upgrade.
@@ -677,8 +677,8 @@ function BadgeResetUtility() {
       {resetStatus && (
         <div className={`mb-4 p-3 rounded-md border-2 ${
           resetStatus.success 
-            ? 'bg-green-50 border-green-300 text-green-800' 
-            : 'bg-red-50 border-red-300 text-red-800'
+            ? 'bg-[#FD9E7F]/20 border-[#FB6331] text-[#F4622F]' 
+            : 'bg-[#E8552A]/20 border-[#E8552A] text-[#E8552A]'
         }`}>
           <p className="text-xs sm:text-sm font-medium">{resetStatus.message}</p>
           {resetStatus.success && resetStatus.txId && (
@@ -686,7 +686,7 @@ function BadgeResetUtility() {
               href={getTransactionUrl(resetStatus.txId) || '#'}
               target="_blank"
               rel="noopener noreferrer"
-              className="mt-2 inline-block text-xs text-green-700 hover:text-green-900 underline font-semibold"
+              className="mt-2 inline-block text-xs text-[#F4622F] hover:text-[#E8552A] underline font-semibold"
             >
               View transaction on Explorer
             </a>
@@ -698,7 +698,7 @@ function BadgeResetUtility() {
         {/* Offchain Reset Section */}
         {claimedBadges.length > 0 && (
           <div>
-            <label className="block text-sm font-semibold text-orange-900 mb-2">
+            <label className="block text-sm font-semibold text-[#F4622F] mb-2">
               Reset Offchain State (Unclaim):
             </label>
             <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
@@ -711,8 +711,8 @@ function BadgeResetUtility() {
                   disabled={isResetting}
                   className={`text-xs sm:text-sm capitalize font-semibold transition-all border-2 ${
                     selectedTier === badge.tier
-                      ? 'bg-orange-100 border-orange-500 text-orange-900'
-                      : 'border-orange-300 hover:border-orange-500 hover:bg-orange-50 text-orange-800'
+                      ? 'bg-[#FD9E7F]/30 border-[#FB6331] text-[#F4622F]'
+                      : 'border-[#FD9E7F] hover:border-[#FB6331] hover:bg-[#FD9E7F]/20 text-[#E8552A]'
                   } disabled:opacity-50`}
                 >
                   {badge.tier}
@@ -722,7 +722,7 @@ function BadgeResetUtility() {
                 </Button>
               ))}
             </div>
-            <p className="text-xs text-orange-700 mt-2">
+            <p className="text-xs text-[#E8552A] mt-2">
               Click to unclaim badge (resets offchain state only)
             </p>
           </div>
@@ -731,12 +731,12 @@ function BadgeResetUtility() {
         {/* Onchain Reset Section */}
         {onchainMintedBadges.length > 0 && (
           <div>
-            <label className="block text-sm font-semibold text-orange-900 mb-2">
+            <label className="block text-sm font-semibold text-[#F4622F] mb-2">
               Reset Onchain State (Transfer to Burn Address):
             </label>
             {!isAuthenticated ? (
-              <div className="p-3 bg-yellow-50 border border-yellow-300 rounded-md">
-                <p className="text-xs text-yellow-800 font-medium">
+              <div className="p-3 bg-[#FD9E7F]/20 border border-[#FB6331] rounded-md">
+                <p className="text-xs text-[#E8552A] font-medium">
                   Please connect your wallet to reset onchain badges
                 </p>
               </div>
@@ -752,13 +752,13 @@ function BadgeResetUtility() {
                       disabled={isResetting}
                       className={`text-xs sm:text-sm capitalize font-semibold transition-all border-2 ${
                         isResetting
-                          ? 'bg-gray-100 border-gray-300 text-gray-500 cursor-not-allowed'
-                          : 'border-red-300 hover:border-red-500 hover:bg-red-50 text-red-800'
+                          ? 'bg-[#6B7280]/20 border-[#6B7280] text-[#6B7280] cursor-not-allowed'
+                          : 'border-[#E8552A] hover:border-[#DC4824] hover:bg-[#E8552A]/20 text-[#E8552A]'
                       }`}
                     >
                       {isResetting ? (
                         <span className="flex items-center gap-1">
-                          <span className="w-3 h-3 border-2 border-red-500 border-t-transparent rounded-full animate-spin"></span>
+                          <span className="w-3 h-3 border-2 border-[#E8552A] border-t-transparent rounded-full animate-spin"></span>
                           Resetting...
                         </span>
                       ) : (
@@ -772,17 +772,17 @@ function BadgeResetUtility() {
                     </Button>
                   ))}
                 </div>
-                <p className="text-xs text-orange-700 mt-2">
+                <p className="text-xs text-[#E8552A] mt-2">
                   Click to transfer badge NFT to burn address (removes from wallet).
                   <br />
-                  <span className="text-red-700 font-semibold">Note:</span> Contract ownership map will still show you as owner (contract limitation).
+                  <span className="text-[#E8552A] font-semibold">Note:</span> Contract ownership map will still show you as owner (contract limitation).
                 </p>
               </>
             )}
           </div>
         )}
 
-        <div className="text-xs sm:text-sm text-orange-700 font-medium pt-2 border-t border-orange-300">
+        <div className="text-xs sm:text-sm text-[#E8552A] font-medium pt-2 border-t border-[#FD9E7F]">
           <p>Claimed badges (offchain): {claimedBadges.length}</p>
           <p>Minted badges (onchain): {onchainMintedBadges.length}</p>
         </div>

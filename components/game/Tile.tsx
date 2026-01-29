@@ -14,25 +14,26 @@ interface TileProps {
 }
 
 const getTileColors = (value: number | null) => {
-  if (!value) return 'bg-gray-50 text-gray-400'
+  if (!value) return 'bg-white/20 text-[#6B7280]'
 
+  // Stacks color progression: white -> tangerine-dream -> tiger-flame-2 -> tiger-flame
   const colors = {
-    2: 'bg-gradient-to-br from-amber-50 to-amber-200 text-amber-800 border-amber-200',
-    4: 'bg-gradient-to-br from-amber-100 to-amber-300 text-amber-900 border-amber-300',
-    8: 'bg-gradient-to-br from-orange-100 to-orange-300 text-orange-900 border-orange-300',
-    16: 'bg-gradient-to-br from-orange-200 to-orange-400 text-white border-orange-400',
-    32: 'bg-gradient-to-br from-rose-200 to-rose-400 text-white border-rose-400',
-    64: 'bg-gradient-to-br from-red-300 to-red-500 text-white border-red-500',
-    128: 'bg-gradient-to-br from-yellow-200 to-yellow-400 text-white border-yellow-400',
-    256: 'bg-gradient-to-br from-yellow-300 to-yellow-500 text-white border-yellow-500',
-    512: 'bg-gradient-to-br from-emerald-200 to-emerald-400 text-white border-emerald-400',
-    1024: 'bg-gradient-to-br from-emerald-300 to-emerald-500 text-white border-emerald-500',
-    2048: 'bg-gradient-to-br from-sky-300 to-sky-500 text-white border-sky-500',
+    2: 'bg-gradient-to-br from-white to-[#FD9E7F] text-[#F4622F] border-[#FD9E7F]',
+    4: 'bg-gradient-to-br from-[#FD9E7F] to-[#FB6331] text-white border-[#FB6331]',
+    8: 'bg-gradient-to-br from-[#FB6331] to-[#F4622F] text-white border-[#F4622F]',
+    16: 'bg-gradient-to-br from-[#F4622F] to-[#E8552A] text-white border-[#E8552A]',
+    32: 'bg-gradient-to-br from-[#E8552A] to-[#DC4824] text-white border-[#DC4824]',
+    64: 'bg-gradient-to-br from-[#DC4824] to-[#D03B1E] text-white border-[#D03B1E]',
+    128: 'bg-gradient-to-br from-[#D03B1E] to-[#C42E18] text-white border-[#C42E18]',
+    256: 'bg-gradient-to-br from-[#C42E18] to-[#B82112] text-white border-[#B82112]',
+    512: 'bg-gradient-to-br from-[#B82112] to-[#AC140C] text-white border-[#AC140C]',
+    1024: 'bg-gradient-to-br from-[#AC140C] to-[#A00706] text-white border-[#A00706]',
+    2048: 'bg-gradient-to-br from-[#A00706] to-[#940000] text-white border-[#940000] shadow-[0_0_20px_rgba(244,98,47,0.6)]',
   }
 
   return (
     colors[value as keyof typeof colors] ||
-    'bg-gradient-to-br from-purple-400 to-purple-600 text-white border-purple-500'
+    'bg-gradient-to-br from-[#940000] to-[#880000] text-white border-[#880000] shadow-[0_0_25px_rgba(244,98,47,0.8)]'
   )
 }
 

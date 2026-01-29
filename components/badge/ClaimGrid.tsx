@@ -888,16 +888,16 @@ export function ClaimGrid() {
           : ''}
       </div>
       {lastClaimedMeta && (
-        <div className="rounded-2xl border border-emerald-200 bg-emerald-50 p-4 text-emerald-800">
+        <div className="rounded-2xl border border-[#FB6331] bg-[#FD9E7F]/20 p-4 text-[#F4622F]">
           <p className="text-sm font-semibold">Badge claimed!</p>
-          <p className="text-sm text-emerald-700">
+          <p className="text-sm text-[#E8552A]">
             The {lastClaimedMeta.label} badge is now in your collection.
           </p>
           <div className="mt-3 flex flex-wrap gap-2">
             <Button
               asChild
               size="sm"
-              className="rounded-full bg-gradient-to-r from-emerald-600 to-emerald-700 text-white font-semibold hover:from-emerald-700 hover:to-emerald-800 shadow-md hover:shadow-lg transition-all border-0"
+              className="rounded-full bg-gradient-to-r from-[#F4622F] to-[#FB6331] text-white font-semibold hover:from-[#FB6331] hover:to-[#F4622F] shadow-md hover:shadow-lg transition-all border-0"
             >
               <Link href="/badges">View badges</Link>
             </Button>
@@ -922,7 +922,7 @@ export function ClaimGrid() {
             Syncing with the blockchain to see which badges you can claim…
           </p>
           <div className="mt-4 flex justify-center">
-            <div className="h-6 w-6 animate-spin rounded-full border-2 border-blue-500 border-t-transparent" aria-hidden />
+            <div className="h-6 w-6 animate-spin rounded-full border-2 border-[#F4622F] border-t-transparent" aria-hidden />
           </div>
         </div>
       ) : claimableBadges.length === 0 ? (
@@ -938,7 +938,7 @@ export function ClaimGrid() {
             <Button 
               asChild 
               size="sm"
-              className="bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white font-semibold shadow-md hover:shadow-lg transition-all border-0"
+              className="bg-gradient-to-r from-[#F4622F] to-[#FB6331] hover:from-[#FB6331] hover:to-[#F4622F] text-white font-semibold shadow-md hover:shadow-lg transition-all border-0"
             >
               <Link href="/play">Play now</Link>
             </Button>
@@ -956,13 +956,13 @@ export function ClaimGrid() {
         <>
           {/* Onchain sync status */}
           {isAuthenticated && isSyncingOnchain && (
-            <div className="rounded-lg border border-blue-200 bg-blue-50 p-3 text-sm text-blue-800">
+            <div className="rounded-lg border border-[#FB6331] bg-[#FD9E7F]/20 p-3 text-sm text-[#F4622F]">
               <p className="font-medium">Syncing badge status with blockchain...</p>
             </div>
           )}
           
           {isAuthenticated && onchainSyncError && (
-            <div className="rounded-lg border border-yellow-200 bg-yellow-50 p-3 text-sm text-yellow-800">
+            <div className="rounded-lg border border-[#FB6331] bg-[#FD9E7F]/20 p-3 text-sm text-[#E8552A]">
               <p className="font-medium">Sync warning: {onchainSyncError}</p>
               <button
                 onClick={syncBadgeStateWithOnchain}
@@ -991,13 +991,17 @@ export function ClaimGrid() {
               <div className="grid gap-4 sm:grid-cols-2">
                 {mintedBadges.map((badge) => {
                   const meta = badgeTierMeta[badge.tier]
+                  // Check if softBackground contains tiger-flame colors that need white text
+                  const needsWhiteText = badge.tier === 'silver' || badge.tier === 'gold' || badge.tier === 'elite'
+                  
                   return (
                     <div
                       key={badge.tier}
                       className={cn(
                         'rounded-2xl border p-5 shadow-sm opacity-90',
                         meta.softBackground,
-                        meta.border
+                        meta.border,
+                        needsWhiteText && 'text-white'
                       )}
                     >
                       <div className="flex items-start justify-between gap-3">
@@ -1009,13 +1013,18 @@ export function ClaimGrid() {
                             {meta.iconSvg}
                           </div>
                           <div>
-                            <p className={cn('text-lg font-semibold', meta.accent)}>
+                            <p className={cn('text-lg font-semibold', needsWhiteText ? 'text-white' : meta.accent)}>
                               {meta.label}
                             </p>
-                            <p className="text-sm font-medium text-gray-700">{meta.description}</p>
+                            <p className={cn('text-sm font-medium', needsWhiteText ? 'text-white/90' : 'text-gray-700')}>{meta.description}</p>
                           </div>
                         </div>
-                        <span className="rounded-full border border-green-200 bg-green-50 px-2.5 py-1 text-xs font-semibold uppercase tracking-wide text-green-700">
+                        <span className={cn(
+                          'rounded-full border px-2.5 py-1 text-xs font-semibold uppercase tracking-wide',
+                          needsWhiteText 
+                            ? 'border-white/30 bg-white/20 text-white' 
+                            : 'border-[#FB6331] bg-[#FD9E7F]/20 text-[#F4622F]'
+                        )}>
                           Minted
                         </span>
                       </div>
@@ -1023,20 +1032,20 @@ export function ClaimGrid() {
                       <div className="mt-4 space-y-2">
                         {badge.tokenId !== undefined && (
                           <div className="flex items-center justify-between text-sm">
-                            <span className="font-medium text-gray-600">Token ID</span>
-                            <span className={cn('font-semibold', meta.accent)}>
+                            <span className={cn('font-medium', needsWhiteText ? 'text-white/80' : 'text-gray-600')}>Token ID</span>
+                            <span className={cn('font-semibold', needsWhiteText ? 'text-white' : meta.accent)}>
                               #{badge.tokenId}
                             </span>
                           </div>
                         )}
                         {badge.txId && (
                           <div className="flex items-center justify-between text-sm">
-                            <span className="font-medium text-gray-600">Transaction</span>
+                            <span className={cn('font-medium', needsWhiteText ? 'text-white/80' : 'text-gray-600')}>Transaction</span>
                             <a
                               href={getTransactionUrl(badge.txId) || '#'}
                               target="_blank"
                               rel="noopener noreferrer"
-                              className={cn('font-semibold underline hover:no-underline', meta.accent)}
+                              className={cn('font-semibold underline hover:no-underline', needsWhiteText ? 'text-white' : meta.accent)}
                             >
                               View on Explorer
                             </a>
@@ -1089,13 +1098,17 @@ export function ClaimGrid() {
                 meta.icon
               )
 
+              // Check if softBackground contains tiger-flame colors that need white text
+              const needsWhiteText = badge.tier === 'silver' || badge.tier === 'gold' || badge.tier === 'elite'
+
               return (
                 <div
                   key={badge.tier}
                   className={cn(
                     'rounded-2xl border p-5 shadow-sm',
                     meta.softBackground,
-                    meta.border
+                    meta.border,
+                    needsWhiteText && 'text-white'
                   )}
                 >
                   <div className="flex items-start justify-between gap-3">
@@ -1104,26 +1117,31 @@ export function ClaimGrid() {
                         {meta.iconSvg}
                       </div>
                       <div>
-                        <p className={cn('text-lg font-semibold', meta.accent)}>
+                        <p className={cn('text-lg font-semibold', needsWhiteText ? 'text-white' : meta.accent)}>
                           {meta.label}
                         </p>
-                        <p className="text-sm font-medium text-gray-700">{meta.description}</p>
+                        <p className={cn('text-sm font-medium', needsWhiteText ? 'text-white/90' : 'text-gray-700')}>{meta.description}</p>
                       </div>
                     </div>
-                    <span className="rounded-full border border-emerald-200 bg-emerald-50 px-2.5 py-1 text-xs font-semibold uppercase tracking-wide text-emerald-700">
+                    <span className={cn(
+                      'rounded-full border px-2.5 py-1 text-xs font-semibold uppercase tracking-wide',
+                      needsWhiteText 
+                        ? 'border-white/30 bg-white/20 text-white' 
+                        : 'border-[#FB6331] bg-[#FD9E7F]/20 text-[#F4622F]'
+                    )}>
                       Unlocked
                     </span>
                   </div>
 
                   <div className="mt-4 flex items-center justify-between text-sm">
-                    <span className="font-medium text-gray-600">Score target</span>
-                    <span className={cn('font-semibold', meta.accent)}>
+                    <span className={cn('font-medium', needsWhiteText ? 'text-white/80' : 'text-gray-600')}>Score target</span>
+                    <span className={cn('font-semibold', needsWhiteText ? 'text-white' : meta.accent)}>
                       {badge.threshold.toLocaleString()}
                     </span>
                   </div>
 
                   <div className="mt-4 flex flex-wrap items-center justify-between gap-3">
-                    <p className="text-xs font-medium text-gray-700">
+                    <p className={cn('text-xs font-medium', needsWhiteText ? 'text-white/90' : 'text-gray-700')}>
                       Claim now to add it to your collection.
                     </p>
                     <Button
@@ -1187,11 +1205,11 @@ export function ClaimGrid() {
                 </span>
               </div>
             </div>
-            <div className="rounded-lg border border-amber-200 bg-amber-50 p-4">
-              <p className="text-sm font-medium text-amber-900 mb-3">
+            <div className="rounded-lg border border-[#FB6331] bg-[#FD9E7F]/20 p-4">
+              <p className="text-sm font-medium text-[#F4622F] mb-3">
                 Why connect your wallet?
               </p>
-              <ul className="text-xs sm:text-sm text-amber-800 space-y-1.5 list-disc list-inside">
+              <ul className="text-xs sm:text-sm text-[#E8552A] space-y-1.5 list-disc list-inside">
                 <li>Mint badge as NFT on Stacks blockchain</li>
                 <li>Verify your achievement onchain</li>
                 <li>Showcase your badge in your wallet</li>
@@ -1259,8 +1277,8 @@ export function ClaimGrid() {
               </div>
             </div>
             {isAuthenticated && transactionStatus === 'idle' && (
-              <div className="rounded-lg border border-green-200 bg-green-50 p-3">
-                <p className="text-xs sm:text-sm text-green-800">
+              <div className="rounded-lg border border-[#FB6331] bg-[#FD9E7F]/20 p-3">
+                <p className="text-xs sm:text-sm text-[#F4622F]">
                   <span className="font-semibold">Wallet connected:</span> This badge will be minted as an NFT on the Stacks blockchain.
                 </p>
               </div>
@@ -1268,16 +1286,16 @@ export function ClaimGrid() {
 
             {/* Transaction Status: Pending */}
             {transactionStatus === 'pending' && (
-              <div className="rounded-lg border border-blue-200 bg-blue-50 p-3 sm:p-4">
+              <div className="rounded-lg border border-[#FB6331] bg-[#FD9E7F]/20 p-3 sm:p-4">
                 <div className="flex items-start gap-3">
                   <div className="flex-shrink-0">
-                    <div className="h-5 w-5 animate-spin rounded-full border-2 border-blue-600 border-t-transparent" />
+                    <div className="h-5 w-5 animate-spin rounded-full border-2 border-[#F4622F] border-t-transparent" />
                   </div>
                   <div className="flex-1 min-w-0">
-                    <p className="text-xs sm:text-sm font-medium text-blue-900">
+                    <p className="text-xs sm:text-sm font-medium text-[#F4622F]">
                       Waiting for wallet approval...
                     </p>
-                    <p className="text-xs text-blue-700 mt-1">
+                    <p className="text-xs text-[#E8552A] mt-1">
                       Please approve the transaction in your wallet extension.
                     </p>
                   </div>
@@ -1287,16 +1305,16 @@ export function ClaimGrid() {
 
             {/* Transaction Status: Polling */}
             {transactionStatus === 'polling' && transactionTxId && (
-              <div className="rounded-lg border border-blue-200 bg-blue-50 p-3 sm:p-4">
+              <div className="rounded-lg border border-[#FB6331] bg-[#FD9E7F]/20 p-3 sm:p-4">
                 <div className="flex items-start gap-3">
                   <div className="flex-shrink-0">
-                    <div className="h-5 w-5 animate-spin rounded-full border-2 border-blue-600 border-t-transparent" />
+                    <div className="h-5 w-5 animate-spin rounded-full border-2 border-[#F4622F] border-t-transparent" />
                   </div>
                   <div className="flex-1 min-w-0">
-                    <p className="text-xs sm:text-sm font-medium text-blue-900">
+                    <p className="text-xs sm:text-sm font-medium text-[#F4622F]">
                       Minting badge onchain...
                     </p>
-                    <p className="text-xs text-blue-700 mt-1">
+                    <p className="text-xs text-[#E8552A] mt-1">
                       Transaction submitted. Waiting for confirmation... (Attempt {pollCount}/60)
                     </p>
                     <div className="mt-2 flex flex-col sm:flex-row gap-2">
@@ -1304,7 +1322,7 @@ export function ClaimGrid() {
                         href={getTransactionUrl(transactionTxId) || '#'}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="text-xs text-blue-600 hover:text-blue-800 underline break-all"
+                        className="text-xs text-[#F4622F] hover:text-[#E8552A] underline break-all"
                       >
                         View on Stacks Explorer
                       </a>
@@ -1320,7 +1338,7 @@ export function ClaimGrid() {
                             startPolling(transactionTxId)
                           }
                         }}
-                        className="text-xs text-blue-600 hover:text-blue-800 underline text-left sm:text-left"
+                        className="text-xs text-[#F4622F] hover:text-[#E8552A] underline text-left sm:text-left"
                       >
                         Check status now
                       </button>
@@ -1332,11 +1350,11 @@ export function ClaimGrid() {
 
             {/* Transaction Status: Success */}
             {transactionStatus === 'success' && transactionTxId && (
-              <div className="rounded-lg border border-green-200 bg-green-50 p-3 sm:p-4">
+              <div className="rounded-lg border border-[#FB6331] bg-[#FD9E7F]/20 p-3 sm:p-4">
                 <div className="flex items-start gap-3">
                   <div className="flex-shrink-0">
                     <svg
-                      className="h-5 w-5 text-green-600"
+                      className="h-5 w-5 text-[#F4622F]"
                       fill="none"
                       viewBox="0 0 24 24"
                       stroke="currentColor"
@@ -1350,17 +1368,17 @@ export function ClaimGrid() {
                     </svg>
                   </div>
                   <div className="flex-1 min-w-0">
-                    <p className="text-xs sm:text-sm font-medium text-green-900">
+                    <p className="text-xs sm:text-sm font-medium text-[#F4622F]">
                       Badge minted successfully!
                     </p>
-                    <p className="text-xs text-green-700 mt-1">
+                    <p className="text-xs text-[#E8552A] mt-1">
                       Your badge has been minted as an NFT on the Stacks blockchain.
                     </p>
                     <a
                       href={getTransactionUrl(transactionTxId) || '#'}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="text-xs text-green-600 hover:text-green-800 underline mt-2 inline-block break-all"
+                      className="text-xs text-[#F4622F] hover:text-[#E8552A] underline mt-2 inline-block break-all"
                     >
                       View transaction on Stacks Explorer
                     </a>

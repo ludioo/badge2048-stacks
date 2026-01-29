@@ -36,22 +36,22 @@ export function WalletConnect() {
     return (
       <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2 sm:gap-3 w-full sm:w-auto">
         {/* Desktop: Show address badge */}
-        <div className="hidden sm:flex items-center gap-2 px-3 py-1.5 bg-green-50 border border-green-300 rounded-md shadow-sm">
-          <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse" />
-          <span className="text-xs sm:text-sm font-mono text-green-800 font-semibold">
+        <div className="hidden sm:flex items-center gap-2 px-3 py-1.5 bg-[#FD9E7F]/20 border border-[#FB6331] rounded-md shadow-sm">
+          <div className="w-2 h-2 bg-[#F4622F] rounded-full animate-pulse" />
+          <span className="text-xs sm:text-sm font-mono text-[#F4622F] font-semibold">
             {formatAddress(address)}
           </span>
         </div>
         {/* Mobile: Show truncated address in compact badge */}
-        <div className="sm:hidden flex items-center gap-1.5 px-2.5 py-1.5 bg-green-50 border border-green-300 rounded-md shadow-sm">
-          <div className="w-1.5 h-1.5 bg-green-500 rounded-full animate-pulse" />
-          <span className="text-xs font-mono text-green-800 font-semibold">
+        <div className="sm:hidden flex items-center gap-1.5 px-2.5 py-1.5 bg-[#FD9E7F]/20 border border-[#FB6331] rounded-md shadow-sm">
+          <div className="w-1.5 h-1.5 bg-[#F4622F] rounded-full animate-pulse" />
+          <span className="text-xs font-mono text-[#F4622F] font-semibold">
             {formatAddress(address)}
           </span>
         </div>
         <button
           onClick={handleDisconnect}
-          className="w-full sm:w-auto min-h-[44px] text-xs sm:text-sm bg-gradient-to-r from-red-500 to-red-600 hover:from-red-600 hover:to-red-700 active:from-red-700 active:to-red-800 text-white font-semibold shadow-md hover:shadow-lg active:shadow-xl transition-all duration-200 border-0 px-4 sm:px-3 py-2.5 sm:py-1.5 rounded-md inline-flex items-center justify-center gap-2 whitespace-nowrap focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-red-500 focus-visible:ring-offset-2"
+          className="w-full sm:w-auto min-h-[44px] text-xs sm:text-sm bg-gradient-to-r from-[#E8552A] to-[#DC4824] hover:from-[#DC4824] hover:to-[#C42E18] active:from-[#C42E18] active:to-[#B82112] text-white font-semibold shadow-md hover:shadow-lg active:shadow-xl transition-all duration-200 border-0 px-4 sm:px-3 py-2.5 sm:py-1.5 rounded-md inline-flex items-center justify-center gap-2 whitespace-nowrap focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#E8552A] focus-visible:ring-offset-2"
         >
           Disconnect
         </button>
@@ -63,7 +63,7 @@ export function WalletConnect() {
     <button
       onClick={handleConnect}
       disabled={isAuthenticating}
-      className="w-full sm:w-auto min-h-[44px] text-xs sm:text-sm bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 active:from-blue-800 active:to-blue-900 text-white font-semibold shadow-md hover:shadow-lg active:shadow-xl transition-all duration-200 disabled:opacity-60 disabled:cursor-not-allowed border-0 px-4 sm:px-3 py-2.5 sm:py-1.5 rounded-md inline-flex items-center justify-center gap-2 whitespace-nowrap focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2"
+      className="w-full sm:w-auto min-h-[44px] text-xs sm:text-sm bg-gradient-to-r from-[#F4622F] to-[#FB6331] hover:from-[#FB6331] hover:to-[#F4622F] active:from-[#F4622F] active:to-[#E8552A] text-white font-semibold shadow-md hover:shadow-lg active:shadow-xl transition-all duration-200 disabled:opacity-60 disabled:cursor-not-allowed border-0 px-4 sm:px-3 py-2.5 sm:py-1.5 rounded-md inline-flex items-center justify-center gap-2 whitespace-nowrap focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#F4622F] focus-visible:ring-offset-2"
     >
       {isAuthenticating ? (
         <>

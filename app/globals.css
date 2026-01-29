@@ -2,14 +2,53 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+/* Stacks Color Palette */
 :root {
-  --background: #ffffff;
+  /* Stacks Colors - HEX */
+  --tiger-flame: #F4622F;
+  --tiger-flame-2: #FB6331;
+  --tangerine-dream: #FD9E7F;
+  --white: #FFFFFF;
+  --white-2: #FFFFFF;
+
+  /* Stacks Colors - HSL */
+  --tiger-flame-hsl: 16, 90%, 57%;
+  --tiger-flame-2-hsl: 15, 96%, 59%;
+  --tangerine-dream-hsl: 15, 97%, 75%;
+  --white-hsl: 0, 0%, 100%;
+
+  /* Application Colors */
+  --background: var(--white);
   --foreground: #171717;
+  
+  /* Primary colors using Stacks palette */
+  --primary: var(--tiger-flame);
+  --primary-hover: var(--tiger-flame-2);
+  --primary-light: var(--tangerine-dream);
+  
+  /* Text colors */
+  --text-primary: #171717;
+  --text-secondary: #4B5563;
+  --text-muted: #6B7280;
+  
+  /* Border colors */
+  --border-light: rgba(244, 98, 47, 0.2);
+  --border-medium: rgba(244, 98, 47, 0.4);
+  --border-strong: var(--tiger-flame);
+  
+  /* Background variants */
+  --bg-primary-light: rgba(253, 158, 127, 0.1);
+  --bg-primary-medium: rgba(253, 158, 127, 0.2);
+  --bg-primary-strong: var(--tangerine-dream);
 }
 
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
+  --color-primary: var(--primary);
+  --color-primary-hover: var(--primary-hover);
+  --color-primary-light: var(--primary-light);
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
 }

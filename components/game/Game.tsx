@@ -48,10 +48,10 @@ export function Game() {
   const lastGameOverScoreRef = useRef<number | null>(null)
 
   const badgeTierLabels = useMemo(() => ({
-    bronze: { label: 'Bronze', className: 'bg-amber-100 text-amber-900 border-amber-200' },
-    silver: { label: 'Silver', className: 'bg-slate-100 text-slate-800 border-slate-200' },
-    gold: { label: 'Gold', className: 'bg-yellow-100 text-yellow-900 border-yellow-200' },
-    elite: { label: 'Elite', className: 'bg-purple-100 text-purple-900 border-purple-200' },
+    bronze: { label: 'Bronze', className: 'bg-[#FD9E7F] text-[#F4622F] border-[#FB6331]' },
+    silver: { label: 'Silver', className: 'bg-[#FB6331] text-white border-[#F4622F]' },
+    gold: { label: 'Gold', className: 'bg-[#F4622F] text-white border-[#E8552A]' },
+    elite: { label: 'Elite', className: 'bg-[#E8552A] text-white border-[#DC4824]' },
   }), [])
 
   const handleMove = useCallback((direction: 'up' | 'down' | 'left' | 'right') => {
@@ -289,12 +289,12 @@ export function Game() {
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -12 }}
             transition={prefersReducedMotion ? { duration: 0 } : { duration: 0.2, ease: 'easeOut' }}
-            className="pointer-events-none fixed left-1/2 top-4 z-[60] w-[92vw] max-w-sm -translate-x-1/2 rounded-2xl border border-slate-200 bg-white/95 px-4 py-3 text-center shadow-lg backdrop-blur"
+            className="pointer-events-none fixed left-1/2 top-4 z-[60] w-[92vw] max-w-sm -translate-x-1/2 rounded-2xl border border-[#FB6331] bg-white/95 px-4 py-3 text-center shadow-lg backdrop-blur"
             role="status"
             aria-live="polite"
           >
-            <div className="text-sm font-semibold text-slate-900">Badge unlocked</div>
-            <div className="text-xs text-slate-600">
+            <div className="text-sm font-semibold text-[#F4622F]">Badge unlocked</div>
+            <div className="text-xs text-[#4B5563]">
               You reached {badgeToast.score.toLocaleString()} points.
             </div>
             <div className="mt-2 flex flex-wrap justify-center gap-1.5">
@@ -324,11 +324,11 @@ export function Game() {
           variant={soundEnabled ? 'default' : 'outline'}
           aria-pressed={soundEnabled}
           onClick={() => setSoundEnabled((value) => !value)}
-          className={cn(
+            className={cn(
             'min-w-[96px] min-h-[44px] rounded-full',
             soundEnabled
-              ? 'bg-slate-900 text-white hover:bg-slate-800'
-              : 'bg-white text-slate-700 border-slate-300 hover:bg-slate-100'
+              ? 'bg-[#F4622F] text-white hover:bg-[#FB6331]'
+              : 'bg-white text-[#4B5563] border-[#FD9E7F] hover:bg-[#FD9E7F]/10'
           )}
         >
           Sound {soundEnabled ? 'On' : 'Off'}
@@ -339,12 +339,12 @@ export function Game() {
           aria-pressed={hapticsEnabled}
           disabled={!canVibrate}
           onClick={() => setHapticsEnabled((value) => !value)}
-          className={cn(
+            className={cn(
             'min-w-[96px] min-h-[44px] rounded-full',
             !canVibrate && 'opacity-60',
             hapticsEnabled
-              ? 'bg-emerald-600 text-white hover:bg-emerald-500'
-              : 'bg-white text-slate-700 border-slate-300 hover:bg-slate-100'
+              ? 'bg-[#E8552A] text-white hover:bg-[#F4622F]'
+              : 'bg-white text-[#4B5563] border-[#FD9E7F] hover:bg-[#FD9E7F]/10'
           )}
         >
           Haptic {canVibrate ? (hapticsEnabled ? 'On' : 'Off') : 'Unavailable'}
@@ -358,7 +358,7 @@ export function Game() {
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -6 }}
             transition={prefersReducedMotion ? { duration: 0 } : { duration: 0.2, ease: 'easeOut' }}
-            className="rounded-full bg-slate-900 px-3 py-1 text-[11px] text-white shadow-sm"
+            className="rounded-full bg-[#F4622F] px-3 py-1 text-[11px] text-white shadow-sm"
           >
             Swipe, drag, or use arrow keys to move tiles
           </motion.div>
@@ -394,31 +394,31 @@ export function Game() {
         <DialogContent
           className={cn(
             'w-[92vw] max-w-sm sm:max-w-md',
-            'rounded-2xl border border-slate-200/80',
-            'bg-gradient-to-br from-white via-slate-50 to-slate-100',
-            'shadow-[0_24px_60px_rgba(15,23,42,0.18)]'
+            'rounded-2xl border border-[#FD9E7F]/40',
+            'bg-gradient-to-br from-white via-[#FD9E7F]/10 to-[#FD9E7F]/20',
+            'shadow-[0_24px_60px_rgba(244,98,47,0.18)]'
           )}
         >
           <DialogHeader>
-            <DialogTitle className="text-center text-2xl sm:text-3xl text-slate-900">
+            <DialogTitle className="text-center text-2xl sm:text-3xl text-[#F4622F]">
               Game Over
             </DialogTitle>
-            <DialogDescription className="text-center text-sm sm:text-base text-slate-600">
+            <DialogDescription className="text-center text-sm sm:text-base text-[#4B5563]">
               Final Score
             </DialogDescription>
           </DialogHeader>
           <div className="mt-2 flex flex-col items-center gap-4">
-            <div className="rounded-xl border border-slate-200 bg-white px-6 py-3 text-3xl font-bold text-slate-800 shadow-sm">
+            <div className="rounded-xl border border-[#FD9E7F] bg-white px-6 py-3 text-3xl font-bold text-[#F4622F] shadow-sm">
               {state.score.toLocaleString()}
             </div>
             {gameOverBestTile > 0 && (
-              <div className="text-xs font-medium uppercase tracking-wide text-slate-500">
-                Best Tile: <span className="text-slate-800">{gameOverBestTile.toLocaleString()}</span>
+              <div className="text-xs font-medium uppercase tracking-wide text-[#6B7280]">
+                Best Tile: <span className="text-[#F4622F]">{gameOverBestTile.toLocaleString()}</span>
               </div>
             )}
             {gameOverUnlocks.length > 0 && (
-              <div className="flex flex-col items-center gap-2 rounded-xl border border-emerald-100 bg-emerald-50 px-4 py-3 text-center">
-                <div className="text-xs font-semibold uppercase tracking-wide text-emerald-700">
+              <div className="flex flex-col items-center gap-2 rounded-xl border border-[#FB6331] bg-[#FD9E7F]/20 px-4 py-3 text-center">
+                <div className="text-xs font-semibold uppercase tracking-wide text-[#F4622F]">
                   Badges Unlocked
                 </div>
                 <div className="flex flex-wrap justify-center gap-1.5">
@@ -440,20 +440,20 @@ export function Game() {
               </div>
             )}
             {gameOverBadges.length > 0 && (
-              <div className="flex w-full flex-col items-center gap-2 rounded-xl border border-slate-200 bg-white px-4 py-3 text-center">
-                <div className="text-xs font-semibold uppercase tracking-wide text-slate-600">
+              <div className="flex w-full flex-col items-center gap-2 rounded-xl border border-[#FD9E7F] bg-white px-4 py-3 text-center">
+                <div className="text-xs font-semibold uppercase tracking-wide text-[#4B5563]">
                   Badge Status
                 </div>
                 <div className="flex flex-wrap justify-center gap-2">
                   {gameOverBadges.map((badge) => {
                     const tierMeta = badgeTierLabels[badge.tier]
                     const status = badge.claimed
-                      ? { label: 'Claimed', className: 'bg-emerald-100 text-emerald-800 border-emerald-200' }
+                      ? { label: 'Claimed', className: 'bg-[#E8552A]/20 text-[#E8552A] border-[#E8552A]' }
                       : badge.unlocked
-                      ? { label: 'Unlocked', className: 'bg-blue-100 text-blue-800 border-blue-200' }
-                      : { label: 'Locked', className: 'bg-slate-100 text-slate-700 border-slate-200' }
+                      ? { label: 'Unlocked', className: 'bg-[#FB6331]/20 text-[#FB6331] border-[#FB6331]' }
+                      : { label: 'Locked', className: 'bg-[#FD9E7F]/20 text-[#6B7280] border-[#FD9E7F]' }
                     return (
-                      <div key={badge.tier} className="flex items-center gap-1.5 rounded-full border border-slate-200 bg-slate-50 px-2 py-1 text-[11px]">
+                      <div key={badge.tier} className="flex items-center gap-1.5 rounded-full border border-[#FD9E7F] bg-white px-2 py-1 text-[11px]">
                         <span
                           className={cn(
                             'rounded-full border px-2 py-0.5 font-semibold uppercase tracking-wide',
@@ -476,25 +476,25 @@ export function Game() {
                 </div>
               </div>
             )}
-            <div className="w-full rounded-xl border border-slate-200 bg-white px-4 py-3 text-center">
+            <div className="w-full rounded-xl border border-[#FD9E7F] bg-white px-4 py-3 text-center">
               {!address ? (
-                <p className="text-sm text-slate-600">
+                <p className="text-sm text-[#4B5563]">
                   Connect your wallet to submit your score to the leaderboard.
                 </p>
               ) : submitStatus === 'submitting' ? (
-                <p className="text-sm text-slate-600">Submitting score…</p>
+                <p className="text-sm text-[#4B5563]">Submitting score…</p>
               ) : submitStatus === 'error' ? (
-                <p className="text-sm text-amber-700">{submitError ?? 'Failed to submit score'}</p>
+                <p className="text-sm text-[#E8552A]">{submitError ?? 'Failed to submit score'}</p>
               ) : rankData ? (
-                <p className="text-sm font-semibold text-slate-800">
-                  Your rank: <span className="text-emerald-700">#{rankData.rank}</span> of {rankData.total}
+                <p className="text-sm font-semibold text-[#F4622F]">
+                  Your rank: <span className="text-[#E8552A]">#{rankData.rank}</span> of {rankData.total}
                 </p>
               ) : (
-                <p className="text-sm text-slate-600">Score submitted.</p>
+                <p className="text-sm text-[#4B5563]">Score submitted.</p>
               )}
               <Link
                 href="/leaderboard"
-                className="mt-2 inline-block text-sm font-medium text-slate-700 underline hover:no-underline"
+                className="mt-2 inline-block text-sm font-medium text-[#F4622F] underline hover:no-underline"
               >
                 View Leaderboard
               </Link>
@@ -502,7 +502,7 @@ export function Game() {
             <Button
               onClick={restart}
               size="lg"
-              className="w-full sm:w-auto bg-slate-900 text-white hover:bg-slate-800"
+              className="w-full sm:w-auto bg-[#F4622F] text-white hover:bg-[#FB6331]"
             >
               Play Again
             </Button>
@@ -510,7 +510,7 @@ export function Game() {
         </DialogContent>
       </Dialog>
 
-      <div className="text-center text-xs sm:text-sm text-gray-600 max-w-md px-4">
+      <div className="text-center text-xs sm:text-sm text-[#4B5563] max-w-md px-4">
         <p>Use arrow keys, swipe (mobile), or drag (desktop) to move tiles. Combine tiles with the same number to reach 2048!</p>
       </div>
     </div>

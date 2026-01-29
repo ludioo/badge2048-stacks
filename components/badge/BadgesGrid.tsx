@@ -117,7 +117,7 @@ export function BadgesGrid() {
   return (
     <div className="space-y-6">
       {isAuthenticated && address && isSyncing && (
-        <div className="rounded-lg border border-blue-200 bg-blue-50 p-3 text-sm text-blue-800">
+        <div className="rounded-lg border border-[#FB6331] bg-[#FD9E7F]/20 p-3 text-sm text-[#F4622F]">
           <p className="font-medium">Checking badge status with blockchain…</p>
         </div>
       )}
@@ -132,7 +132,7 @@ export function BadgesGrid() {
           {claimableCount > 0 ? (
             <Link
               href="/claim"
-              className="rounded-full border border-emerald-200 bg-emerald-50 px-4 py-2.5 min-h-[44px] inline-flex items-center text-xs font-semibold uppercase tracking-wide text-emerald-700"
+              className="rounded-full border border-[#FB6331] bg-[#FD9E7F]/20 px-4 py-2.5 min-h-[44px] inline-flex items-center text-xs font-semibold uppercase tracking-wide text-[#F4622F]"
             >
               Go to Claim
             </Link>
@@ -142,7 +142,7 @@ export function BadgesGrid() {
         </div>
         <div className="mt-3 h-2 w-full overflow-hidden rounded-full bg-slate-100">
           <div
-            className="h-2 rounded-full bg-emerald-500 transition-[width] duration-300"
+            className="h-2 rounded-full bg-[#F4622F] transition-[width] duration-300"
             style={{ width: `${progress}%` }}
           />
         </div>
@@ -152,7 +152,7 @@ export function BadgesGrid() {
         <div className="rounded-full border border-slate-200 bg-white px-3 py-1">
           Owned: {claimedCount}
         </div>
-        <div className="rounded-full border border-emerald-200 bg-emerald-50 px-3 py-1 text-emerald-700">
+        <div className="rounded-full border border-[#FB6331] bg-[#FD9E7F]/20 px-3 py-1 text-[#F4622F]">
           Claimable: {claimableCount}
         </div>
         <div className="rounded-full border border-slate-200 bg-slate-50 px-3 py-1 text-slate-500">
