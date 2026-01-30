@@ -11,7 +11,7 @@ import { CONTRACT_NAME } from './constants';
 const networkEnv = process.env.NEXT_PUBLIC_STACKS_NETWORK || 'testnet';
 export const isTestnet = networkEnv === 'testnet';
 
-// Contract address from environment
+// Contract address from environment (for mainnet set NEXT_PUBLIC_CONTRACT_ADDRESS and NEXT_PUBLIC_DEPLOYER_ADDRESS)
 const contractAddress = process.env.NEXT_PUBLIC_CONTRACT_ADDRESS || '';
 const deployerAddress = process.env.NEXT_PUBLIC_DEPLOYER_ADDRESS || 'ST22ZCY5GAH27T4CK3ATG4QTZJQV6FXPRBAQ0BRW5';
 

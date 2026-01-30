@@ -2,21 +2,21 @@
 
 **Project**: badge2048-stacks  
 **Date Created**: 2026-01-29  
-**Status**: Phase 2.3 done; next Phase 3  
+**Status**: Phase 3 done; next Phase 4  
 **Target Network**: Stacks Mainnet
 
 ---
 
 ## Migration Progress Tracker
 
-**Current Phase**: Phase 3 — Frontend Configuration  
-**Status**: Phase 2.3 verification done; ready for Phase 3  
+**Current Phase**: Phase 4 — Testing & Verification  
+**Status**: Phase 3 done; ready for Phase 4  
 **Last Updated**: 2026-01-30
 
 ### Completed Phases
 - [x] Phase 1: Preparation & Security (implementation complete; see “Manual Testing for You” below)
 - [x] Phase 2: Contract Deployment (2.1 plan generated, 2.2 applied, 2.3 verified — “see Phase 2.3 Implementation Summary below”)
-- [ ] Phase 3: Frontend Configuration
+- [x] Phase 3: Frontend Configuration (see Phase 3 Implementation Summary and Manual Testing below)
 - [ ] Phase 4: Testing & Verification
 - [ ] Phase 5: Production Deployment
 - [ ] Phase 6: Post-Migration Tasks
@@ -39,6 +39,15 @@
 #### Phase 2
 - [x] `contracts/badge2048-contract/deployments/default.mainnet-plan.yaml` (used for mainnet deploy; contract live)
 - [x] `scripts/verify-mainnet-deployment.mjs` (Phase 2.3: automated read-only verification script)
+
+#### Phase 3
+- [x] `.env.example` (mainnet/testnet examples and comments)
+- [x] `.env.local` (mainnet values — gitignored; backup testnet as .env.local.testnet.backup if needed)
+- [x] `lib/stacks/config.ts` (comment for mainnet env)
+- [x] `README.md` (env table mainnet/testnet notes)
+- [x] `contracts/badge2048-contract/README.md` (mainnet contract address and Explorer link)
+- [x] `docs/TESTNET-TO-MAINNET-MIGRATION-PLAN.md` (Phase 3 summary and manual testing)
+- [x] **Phase 3 follow-up:** `lib/highScore.ts` (network-scoped high score), `components/badge/BadgesGrid.tsx`, `components/badge/ClaimGrid.tsx` (high score + diagnostic), `app/api/badge-ownership/route.ts` (response headers)
 
 ---
 
@@ -114,7 +123,7 @@ Track progress using this format:
 ### Completed Phases
 - [x] Phase 1: Preparation & Security
 - [ ] Phase 2: Contract Deployment
-- [ ] Phase 3: Frontend Configuration
+- [x] Phase 3: Frontend Configuration (see Phase 3 Implementation Summary and Manual Testing below)
 - [ ] Phase 4: Testing & Verification
 - [ ] Phase 5: Production Deployment
 - [ ] Phase 6: Post-Migration Tasks
@@ -1368,6 +1377,77 @@ grep -r "api.testnet.hiro.so\|api.hiro.so" --exclude-dir=node_modules --exclude-
 - `README.md`
 - `contracts/badge2048-contract/README.md`
 - `docs/ONCHAIN_STACKS_BADGE2048.md` (if applicable)
+
+### Phase 3 Implementation Summary (2026-01-30)
+
+**Completed:**
+
+- **3.1 Environment variables**
+  - `.env.example`: Updated with mainnet/testnet examples; default remains `testnet` for safety.
+  - `.env.local`: Set to mainnet (`NEXT_PUBLIC_STACKS_NETWORK=mainnet`, contract and deployer `SP22ZCY5GAH27T4CK3ATG4QTZJQV6FXPRB8X907KX`).
+- **3.2 Configuration**
+  - `lib/stacks/config.ts`: Verified; reads from env; comment added for mainnet. Hardcoded testnet address only in fallback and in contract tests (correct).
+- **3.3 API URLs**
+  - ClaimGrid already uses `apiUrl` from config (Phase 1). Grep confirms only `lib/stacks/config.ts` contains Hiro API URLs.
+- **3.4 Documentation**
+  - `README.md`: Env table updated with mainnet/testnet notes.
+  - `contracts/badge2048-contract/README.md`: Mainnet contract address and Explorer link added.
+- **Build**: `npm run build:webpack` succeeded.
+
+**Verification checklist (automated):**
+
+- [x] `.env.local` has `NEXT_PUBLIC_STACKS_NETWORK=mainnet`
+- [x] `.env.local` has mainnet contract address (SP...badge2048)
+- [x] `.env.local` has mainnet deployer address (SP...)
+- [x] `.env.example` updated with mainnet/testnet examples
+- [x] No hardcoded API URLs in code (only in `lib/stacks/config.ts`)
+- [x] Production build succeeds
+
+**Phase 3 follow-up fix (2026-01-30) — masalah claimable tanpa main sudah teratasi:**
+
+- **Masalah:** Di `/badges` dan `/claim` badge bronze/silver tampil claimable padahal user belum main (mainnet).
+- **Penyebab:** High score disimpan satu key untuk semua network; skor dari testnet terbaca di mainnet.
+- **Perbaikan:**
+  - **`lib/highScore.ts`**: High score sekarang **per network** (`highScore_v1_mainnet`, `highScore_v1_testnet`). Mainnet selalu mulai dari 0; testnet tetap migrasi dari key lama.
+  - **`BadgesGrid` & `ClaimGrid`**: "Unlocked" / claimable memakai **current high score** (loadHighScore()) saja; mainnet = 0 sampai user main di mainnet.
+  - **API `/api/badge-ownership`**: Response header `X-Stacks-Network` dan `X-Contract-Address` untuk verifikasi mainnet/testnet.
+  - **Diagnostic logs**: `[BadgesGrid] diagnostic`, `[ClaimGrid] diagnostic`, dan API response headers di console (bisa dihapus setelah stabil).
+- **Konfirmasi:** User mengonfirmasi masalah sudah teratasi; Phase 3 selesai penuh.
+
+---
+
+### Manual Testing for You (Phase 3)
+
+Lakukan secara manual:
+
+1. **Backup .env.local testnet (opsional)**  
+   Jika ingin bisa switch kembali ke testnet:
+   ```bash
+   cp .env.local .env.local.mainnet.backup
+   # Simpan isi testnet lama di .env.local.testnet.backup jika belum
+   ```
+
+2. **Verifikasi lokal dengan mainnet**  
+   - Jalankan: `npm run dev`  
+   - Buka http://localhost:3000  
+   - Cek: `/`, `/play`, `/claim`, `/badges`, `/leaderboard`  
+   - Connect wallet (mainnet); pastikan network di wallet adalah **Mainnet**  
+   - Di `/claim`: jika eligible, cek bahwa flow claim/mint memakai mainnet (Explorer link harus mainnet)  
+   - Di `/badges`: badge ownership dari API harus dari mainnet contract  
+
+3. **Production environment variables (wajib jika deploy ke Vercel/dll)**  
+   - **Vercel Dashboard**: Project → Settings → Environment Variables  
+   - Tambah/update:
+     - `NEXT_PUBLIC_STACKS_NETWORK` = `mainnet`
+     - `NEXT_PUBLIC_CONTRACT_ADDRESS` = `SP22ZCY5GAH27T4CK3ATG4QTZJQV6FXPRB8X907KX.badge2048`
+     - `NEXT_PUBLIC_DEPLOYER_ADDRESS` = `SP22ZCY5GAH27T4CK3ATG4QTZJQV6FXPRB8X907KX`
+   - Scope: Production (dan Preview/Development jika ingin)
+   - Setelah simpan: **Redeploy** project agar env dipakai di build
+
+4. **E2E (opsional)**  
+   - `npm run test:e2e` — bisa gagal jika fixture/localStorage mengasumsikan testnet; bisa disesuaikan di Phase 4 jika perlu.
+
+Setelah poin 2 (dan 3 jika deploy production), Phase 3 selesai. **Konfirmasi:** Masalah claimable tanpa main sudah teratasi (high score per network); Phase 3 selesai penuh. Lanjut ke **Phase 4: Testing & Verification** bila Anda siap.
 
 ---
 

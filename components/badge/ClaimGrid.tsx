@@ -63,18 +63,44 @@ export function ClaimGrid() {
   // we can't mint without a wallet. Avoids confusion where hard refresh keeps
   // old data (localStorage survives Ctrl+Shift+R) but incognito shows clean state.
   // When wallet connected: don't show claimable until onchain sync has completed
-  // at least once, so we never show "claimable" for tiers already minted onchain.
+  // at least once. Unlocked = current high score >= threshold (not localStorage) so mainnet/testnet stay correct.
+  const [highScore, setHighScore] = useState(0)
+  useEffect(() => {
+    setHighScore(loadHighScore())
+    const onFocus = () => setHighScore(loadHighScore())
+    window.addEventListener('focus', onFocus)
+    return () => window.removeEventListener('focus', onFocus)
+  }, [])
+
   const claimableBadges = useMemo(
     () => {
       if (!isAuthenticated || !address) return []
       if (!onchainSyncCompletedOnce) return []
       return badges
-        .filter((badge) => badge.unlocked && !badge.claimed && !badge.onchainMinted)
+        .filter(
+          (badge) =>
+            highScore >= badge.threshold && !badge.claimed && !badge.onchainMinted
+        )
         .sort((left, right) => left.threshold - right.threshold)
     },
-    [badges, isAuthenticated, address, onchainSyncCompletedOnce]
+    [badges, isAuthenticated, address, onchainSyncCompletedOnce, highScore]
   )
-  
+
+  // Diagnostic: bantu verifikasi mainnet vs high score (bisa dihapus setelah fix dikonfirmasi)
+  const networkFromEnv =
+    typeof process !== 'undefined' && process.env?.NEXT_PUBLIC_STACKS_NETWORK
+      ? process.env.NEXT_PUBLIC_STACKS_NETWORK
+      : '(not set)'
+  useEffect(() => {
+    console.log('[ClaimGrid] diagnostic', {
+      network: networkFromEnv,
+      highScore,
+      loadHighScoreNow: loadHighScore(),
+      claimableBadgesCount: claimableBadges.length,
+      onchainSyncCompletedOnce,
+    })
+  }, [networkFromEnv, highScore, claimableBadges.length, onchainSyncCompletedOnce])
+
   // Badges that are already minted onchain
   const mintedBadges = useMemo(
     () =>

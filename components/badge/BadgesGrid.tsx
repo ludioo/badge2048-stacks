@@ -5,6 +5,7 @@ import { useEffect, useMemo, useState } from 'react'
 import { useBadges } from '@/hooks/useBadges'
 import { useStacksWallet } from '@/hooks/useStacksWallet'
 import { BadgeCard } from '@/components/badge/BadgeCard'
+import { loadHighScore } from '@/lib/highScore'
 
 const CACHE_TTL_MS = 60_000 // Cache result per address for 60s
 
@@ -18,9 +19,17 @@ export function BadgesGrid() {
   const { badges } = useBadges()
   const { isAuthenticated, address } = useStacksWallet()
 
-  // Ownership dibaca lewat backend /api/badge-ownership agar tidak CORS/429 dari Hiro.
+  // Ownership dibaca lewat backend /api/badge-ownership (mainnet/testnet dari env).
   const [onchainByTier, setOnchainByTier] = useState<Record<string, number | null> | null>(null)
   const [isSyncing, setIsSyncing] = useState(false)
+  // Current high score as source of truth for "unlocked" — avoids showing claimable from stale localStorage (e.g. testnet).
+  const [highScore, setHighScore] = useState(0)
+  useEffect(() => {
+    setHighScore(loadHighScore())
+    const onFocus = () => setHighScore(loadHighScore())
+    window.addEventListener('focus', onFocus)
+    return () => window.removeEventListener('focus', onFocus)
+  }, [])
 
   useEffect(() => {
     if (!isAuthenticated || !address) {
@@ -55,6 +64,13 @@ export function BadgesGrid() {
           ownershipCache.data = data
           ownershipCache.ts = Date.now()
           setOnchainByTier(data)
+          // Diagnostic: verifikasi API pakai mainnet/testnet (cek header response)
+          const apiNetwork = res.headers.get('X-Stacks-Network')
+          const apiContract = res.headers.get('X-Contract-Address')
+          console.log('[BadgesGrid] API badge-ownership response headers', {
+            'X-Stacks-Network': apiNetwork,
+            'X-Contract-Address': apiContract,
+          })
         }
       } catch {
         if (!cancelled) setOnchainByTier(null)
@@ -87,17 +103,17 @@ export function BadgesGrid() {
       if (tokenId != null) {
         return { ...b, onchainMinted: true, claimed: true, tokenId, unlocked: true }
       }
-      // Not minted onchain: owned/claimed from chain (false); unlocked from badge state
-      // (score-based from useBadges) so /badges matches /claim — tier claimable if unlocked by score.
+      // Not minted onchain: unlocked from current high score only (mainnet/testnet consistency).
+      // Avoids showing claimable from stale localStorage (e.g. old testnet play).
       return {
         ...b,
         onchainMinted: false,
         claimed: false,
         tokenId: undefined,
-        unlocked: b.unlocked,
+        unlocked: highScore >= b.threshold,
       }
     })
-  }, [badges, isAuthenticated, address, onchainByTier])
+  }, [badges, isAuthenticated, address, onchainByTier, highScore])
 
   const sortedBadges = useMemo(
     () => [...effectiveBadges].sort((left, right) => left.threshold - right.threshold),
@@ -113,6 +129,22 @@ export function BadgesGrid() {
   const unlockedCount = effectiveBadges.filter((badge) => badge.unlocked).length
   const progress =
     totalCount === 0 ? 0 : Math.round((unlockedCount / totalCount) * 100)
+
+  // Diagnostic: bantu verifikasi mainnet vs high score (bisa dihapus setelah fix dikonfirmasi)
+  const networkFromEnv =
+    typeof process !== 'undefined' && process.env?.NEXT_PUBLIC_STACKS_NETWORK
+      ? process.env.NEXT_PUBLIC_STACKS_NETWORK
+      : '(not set)'
+  useEffect(() => {
+    console.log('[BadgesGrid] diagnostic', {
+      network: networkFromEnv,
+      highScore,
+      loadHighScoreNow: loadHighScore(),
+      claimableCount,
+      unlockedCount,
+      onchainByTierNull: onchainByTier === null,
+    })
+  }, [networkFromEnv, highScore, claimableCount, unlockedCount, onchainByTier])
 
   return (
     <div className="space-y-6">

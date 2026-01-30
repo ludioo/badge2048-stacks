@@ -115,9 +115,9 @@ cp .env.example .env.local
 | Variable | Required | Description |
 |----------|----------|-------------|
 | `NEXT_PUBLIC_STACKS_NETWORK` | No | `testnet` (default) or `mainnet` |
-| `NEXT_PUBLIC_CONTRACT_ADDRESS` | No* | `{deployer}.badge2048` for on-chain mint; omit to use local-only badges |
+| `NEXT_PUBLIC_CONTRACT_ADDRESS` | No* | `{deployer}.badge2048` for on-chain mint; mainnet example: `SP....badge2048`; testnet: `ST....badge2048` |
 | `NEXT_PUBLIC_CONTRACT_NAME` | No | `badge2048` (default) |
-| `NEXT_PUBLIC_DEPLOYER_ADDRESS` | No | Deployer principal; fallback used if `NEXT_PUBLIC_CONTRACT_ADDRESS` is unset |
+| `NEXT_PUBLIC_DEPLOYER_ADDRESS` | No | Deployer principal; mainnet addresses start with `SP`, testnet with `ST`; fallback used if contract address is unset |
 
 \* Needed for on-chain mint on `/claim` and for badge-ownership API. Game, badges (local), and leaderboard work without it.
 
