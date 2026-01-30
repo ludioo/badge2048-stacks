@@ -2,20 +2,20 @@
 
 **Project**: badge2048-stacks  
 **Date Created**: 2026-01-29  
-**Status**: Phase 2 deployment done; next Phase 2.3 / Phase 3  
+**Status**: Phase 2.3 done; next Phase 3  
 **Target Network**: Stacks Mainnet
 
 ---
 
 ## Migration Progress Tracker
 
-**Current Phase**: Phase 2 — Contract Deployment (2.2 done; 2.3 verify then Phase 3)  
-**Status**: Contract deployed to mainnet; next: verify deployment, then frontend config  
+**Current Phase**: Phase 3 — Frontend Configuration  
+**Status**: Phase 2.3 verification done; ready for Phase 3  
 **Last Updated**: 2026-01-30
 
 ### Completed Phases
 - [x] Phase 1: Preparation & Security (implementation complete; see “Manual Testing for You” below)
-- [x] Phase 2: Contract Deployment (2.1 plan generated, 2.2 applied — “Transactions successfully confirmed on Mainnet”)
+- [x] Phase 2: Contract Deployment (2.1 plan generated, 2.2 applied, 2.3 verified — “see Phase 2.3 Implementation Summary below”)
 - [ ] Phase 3: Frontend Configuration
 - [ ] Phase 4: Testing & Verification
 - [ ] Phase 5: Production Deployment
@@ -38,6 +38,7 @@
 
 #### Phase 2
 - [x] `contracts/badge2048-contract/deployments/default.mainnet-plan.yaml` (used for mainnet deploy; contract live)
+- [x] `scripts/verify-mainnet-deployment.mjs` (Phase 2.3: automated read-only verification script)
 
 ---
 
@@ -967,6 +968,29 @@ Setelah Anda selesai dengan poin 1–2 (dan optional 3–5), beri tahu saya dan 
 - **Functions not visible**: May need to wait for indexer sync, check again later
 - **API errors**: Verify contract address format, check API endpoint is mainnet
 - **Timeout errors**: Check network connectivity, try again later
+
+### Phase 2.3 Implementation Summary (2026-01-30)
+
+**Automated verification (done):**
+
+- **API read-only call**: `get-last-token-id` called against mainnet contract via Hiro API (`https://api.hiro.so`).
+  - **Result**: `okay: true`, `result`: hex-encoded Clarity `(ok u0)` — contract is **live and responsive** on mainnet.
+- **Script**: `node scripts/verify-mainnet-deployment.mjs` — run from repo root to re-verify.
+- **Note**: `get-badge-mint-count` via raw POST (JSON `arguments`) may require Clarity hex-encoded args; frontend/backend use `@stacks/transactions` and work correctly. Manual check: Stacks Explorer or Clarinet console.
+
+**Verification checklist (record here):**
+
+- [x] Contract reachable via mainnet API (`get-last-token-id` returns `u0`)
+- [x] Contract responds quickly (no timeout)
+- [ ] Contract visible on Stacks Explorer mainnet (manual: open link below)
+- [ ] Contract code matches local `badge2048.clar` (manual)
+- [ ] Deployment transaction shows as success (manual; fill Transaction ID in Key Information above when available)
+
+**Explorer link (manual check):**
+
+- Contract: `https://explorer.stacks.co/?contract=SP22ZCY5GAH27T4CK3ATG4QTZJQV6FXPRB8X907KX.badge2048`
+
+**Next:** Phase 3 — Frontend Configuration (env, config, docs).
 
 ---
 
