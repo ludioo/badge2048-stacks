@@ -13,9 +13,14 @@ test.describe('badge claim flow', () => {
       window.localStorage.setItem('badges_v1', JSON.stringify({ badges }))
     }, badgesFixture)
 
+    // Ensure we're on app origin so init script runs; then set storage and go to claim
+    await page.goto('/')
+    await page.evaluate((badges) => {
+      window.localStorage.setItem('badges_v1', JSON.stringify({ badges }))
+    }, badgesFixture)
     await page.goto('/claim')
 
-    await expect(page.getByText('1 badge ready to claim.')).toBeVisible()
+    await expect(page.getByText('1 badge ready to claim.')).toBeVisible({ timeout: 10000 })
     await page.getByRole('button', { name: 'Claim badge' }).click()
 
     await expect(

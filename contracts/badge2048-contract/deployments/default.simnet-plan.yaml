@@ -66,6 +66,6 @@ plan:
         - emulated-contract-publish:
             contract-name: badge2048
             emulated-sender: ST1PQHQKV0RJXZFY1DGX8MNSNYVE3VGZJSRTPGZGM
-            path: "contracts\\badge2048.clar"
+            path: contracts/badge2048.clar
             clarity-version: 4
       epoch: "3.3"

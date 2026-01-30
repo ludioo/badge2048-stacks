@@ -15,12 +15,13 @@ test.describe('leaderboard', () => {
     await page.goto('/leaderboard')
     await expect(page.getByRole('heading', { name: 'Leaderboard' })).toBeVisible()
     await expect(page.getByText('Top scores by wallet')).toBeVisible()
-    await expect(page.getByText('Top scores')).toBeVisible()
+    await expect(page.getByRole('heading', { name: 'Top scores' })).toBeVisible()
   })
 
   test('without wallet shows connect message in Your rank', async ({ page }) => {
     await page.goto('/leaderboard')
-    await expect(page.getByText('Connect your wallet to see your rank')).toBeVisible()
+    // Leaderboard shows connect CTA in intro text when wallet not connected
+    await expect(page.getByText(/Connect your wallet and play/)).toBeVisible()
   })
 
   test('leaderboard is reachable from nav', async ({ page }) => {

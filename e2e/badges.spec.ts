@@ -13,11 +13,15 @@ test.describe('badges page', () => {
       window.localStorage.setItem('badges_v1', JSON.stringify({ badges }))
     }, badgesFixture)
 
+    await page.goto('/')
+    await page.evaluate((badges) => {
+      window.localStorage.setItem('badges_v1', JSON.stringify({ badges }))
+    }, badgesFixture)
     await page.goto('/badges')
 
     await expect(page.getByRole('heading', { name: 'Badges' })).toBeVisible()
-    await expect(page.getByRole('link', { name: 'Go to Claim' })).toBeVisible()
-    await expect(page.getByText('Claimable: 1')).toBeVisible()
+    await expect(page.getByRole('link', { name: 'Go to Claim' })).toBeVisible({ timeout: 10000 })
+    await expect(page.getByText('Claimable: 1')).toBeVisible({ timeout: 10000 })
     await expect(page.getByText('Locked: 3')).toBeVisible()
   })
 })

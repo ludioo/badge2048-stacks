@@ -11,8 +11,9 @@ test.describe('play page', () => {
     const board = page.getByTestId('game-board')
     await expect(board).toBeVisible()
 
+    // Game spawns 2 tiles on init; wait for them (client-side render)
     const tiles = page.getByTestId('tile')
-    expect(await tiles.count()).toBeGreaterThanOrEqual(2)
+    await expect(tiles).toHaveCount(2, { timeout: 10000 })
 
     const soundToggle = page.getByRole('button', { name: /Sound/ })
     await expect(soundToggle).toBeVisible()

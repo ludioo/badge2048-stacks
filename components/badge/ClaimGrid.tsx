@@ -21,7 +21,7 @@ import { cn } from '@/lib/utils'
 import { updateBadgeWithOnchainData } from '@/lib/badges'
 import { loadHighScore } from '@/lib/highScore'
 import { fetchBadgeOwnership, getOwnershipForTier } from '@/lib/stacks/badgeOwnershipClient'
-import { getExplorerUrl } from '@/lib/stacks/config'
+import { getExplorerUrl, apiUrl } from '@/lib/stacks/config'
 import { ERROR_MESSAGES } from '@/lib/stacks/constants'
 
 type TransactionStatus = 'idle' | 'pending' | 'polling' | 'success' | 'error'
@@ -316,10 +316,6 @@ export function ClaimGrid() {
         pollCountRef.current++
         setPollCount(pollCountRef.current)
         console.log(`[ClaimGrid] Polling attempt ${pollCountRef.current}/${maxPolls} for txId:`, normalizedTxId)
-        
-        const apiUrl = process.env.NEXT_PUBLIC_STACKS_NETWORK === 'testnet'
-          ? 'https://api.testnet.hiro.so'
-          : 'https://api.hiro.so'
         
         // Use AbortController for timeout
         const controller = new AbortController()
