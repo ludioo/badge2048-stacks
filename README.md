@@ -136,6 +136,11 @@ npm run build
 npm run start
 ```
 
+### Deploying to Vercel
+
+- **Build command** must be `npm run build` (defined in `vercel.json`). Do **not** override it in Vercel Dashboard with a custom script (e.g. one that exits on production), or production builds will fail.
+- Set environment variables in **Project → Settings → Environment Variables** (see table above; use mainnet values for production).
+
 ---
 
 ## Usage

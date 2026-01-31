@@ -8,8 +8,8 @@
  * ⚠️ For badge ownership reads: prefer GET /api/badge-ownership via
  *    fetchBadgeOwnership() from @/lib/stacks/badgeOwnershipClient.
  *    BadgesGrid & ClaimGrid use the backend API to avoid CORS/429.
- *    This hook remains for test-contract page and future read-only calls
- *    (e.g. high score, metadata) that don't yet have a backend proxy.
+ *    This hook remains for read-only contract calls (e.g. high score, metadata)
+ *    that don't yet have a backend proxy.
  */
 
 import { useState } from 'react';
