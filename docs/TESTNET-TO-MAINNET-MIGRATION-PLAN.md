@@ -10,7 +10,7 @@
 ## Migration Progress Tracker
 
 **Current Phase**: Phase 5 — Production Deployment  
-**Status**: Phase 4 complete (fix “badge owned without refresh” verified)  
+**Status**: Phase 5.1 complete; ready for Vercel deploy (user). See "Ready for Vercel" below. “badge owned without refresh” verified)  
 **Last Updated**: 2026-01-31
 
 ### Completed Phases
@@ -53,6 +53,9 @@
 - [x] `scripts/verify-mainnet-deployment.mjs` (hex-encoded Clarity args for Hiro v2; get-last-token-id + get-badge-mint-count verified)
 - [x] `docs/TESTNET-TO-MAINNET-MIGRATION-PLAN.md` (Phase 4 summary, manual testing, Progress Tracker)
 - [x] **Post–Phase 4 (badge owned without refresh):** `lib/badgeOwnershipCache.ts` (new), `components/badge/BadgesGrid.tsx`, `components/badge/ClaimGrid.tsx` (invalidate cache on claim success so /badges shows Owned without page refresh)
+
+#### Phase 5
+- [x] `docs/TESTNET-TO-MAINNET-MIGRATION-PLAN.md` (Phase 5.1 checklist, Ready for Vercel handoff — deploy & env steps for user)
 
 ---
 
@@ -1749,6 +1752,87 @@ Setelah poin 1–2 (dan opsional 3–4) selesai, Phase 4 dianggap selesai. Konfi
 
 ---
 
+### Phase 5.1 Implementation Summary (2026-01-31)
+
+**Pre-deployment checklist (AI-executed):**
+
+1. **Verify all configurations**
+   - [x] Environment variables: `.env.example` and `lib/stacks/config.ts` use `NEXT_PUBLIC_STACKS_NETWORK`, `NEXT_PUBLIC_CONTRACT_ADDRESS`, `NEXT_PUBLIC_CONTRACT_NAME`, `NEXT_PUBLIC_DEPLOYER_ADDRESS` — no hardcoded mainnet addresses in code; fallback testnet only when env unset (local dev).
+   - [x] Contract address: mainnet `SP22ZCY5GAH27T4CK3ATG4QTZJQV6FXPRB8X907KX.badge2048` (from Key Information).
+   - [x] Network: set via env to `mainnet` for production.
+   - [x] All tests passing: `npm run test` — 111 passed (9 files).
+
+2. **Review code changes**
+   - [x] Config and contract usage: all from env/centralized config; testnet fallback only in `lib/stacks/config.ts` when env empty.
+   - [x] No testnet-specific code blocking production (testnet appears only in fallbacks, comments, and test files).
+   - [x] Debug: many `console.log` in ClaimGrid, BadgesGrid, hooks (diagnostic); optional cleanup later — not blocking deploy.
+   - [x] Documentation: migration plan and README/env docs updated.
+
+3. **Backup / tag**
+   - [ ] Tag current version (user): e.g. `git tag pre-mainnet-deploy-2026-01-31` before deploy (recommended).
+   - [ ] Rollback: revert commit and redeploy on Vercel, or use Vercel "Promote to Production" to previous deployment.
+
+4. **Build**
+   - [x] `npm run build:webpack` — success (Next.js 16.1.4, .env.local loaded).
+
+**Conclusion:** Ready for production deploy. Deploy to Vercel is done by user; see **Ready for Vercel** below.
+
+---
+
+### Ready for Vercel — Langkah Deploy & Environment Variables
+
+**Anda yang melakukan deploy di Vercel.** Berikut langkah dan env yang perlu diisi.
+
+#### Langkah 1: Push code (jika belum)
+
+```bash
+git add .
+git status   # pastikan hanya file yang ingin deploy
+git commit -m "chore: ready for mainnet production deploy"
+git push origin mainnet   # atau branch yang dipakai Vercel (mis. main)
+```
+
+#### Langkah 2: Buat / pilih project di Vercel
+
+1. Buka [vercel.com](https://vercel.com) → login.
+2. **Import** repo `badge2048-stacks` (atau pilih project yang sudah ada).
+3. **Framework Preset**: Next.js (auto-detect).
+4. **Root Directory**: kosongkan (root repo = `./`).
+5. **Build Command**: `npm run build` atau `npm run build:webpack` (disarankan `build:webpack` untuk build stabil seperti lokal).
+6. **Output Directory**: default Next.js (biarkan default).
+7. Jangan klik Deploy dulu — set Environment Variables dulu (Langkah 3).
+
+#### Langkah 3: Environment Variables di Vercel
+
+Di Vercel: **Project → Settings → Environment Variables**. Tambahkan variabel berikut untuk **Production** (dan optional untuk Preview jika ingin preview mainnet):
+
+| Name | Value | Environment | Wajib |
+|------|--------|-------------|--------|
+| `NEXT_PUBLIC_STACKS_NETWORK` | `mainnet` | Production (dan Preview jika mau) | Ya |
+| `NEXT_PUBLIC_CONTRACT_ADDRESS` | `SP22ZCY5GAH27T4CK3ATG4QTZJQV6FXPRB8X907KX.badge2048` | Production | Ya |
+| `NEXT_PUBLIC_CONTRACT_NAME` | `badge2048` | Production | Ya |
+| `NEXT_PUBLIC_DEPLOYER_ADDRESS` | `SP22ZCY5GAH27T4CK3ATG4QTZJQV6FXPRB8X907KX` | Production | Ya |
+
+- Tidak ada secret/private key yang perlu diisi; semua variabel di atas **NEXT_PUBLIC_** (aman untuk client).
+- Setelah menambah/mengubah env, **redeploy** agar env dipakai (Deployments → ... → Redeploy).
+
+#### Langkah 4: Deploy
+
+1. Klik **Deploy** (atau trigger deploy lewat push).
+2. Tunggu build selesai; cek log bila ada error.
+3. Catat **Production URL** (mis. `https://badge2048-stacks.vercel.app`).
+
+#### Langkah 5: Verifikasi setelah deploy
+
+1. Buka Production URL → pastikan halaman load.
+2. Cek network: wallet connect → pastikan koneksi ke **mainnet** (bukan testnet).
+3. Test halaman: `/`, `/play`, `/claim`, `/badges`, `/leaderboard`.
+4. (Opsional) Claim flow: mainnet contract read/write dan badge ownership tampil benar.
+
+Setelah Anda selesai deploy dan verifikasi, beri tahu saya — kita lanjut **Phase 5.3 Post-Deployment Verification** (functional test, performance, monitoring) dan update Progress Tracker.
+
+---
+
 ## Phase 6: Post-Migration Tasks
 
 **Duration**: Ongoing  
@@ -2607,11 +2691,11 @@ Use this template to track execution progress:
   - [x] Complete flows tested: Yes (claim → View badges → Owned tanpa refresh — verified by user)
 
 ## Phase 5: Production Deployment
-- [ ] 5.1 Pre-Deployment Checklist
-  - [ ] All configs verified: [Yes/No]
-  - [ ] Code reviewed: [Yes/No]
-  - [ ] Backup created: [Yes/No]
-- [ ] 5.2 Deploy to Production
+- [x] 5.1 Pre-Deployment Checklist (2026-01-31)
+  - [x] All configs verified: Yes (env from config; contract mainnet; tests 111 passed; build:webpack OK)
+  - [x] Code reviewed: Yes (no blocking testnet/debug; optional console.log cleanup later)
+  - [ ] Backup created: User to tag if desired (e.g. pre-mainnet-deploy-2026-01-31)
+- [ ] 5.2 Deploy to Production (user deploys on Vercel — see "Ready for Vercel" above)
   - [ ] Frontend deployed: [Yes/No]
   - [ ] Deployment verified: [Yes/No]
 - [ ] 5.3 Post-Deployment Verification
