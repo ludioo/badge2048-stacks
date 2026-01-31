@@ -1,16 +1,16 @@
-﻿# Testnet to Mainnet Migration Plan
+# Testnet to Mainnet Migration Plan
 
 **Project**: badge2048-stacks  
 **Date Created**: 2026-01-29  
-**Status**: Phase 5.2 done (Vercel production deploy succeeded); next Phase 5.3 / Phase 6  
-**Target Network**: Stacks Mainnet
+**Status**: Mainnet migration complete (Phase 1–5.3 done; Phase 6 in progress)  
+**Target Network**: Stacks Mainnet ✅
 
 ---
 
 ## Migration Progress Tracker
 
-**Current Phase**: Phase 5.3 / Phase 6 — Post-Deployment Verification & Post-Migration  
-**Status**: Phase 5.2 complete — Vercel production deploy succeeded via CLI (2026-01-31). Next: Phase 5.3 functional verification, then Phase 6.
+**Current Phase**: Phase 6 — Post-Migration Tasks  
+**Status**: Phase 6.1 complete; Phase 6.2 draft complete (2026-01-31): health API + docs/MONITORING.md + .env.example. Anda isi tool/secret (Uptime Robot, Sentry) dan centang checklist di MONITORING.md. Next: Phase 6.3 Communication setelah monitoring aman.
 **Last Updated**: 2026-01-31
 
 ### Completed Phases
@@ -60,6 +60,12 @@
 - [x] `vercel.json` (mainnet env vars, `outputDirectory`: `.next`, `devCommand`; used for Vercel CLI deploy)
 - [x] `tsconfig.json` (exclude `contracts` so Next.js build does not type-check contract vitest.config.ts)
 - [x] `docs/VERCEL-DEPLOY.md` (section 4b: Output Directory error fix and checklist)
+
+#### Phase 6.2
+- [x] `app/api/health/route.ts` (GET /api/health — contract reachable check via Hiro read-only)
+- [x] `docs/MONITORING.md` (checklist & draft konfigurasi: health, Sentry, analytics, maintenance; Anda isi tool/secret)
+- [x] `.env.example` (optional NEXT_PUBLIC_SENTRY_DSN / SENTRY_DSN)
+- [x] `docs/TESTNET-TO-MAINNET-MIGRATION-PLAN.md` (Phase 6.2 implementation summary, checklist)
 
 ---
 
@@ -1851,6 +1857,52 @@ Setelah Anda selesai deploy dan verifikasi, beri tahu saya "” kita lanjut **Ph
 
 ---
 
+### Phase 5.3 Implementation Summary (2026-01-31)
+
+**Automated verification (AI-executed):**
+
+1. **Unit tests**
+   - [x] `npm run test` — 111 passed (9 files).
+
+2. **Mainnet contract read-only**
+   - [x] `node scripts/verify-mainnet-deployment.mjs` — get-last-token-id and get-badge-mint-count OK; contract live on mainnet.
+
+3. **Production build**
+   - [x] `npm run build` (Next.js with webpack) — compiled successfully; static/dynamic routes generated.
+
+**Manual verification (for you):**
+
+- See **Manual Testing for You (Phase 5.3)** below. Setelah Anda selesai cek production URL (load, wallet mainnet, claim/badges/leaderboard), centang checklist di sana dan beri tahu jika ada issue — lalu kita lanjut Phase 6.
+
+---
+
+### Manual Testing for You (Phase 5.3)
+
+Lakukan di **production URL** (mis. `https://badge2048-stacks-cle4gz9s6-hakuryuukous-projects.vercel.app` atau URL project Vercel Anda):
+
+1. **Site load**
+   - [x] Home `/` load tanpa error.
+   - [x] Halaman `/play`, `/claim`, `/badges`, `/leaderboard` load.
+
+2. **Network & wallet**
+   - [x] Connect wallet → pastikan network **mainnet** (bukan testnet).
+   - [x] UI menampilkan mainnet / contract mainnet jika ada indikator.
+
+3. **Contract & flows**
+   - [x] `/claim`: eligibility dan claim flow jalan (baca dari mainnet contract).
+   - [x] `/badges`: daftar badge dan status "Owned" tampil benar setelah claim.
+   - [x] `/leaderboard`: high score / leaderboard load (mainnet).
+
+4. **Error handling**
+   - [x] Disconnect wallet atau address tanpa badge → pesan error/empty state jelas (tidak blank/crash).
+
+5. **Optional: device/browser**
+   - [x] Test di mobile view atau browser lain jika perlu.
+
+**Status (2026-01-31):** Manual testing selesai oleh user; semua aman. Lanjut Phase 6.
+
+---
+
 ## Phase 6: Post-Migration Tasks
 
 **Duration**: Ongoing  
@@ -1862,19 +1914,19 @@ Setelah Anda selesai deploy dan verifikasi, beri tahu saya "” kita lanjut **Ph
 
 **Tasks**:
 1. **Update main README**
-   - [ ] Contract address updated
-   - [ ] Environment variable examples updated
-   - [ ] Deployment instructions updated
+   - [x] Contract address / mainnet status (live on Mainnet; link to migration plan)
+   - [x] Environment variable examples (mainnet for production)
+   - [x] Deployment instructions (link to migration plan Phase 5 / VERCEL-DEPLOY)
 
 2. **Update contract README**
-   - [ ] Mainnet address added
-   - [ ] Explorer links updated
-   - [ ] Deployment steps documented
+   - [x] Mainnet address added (already present; mainnet deploy date 2026-01-30 added)
+   - [x] Explorer links updated (already present)
+   - [x] Deployment steps documented (link to migration plan)
 
 3. **Update internal docs**
-   - [ ] Migration completed documented
-   - [ ] Mainnet addresses recorded
-   - [ ] Lessons learned documented
+   - [x] Migration completed documented (status at top of this doc; Phase 5.3 complete)
+   - [x] Mainnet addresses recorded (Key Information Recorded; contract README)
+   - [ ] Lessons learned documented (optional; add to Issues & Resolutions or appendix if needed)
 
 **Deliverables**:
 - All documentation updated
@@ -1886,24 +1938,29 @@ Setelah Anda selesai deploy dan verifikasi, beri tahu saya "” kita lanjut **Ph
 
 **Tasks**:
 1. **Set up error monitoring**
-   - Configure error tracking (Sentry, etc.)
-   - Set up alerts for critical errors
-   - Monitor transaction failure rates
+   - [ ] Configure error tracking (Sentry, etc.) — **Anda isi tool/secret**; langkah di [docs/MONITORING.md](MONITORING.md).
+   - [ ] Set up alerts for critical errors (Sentry / Vercel / layanan pilihan).
+   - [ ] (Opsional) Monitor transaction failure rates (Stacks Explorer / indexer).
 
 2. **Set up analytics**
-   - Track user interactions
-   - Monitor contract usage
-   - Track badge minting activity
+   - [ ] (Opsional) Track user interactions (Vercel Analytics, Plausible, GA, dll.).
+   - [ ] (Opsional) Monitor contract usage / badge minting (Explorer, indexer).
 
 3. **Regular health checks**
-   - Daily verification of contract accessibility
-   - Weekly review of error logs
-   - Monthly review of usage metrics
+   - [x] **Health endpoint tersedia**: `GET /api/health` — verifikasi contract reachable (Hiro read-only). Implementasi: `app/api/health/route.ts`.
+   - [ ] Daftar health check di Uptime Robot (atau Cronitor/Better Uptime); alert jika 503.
+   - [ ] Rutinitas: harian (health), mingguan (error logs), bulanan (usage) — checklist di [docs/MONITORING.md](MONITORING.md).
 
 **Deliverables**:
-- Monitoring configured
-- Alerts set up
-- Health check process established
+- Health check API live (`/api/health`); Anda daftar di layanan uptime + isi error monitoring (Sentry/tool).
+- Checklist dan draft konfigurasi: **[docs/MONITORING.md](MONITORING.md)**.
+- Env placeholder untuk monitoring: `.env.example` (SENTRY_DSN, dll.); Anda isi di Vercel.
+
+**Phase 6.2 Implementation Summary (2026-01-31):**
+- **Health API**: `GET /api/health` — returns 200 when contract reachable, 503 when Hiro/contract unreachable. No secrets; pakai config existing.
+- **Docs**: `docs/MONITORING.md` — checklist step-by-step (health, Sentry, analytics, maintenance). Anda isi tool (Uptime Robot, Sentry DSN, dll.).
+- **Env**: `.env.example` — optional `NEXT_PUBLIC_SENTRY_DSN` / `SENTRY_DSN`; Anda set di Vercel bila pakai Sentry.
+- **Sisa untuk Anda**: (1) Daftar `/api/health` di Uptime Robot; (2) Pilih & konfigurasi error monitoring (Sentry); (3) Centang checklist di MONITORING.md setelah selesai.
 
 ### 6.3 Communication
 
@@ -2713,18 +2770,20 @@ Use this template to track execution progress:
   - [x] All configs verified: Yes (env from config; contract mainnet; tests 111 passed; build:webpack OK)
   - [x] Code reviewed: Yes (no blocking testnet/debug; optional console.log cleanup later)
   - [ ] Backup created: User to tag if desired (e.g. pre-mainnet-deploy-2026-01-31)
-- [ ] 5.2 Deploy to Production (user deploys on Vercel "” see "Ready for Vercel" above)
-  - [ ] Frontend deployed: [Yes/No]
-  - [ ] Deployment verified: [Yes/No]
-- [ ] 5.3 Post-Deployment Verification
-  - [ ] Production site tested: [Yes/No]
-  - [ ] Monitoring configured: [Yes/No]
+- [x] 5.2 Deploy to Production (user deploys on Vercel — see "Ready for Vercel" above)
+  - [x] Frontend deployed: Yes (Vercel CLI 2026-01-31)
+  - [x] Deployment verified: Yes (production URL assigned)
+- [x] 5.3 Post-Deployment Verification (2026-01-31)
+  - [x] Automated: tests 111 passed, mainnet contract read-only OK, build OK
+  - [x] Manual: Production site tested by user — semua aman
+  - [ ] Monitoring configured: [Yes/No] (Phase 6.2)
 
 ## Phase 6: Post-Migration Tasks
-- [ ] 6.1 Documentation Updates
-  - [ ] All docs updated: [Yes/No]
-- [ ] 6.2 Monitoring & Maintenance
-  - [ ] Monitoring configured: [Yes/No]
+- [x] 6.1 Documentation Updates (2026-01-31)
+  - [x] All docs updated: README (mainnet status, deploy links), contract README (mainnet date, migration link), migration plan status
+- [x] 6.2 Monitoring & Maintenance (draft 2026-01-31)
+  - [x] Health check API: GET /api/health (contract reachable); docs/MONITORING.md + .env.example placeholder
+  - [ ] User: daftar health di Uptime Robot; konfigurasi Sentry/tool; centang checklist di MONITORING.md
 - [ ] 6.3 Communication
   - [ ] Public info updated: [Yes/No]
 

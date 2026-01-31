@@ -4,6 +4,8 @@
 
 **Blockchain: [Stacks](https://stacks.co) ($STX)** — This project uses Stacks only. All on-chain logic (Clarity contracts, Stacks Connect, leaderboard wallet identity, badge NFT minting) is Stacks-specific. For another chain (EVM, Solana, etc.) you need different contracts, SDKs, and wallet integration.
 
+**Status:** Live on **Stacks Mainnet** (contract and frontend). Testnet also supported for development. See [docs/TESTNET-TO-MAINNET-MIGRATION-PLAN.md](docs/TESTNET-TO-MAINNET-MIGRATION-PLAN.md) for migration details.
+
 ---
 
 ## Overview
@@ -139,8 +141,9 @@ npm run start
 ### Deploying to Vercel
 
 - **Build command** must be `npm run build` (defined in `vercel.json`). Do **not** override it in Vercel Dashboard with a custom script (e.g. one that exits on production), or production builds will fail.
-- Set environment variables in **Project → Settings → Environment Variables** (see table above; use mainnet values for production).
+- Set environment variables in **Project → Settings → Environment Variables** (see table above; use **mainnet** values for production: `NEXT_PUBLIC_STACKS_NETWORK=mainnet`, `NEXT_PUBLIC_CONTRACT_ADDRESS=<deployer>.badge2048`, etc.).
 - If production deploy fails with a script that exits on `VERCEL_ENV=production`, see **[docs/VERCEL-DEPLOY.md](docs/VERCEL-DEPLOY.md)** for where it is set (Dashboard override) and how to fix it.
+- Full mainnet deploy steps and checklist: **[docs/TESTNET-TO-MAINNET-MIGRATION-PLAN.md](docs/TESTNET-TO-MAINNET-MIGRATION-PLAN.md)** (Phase 5 "Ready for Vercel").
 
 ### npm audit (vulnerabilities)
 

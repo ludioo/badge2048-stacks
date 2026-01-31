@@ -81,8 +81,10 @@ clarinet deployments apply --mainnet
 ## Contract Address
 
 - **Testnet**: `ST22ZCY5GAH27T4CK3ATG4QTZJQV6FXPRBAQ0BRW5.badge2048` ✅ **DEPLOYED**
-- **Mainnet**: `SP22ZCY5GAH27T4CK3ATG4QTZJQV6FXPRB8X907KX.badge2048` ✅ **DEPLOYED**
+- **Mainnet**: `SP22ZCY5GAH27T4CK3ATG4QTZJQV6FXPRB8X907KX.badge2048` ✅ **DEPLOYED** (2026-01-30)
 
 ### Verify on Stacks Explorer
 - Testnet: https://explorer.stacks.co/?chain=testnet&contract=ST22ZCY5GAH27T4CK3ATG4QTZJQV6FXPRBAQ0BRW5.badge2048
 - Mainnet: https://explorer.stacks.co/?contract=SP22ZCY5GAH27T4CK3ATG4QTZJQV6FXPRB8X907KX.badge2048
+
+Mainnet deployment and frontend production deploy are documented in the repo root: [docs/TESTNET-TO-MAINNET-MIGRATION-PLAN.md](../../docs/TESTNET-TO-MAINNET-MIGRATION-PLAN.md).
