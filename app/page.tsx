@@ -8,12 +8,12 @@ export const metadata: Metadata = {
 
 export default function Home() {
   return (
-    <div className="flex w-full flex-1 items-center justify-center py-8 sm:py-12">
-      <div className="text-center max-w-2xl">
-        <h1 className="text-2xl sm:text-4xl font-bold text-[#F4622F] mb-4 px-2 sm:px-0">
+    <div className="flex w-full flex-1 items-center justify-center">
+      <div className="text-center max-w-2xl w-full">
+        <h1 className="text-2xl sm:text-4xl font-bold text-[#F4622F] mb-2">
           Welcome to badge2048-stacks
         </h1>
-        <p className="text-base sm:text-lg text-[#4B5563] mb-6 sm:mb-8 px-2 sm:px-0">
+        <p className="text-base sm:text-lg text-[#4B5563] mb-6 sm:mb-8">
           Play the classic 2048 game and collect badges by achieving high scores!
         </p>
         <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 justify-center">

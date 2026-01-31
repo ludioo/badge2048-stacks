@@ -139,7 +139,7 @@ export function BadgesGrid() {
   return (
     <div className="space-y-6">
       {isAuthenticated && address && isSyncing && (
-        <div className="rounded-lg border border-[#FB6331] bg-[#FD9E7F]/20 p-3 text-sm text-[#F4622F]">
+        <div className="rounded-lg border border-[#FD9E7F]/50 bg-[#FD9E7F]/15 p-3 text-sm text-[#171717]">
           <p className="font-medium">Checking badge status with blockchain…</p>
         </div>
       )}
@@ -174,7 +174,7 @@ export function BadgesGrid() {
         <div className="rounded-full border border-slate-200 bg-white px-3 py-1">
           Owned: {claimedCount}
         </div>
-        <div className="rounded-full border border-[#FB6331] bg-[#FD9E7F]/20 px-3 py-1 text-[#F4622F]">
+        <div className="rounded-full border border-[#FD9E7F]/50 bg-[#FD9E7F]/15 px-3 py-1 text-[#171717] font-medium">
           Claimable: {claimableCount}
         </div>
         <div className="rounded-full border border-slate-200 bg-slate-50 px-3 py-1 text-slate-500">

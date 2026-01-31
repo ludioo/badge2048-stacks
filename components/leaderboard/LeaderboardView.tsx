@@ -11,10 +11,10 @@ export function LeaderboardView() {
   const { address } = useStacksWallet()
 
   return (
-    <div className="mx-auto w-full max-w-2xl px-4">
+    <div className="mx-auto w-full max-w-2xl">
       <div className="mb-6 sm:mb-8">
-        <h1 className="text-2xl sm:text-3xl font-bold text-[#F4622F]">Leaderboard</h1>
-        <p className="mt-1 text-sm text-[#4B5563]">
+        <h1 className="text-2xl sm:text-3xl font-bold text-[#F4622F] mb-2">Leaderboard</h1>
+        <p className="text-sm text-[#4B5563]">
           Top scores by wallet. Connect your wallet and play to submit your score.
         </p>
       </div>
@@ -32,12 +32,12 @@ export function LeaderboardView() {
             </div>
           )}
           {status === 'error' && (
-            <div className="rounded-xl border border-[#FB6331] bg-[#FD9E7F]/20 px-4 py-4 text-[#E8552A]">
+            <div className="rounded-xl border border-[#FD9E7F]/50 bg-[#FD9E7F]/15 px-4 py-4 text-[#171717]">
               <p className="font-medium">{error ?? 'Failed to load leaderboard'}</p>
               <button
                 type="button"
                 onClick={() => refetch()}
-                className="mt-2 text-sm font-medium underline hover:no-underline"
+                className="mt-2 text-sm font-medium text-[#F4622F] underline hover:no-underline hover:text-[#E8552A]"
               >
                 Try again
               </button>

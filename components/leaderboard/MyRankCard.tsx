@@ -25,14 +25,14 @@ export function MyRankCard({ address }: MyRankCardProps) {
 
   if (status === 'success' && data) {
     return (
-      <div className="rounded-xl border border-[#FB6331] bg-[#FD9E7F]/20 px-4 py-3">
+      <div className="rounded-xl border border-[#FD9E7F]/50 bg-[#FD9E7F]/15 px-4 py-3">
         <div className="flex flex-wrap items-center justify-between gap-2">
           <div>
-            <p className="text-xs font-semibold uppercase tracking-wide text-[#F4622F]">Your rank</p>
-            <p className="text-lg font-bold text-[#E8552A]">
+            <p className="text-xs font-semibold uppercase tracking-wide text-[#374151]">Your rank</p>
+            <p className="text-lg font-bold text-[#171717]">
               #{data.rank} of {data.total}
             </p>
-            <p className="text-sm text-[#F4622F]">Best score: {data.score.toLocaleString()}</p>
+            <p className="text-sm text-[#374151]">Best score: {data.score.toLocaleString()}</p>
           </div>
         </div>
       </div>

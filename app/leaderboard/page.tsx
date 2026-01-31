@@ -8,7 +8,7 @@ export const metadata: Metadata = {
 
 export default function LeaderboardPage() {
   return (
-    <div className="mx-auto w-full max-w-2xl py-4 sm:py-8">
+    <div className="mx-auto w-full max-w-2xl">
       <LeaderboardView />
     </div>
   )
