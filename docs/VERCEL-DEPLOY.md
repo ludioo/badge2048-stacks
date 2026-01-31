@@ -78,6 +78,23 @@ No code changes are required in the repo; the fix is **only** removing or correc
 
 ---
 
+## 4b. Output Directory error: "   ./" not found
+
+**Error:** `The Next.js output directory "   ./" was not found at "/vercel/path0/   ./"`
+
+**Cause:** During `vercel link`, "What's your Output Directory?" was answered with `./` **with leading spaces** (e.g. `   ./`). That value is saved in the project’s Build settings. Next.js outputs to **`.next`**, not `./`, so the deploy fails.
+
+**Fix (both):**
+
+1. **Vercel Dashboard (recommended):**  
+   **Settings** → **Build & Development Settings** → **Output Directory** → **clear the field** (leave empty) so Vercel uses the Next.js default (`.next`). Save.
+
+2. **Repo:** `vercel.json` now has `"outputDirectory": ".next"` so future deploys use the correct path even if the Dashboard had a wrong value.
+
+When linking a new project, for "What's your Output Directory?" either leave the default or type `.` or `.next` with **no leading/trailing spaces**.
+
+---
+
 ## 5. Double-check (local)
 
 ```bash

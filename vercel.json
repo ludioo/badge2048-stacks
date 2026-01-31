@@ -2,7 +2,13 @@
   "framework": "nextjs",
   "buildCommand": "npm run build",
   "installCommand": "npm install",
+  "devCommand": "next dev --port $PORT",
+  "outputDirectory": ".next",
   "env": {
-    "NEXT_TELEMETRY_DISABLED": "1"
+    "NEXT_TELEMETRY_DISABLED": "1",
+    "NEXT_PUBLIC_STACKS_NETWORK": "mainnet",
+    "NEXT_PUBLIC_CONTRACT_ADDRESS": "SP22ZCY5GAH27T4CK3ATG4QTZJQV6FXPRB8X907KX.badge2048",
+    "NEXT_PUBLIC_CONTRACT_NAME": "badge2048",
+    "NEXT_PUBLIC_DEPLOYER_ADDRESS": "SP22ZCY5GAH27T4CK3ATG4QTZJQV6FXPRB8X907KX"
   }
 }

@@ -1,24 +1,24 @@
-# Testnet to Mainnet Migration Plan
+﻿# Testnet to Mainnet Migration Plan
 
 **Project**: badge2048-stacks  
 **Date Created**: 2026-01-29  
-**Status**: Phase 4 done; next Phase 5 (Production Deployment)  
+**Status**: Phase 5.2 done (Vercel production deploy succeeded); next Phase 5.3 / Phase 6  
 **Target Network**: Stacks Mainnet
 
 ---
 
 ## Migration Progress Tracker
 
-**Current Phase**: Phase 5 — Production Deployment  
-**Status**: Phase 5.1 complete; ready for Vercel deploy (user). See "Ready for Vercel" below. “badge owned without refresh” verified)  
+**Current Phase**: Phase 5.3 / Phase 6 — Post-Deployment Verification & Post-Migration  
+**Status**: Phase 5.2 complete — Vercel production deploy succeeded via CLI (2026-01-31). Next: Phase 5.3 functional verification, then Phase 6.
 **Last Updated**: 2026-01-31
 
 ### Completed Phases
-- [x] Phase 1: Preparation & Security (implementation complete; see “Manual Testing for You” below)
-- [x] Phase 2: Contract Deployment (2.1 plan generated, 2.2 applied, 2.3 verified — “see Phase 2.3 Implementation Summary below”)
+- [x] Phase 1: Preparation & Security (implementation complete; see "Manual Testing for You" below)
+- [x] Phase 2: Contract Deployment (2.1 plan generated, 2.2 applied, 2.3 verified — "see Phase 2.3 Implementation Summary below")
 - [x] Phase 3: Frontend Configuration (see Phase 3 Implementation Summary and Manual Testing below)
-- [x] Phase 4: Testing & Verification (automated + manual; “badge owned without refresh” fix verified by user)
-- [ ] Phase 5: Production Deployment
+- [x] Phase 4: Testing & Verification (automated + manual; "badge owned without refresh" fix verified by user)
+- [x] Phase 5: Production Deployment (5.1 checklist, 5.2 Vercel CLI deploy — see Phase 5.2 summary below)
 - [ ] Phase 6: Post-Migration Tasks
 
 ### Key Information Recorded
@@ -26,6 +26,7 @@
 - Contract Address: `SP22ZCY5GAH27T4CK3ATG4QTZJQV6FXPRB8X907KX.badge2048`
 - Transaction ID: _(isi jika ada dari output deploy; atau cek di Stacks Explorer)_
 - Deployment Date: 2026-01-30
+- **Production URL**: `https://badge2048-stacks-cle4gz9s6-hakuryuukous-projects.vercel.app` (Vercel production 2026-01-31; main project URL may also be `https://badge2048-stacks-hakuryuukous-projects.vercel.app`)
 
 ### Files Modified During Migration
 
@@ -52,10 +53,13 @@
 #### Phase 4
 - [x] `scripts/verify-mainnet-deployment.mjs` (hex-encoded Clarity args for Hiro v2; get-last-token-id + get-badge-mint-count verified)
 - [x] `docs/TESTNET-TO-MAINNET-MIGRATION-PLAN.md` (Phase 4 summary, manual testing, Progress Tracker)
-- [x] **Post–Phase 4 (badge owned without refresh):** `lib/badgeOwnershipCache.ts` (new), `components/badge/BadgesGrid.tsx`, `components/badge/ClaimGrid.tsx` (invalidate cache on claim success so /badges shows Owned without page refresh)
+- [x] **Post—Phase 4 (badge owned without refresh):** `lib/badgeOwnershipCache.ts` (new), `components/badge/BadgesGrid.tsx`, `components/badge/ClaimGrid.tsx` (invalidate cache on claim success so /badges shows Owned without page refresh)
 
 #### Phase 5
 - [x] `docs/TESTNET-TO-MAINNET-MIGRATION-PLAN.md` (Phase 5.1 checklist, Ready for Vercel handoff — deploy & env steps for user)
+- [x] `vercel.json` (mainnet env vars, `outputDirectory`: `.next`, `devCommand`; used for Vercel CLI deploy)
+- [x] `tsconfig.json` (exclude `contracts` so Next.js build does not type-check contract vitest.config.ts)
+- [x] `docs/VERCEL-DEPLOY.md` (section 4b: Output Directory error fix and checklist)
 
 ---
 
@@ -99,23 +103,23 @@ This plan uses a **hybrid execution model**:
 
 ### Execution Flow
 
-1. **Read current phase** → Understand objectives and tasks
-2. **Check prerequisites** → Verify previous phase completed
-3. **Execute tasks** → Perform automated tasks, request human for manual tasks
-4. **Verify completion** → Run verification commands
-5. **Document progress** → Update status, record results
-6. **Proceed to next phase** → Only after verification passes
+1. **Read current phase** â†’ Understand objectives and tasks
+2. **Check prerequisites** â†’ Verify previous phase completed
+3. **Execute tasks** â†’ Perform automated tasks, request human for manual tasks
+4. **Verify completion** â†’ Run verification commands
+5. **Document progress** â†’ Update status, record results
+6. **Proceed to next phase** â†’ Only after verification passes
 
 ### Checkpoints & User Input Points
 
-**⚠️ STOP AND WAIT FOR USER INPUT at these points**:
+**âš ï¸ STOP AND WAIT FOR USER INPUT at these points**:
 
-1. **Phase 1.1**: After wallet setup instructions → Wait for user to provide mainnet wallet address
-2. **Phase 1.2**: After Mainnet.toml template → Wait for user to add mnemonic (AI cannot access secrets)
-3. **Phase 2.2**: Before `clarinet deployments apply` → Wait for user confirmation (IRREVERSIBLE)
-4. **Phase 2.2**: After deployment command → Wait for user to provide transaction ID
-5. **Phase 3.1**: When updating `.env.local` → Wait for user to provide mainnet contract address
-6. **Phase 5.2**: Before production deployment → Wait for user confirmation
+1. **Phase 1.1**: After wallet setup instructions â†’ Wait for user to provide mainnet wallet address
+2. **Phase 1.2**: After Mainnet.toml template â†’ Wait for user to add mnemonic (AI cannot access secrets)
+3. **Phase 2.2**: Before `clarinet deployments apply` â†’ Wait for user confirmation (IRREVERSIBLE)
+4. **Phase 2.2**: After deployment command â†’ Wait for user to provide transaction ID
+5. **Phase 3.1**: When updating `.env.local` â†’ Wait for user to provide mainnet contract address
+6. **Phase 5.2**: Before production deployment â†’ Wait for user confirmation
 
 ### State Tracking
 
@@ -146,11 +150,11 @@ Track progress using this format:
 ### Error Handling
 
 If an error occurs:
-1. **Stop execution** → Do not proceed to next step
-2. **Document error** → Record error message, step, and context
-3. **Check troubleshooting** → Review "Common Errors & Solutions" section
-4. **Request user input** → If manual intervention needed
-5. **Retry or fix** → After resolving issue, retry from failed step
+1. **Stop execution** â†’ Do not proceed to next step
+2. **Document error** â†’ Record error message, step, and context
+3. **Check troubleshooting** â†’ Review "Common Errors & Solutions" section
+4. **Request user input** â†’ If manual intervention needed
+5. **Retry or fix** â†’ After resolving issue, retry from failed step
 
 ### Verification Strategy
 
@@ -193,7 +197,7 @@ Track all file changes made during migration:
 
 ### Current State
 
-- **Testnet Contract**: `ST22ZCY5GAH27T4CK3ATG4QTZJQV6FXPRBAQ0BRW5.badge2048` ✅ Deployed
+- **Testnet Contract**: `ST22ZCY5GAH27T4CK3ATG4QTZJQV6FXPRBAQ0BRW5.badge2048` âœ… Deployed
 - **Network Configuration**: Centralized in `lib/stacks/config.ts`
 - **Environment Variables**: Managed via `.env.local` and `.env.example`
 - **Frontend**: Fully functional on testnet
@@ -211,11 +215,11 @@ Track all file changes made during migration:
 
 **Critical dependencies between phases**:
 
-- **Phase 1 → Phase 2**: Must have mainnet wallet address and Mainnet.toml configured
-- **Phase 2 → Phase 3**: Must have mainnet contract address from deployment
-- **Phase 3 → Phase 4**: Must have all config files updated
-- **Phase 4 → Phase 5**: Must have all tests passing
-- **Phase 5 → Phase 6**: Must have production deployment complete
+- **Phase 1 â†’ Phase 2**: Must have mainnet wallet address and Mainnet.toml configured
+- **Phase 2 â†’ Phase 3**: Must have mainnet contract address from deployment
+- **Phase 3 â†’ Phase 4**: Must have all config files updated
+- **Phase 4 â†’ Phase 5**: Must have all tests passing
+- **Phase 5 â†’ Phase 6**: Must have production deployment complete
 
 **Prerequisites**:
 - [ ] Git repository access
@@ -263,13 +267,13 @@ Before starting the migration, ensure all items below are completed:
 **Duration**: 1-2 days  
 **Priority**: Critical
 
-**⚠️ IMPORTANT**: Complete all tasks in this phase before proceeding. Do not skip verification steps.
+**âš ï¸ IMPORTANT**: Complete all tasks in this phase before proceeding. Do not skip verification steps.
 
 ### 1.1 Mainnet Wallet Setup
 
 **Objective**: Prepare a secure mainnet wallet for contract deployment
 
-**⚠️ AI EXECUTION NOTE**: This task requires human action. AI should provide instructions and wait for user input.
+**âš ï¸ AI EXECUTION NOTE**: This task requires human action. AI should provide instructions and wait for user input.
 
 **Tasks**:
 1. **Create or verify mainnet wallet** (HUMAN ACTION REQUIRED)
@@ -317,7 +321,7 @@ Before starting the migration, ensure all items below are completed:
 ```bash
 # Verify address format (after user provides it)
 # Address should start with SP (mainnet), not ST (testnet)
-echo "{MAINNET_ADDRESS}" | grep -q "^SP" && echo "✓ Valid mainnet address" || echo "✗ Invalid: must start with SP"
+echo "{MAINNET_ADDRESS}" | grep -q "^SP" && echo "âœ“ Valid mainnet address" || echo "âœ— Invalid: must start with SP"
 
 # Check wallet balance (optional, via Explorer API)
 # curl "https://api.hiro.so/extended/v1/address/{MAINNET_ADDRESS}/stx" | jq '.balance'
@@ -360,7 +364,7 @@ echo "{MAINNET_ADDRESS}" | grep -q "^SP" && echo "✓ Valid mainnet address" || 
    - Verify the file is in `.gitignore` (check `contracts/badge2048-contract/.gitignore` contains `**/settings/Mainnet.toml`)
    - **NEVER** commit this file to repository
    
-   **⚠️ AI EXECUTION NOTE**: 
+   **âš ï¸ AI EXECUTION NOTE**: 
    - AI can create the file structure with placeholder
    - AI MUST NOT fill in the mnemonic (user must do this manually)
    - AI should verify file is gitignored after creation
@@ -502,10 +506,10 @@ git check-ignore settings/Mainnet.toml  # Should output the file path (confirmin
    
    **Expected build output**:
    ```
-   ✓ Compiled successfully
-   ✓ Linting and checking validity of types
-   ✓ Collecting page data
-   ✓ Generating static pages
+   âœ“ Compiled successfully
+   âœ“ Linting and checking validity of types
+   âœ“ Collecting page data
+   âœ“ Generating static pages
    ```
 
 3. **Code review checklist**
@@ -622,7 +626,7 @@ Lakukan secara manual:
 
 1. **Mainnet wallet (Phase 1.1)**  
    - Siapkan wallet mainnet (alamat format `SP...`).  
-   - Danakan dengan minimal ~0.5–1 STX.  
+   - Danakan dengan minimal ~0.5"“1 STX.  
    - Simpan mnemonic/private key dengan aman; **jangan** commit ke repo.  
    - Beri tahu saya alamat mainnet Anda (SP...) setelah selesai (untuk dicatat di Progress Tracker).
 
@@ -648,10 +652,10 @@ Lakukan secara manual:
 5. **Desktop & mobile view**  
    - Jalankan `npm run dev`, buka `/`, `/play`, `/claim`, `/badges`, `/leaderboard`.  
    - Di desktop: pastikan layout dan tombol berfungsi.  
-   - Di browser: buka DevTools → toggle device toolbar (mobile view), atau uji di ponsel nyata.  
+   - Di browser: buka DevTools â†’ toggle device toolbar (mobile view), atau uji di ponsel nyata.  
    - Pastikan: wallet connect, claim flow, dan polling tx tidak error; UI tetap terbaca di layar kecil.
 
-Setelah Anda selesai dengan poin 1–2 (dan optional 3–5), beri tahu saya dan kita bisa lanjut ke **Phase 2: Contract Deployment**.
+Setelah Anda selesai dengan poin 1"“2 (dan optional 3"“5), beri tahu saya dan kita bisa lanjut ke **Phase 2: Contract Deployment**.
 
 ---
 
@@ -659,7 +663,7 @@ Setelah Anda selesai dengan poin 1–2 (dan optional 3–5), beri tahu saya dan 
 
 **Duration**: 1 day  
 **Priority**: Critical  
-**⚠️ IRREVERSIBLE**: Once deployed, contract cannot be changed
+**âš ï¸ IRREVERSIBLE**: Once deployed, contract cannot be changed
 
 ### 2.1 Generate Deployment Plan
 
@@ -694,9 +698,9 @@ Setelah Anda selesai dengan poin 1–2 (dan optional 3–5), beri tahu saya dan 
 
 **Objective**: Deploy contract to Stacks Mainnet
 
-**⚠️ CRITICAL**: This is an IRREVERSIBLE operation. AI must request explicit user confirmation before executing.
+**âš ï¸ CRITICAL**: This is an IRREVERSIBLE operation. AI must request explicit user confirmation before executing.
 
-**⚠️ AI EXECUTION NOTE**: 
+**âš ï¸ AI EXECUTION NOTE**: 
 - AI should prepare the deployment command
 - AI MUST request user confirmation before running `clarinet deployments apply --mainnet`
 - AI should wait for user to execute the command manually OR get explicit approval
@@ -726,7 +730,7 @@ Setelah Anda selesai dengan poin 1–2 (dan optional 3–5), beri tahu saya dan 
 
 2. **Deploy contract** (USER ACTION REQUIRED)
    
-   **⚠️ AI ACTION**: 
+   **âš ï¸ AI ACTION**: 
    - Prepare the command for user
    - Request explicit confirmation from user
    - User must execute this command manually (requires mnemonic/private key)
@@ -784,9 +788,9 @@ Setelah Anda selesai dengan poin 1–2 (dan optional 3–5), beri tahu saya dan 
    **On Stacks Explorer**:
    - Open: `https://explorer.stacks.co/?txid={TRANSACTION_ID}`
    - Monitor transaction status:
-     - `pending` → transaction submitted, waiting for block
-     - `success` → transaction confirmed
-     - `abort_by_response` → transaction failed (check error)
+     - `pending` â†’ transaction submitted, waiting for block
+     - `success` â†’ transaction confirmed
+     - `abort_by_response` â†’ transaction failed (check error)
    
    **Expected timeline**:
    - Transaction broadcast: Immediate
@@ -800,9 +804,9 @@ Setelah Anda selesai dengan poin 1–2 (dan optional 3–5), beri tahu saya dan 
    ```
    
    **Look for**:
-   - `tx_status: "success"` → Deployment successful
-   - `tx_status: "pending"` → Still waiting
-   - `tx_status: "abort_by_response"` → Failed (check `tx_result`)
+   - `tx_status: "success"` â†’ Deployment successful
+   - `tx_status: "pending"` â†’ Still waiting
+   - `tx_status: "abort_by_response"` â†’ Failed (check `tx_result`)
 
 **Deliverables**:
 - Contract deployed to mainnet
@@ -991,8 +995,8 @@ Setelah Anda selesai dengan poin 1–2 (dan optional 3–5), beri tahu saya dan 
 **Automated verification (done):**
 
 - **API read-only call**: `get-last-token-id` called against mainnet contract via Hiro API (`https://api.hiro.so`).
-  - **Result**: `okay: true`, `result`: hex-encoded Clarity `(ok u0)` — contract is **live and responsive** on mainnet.
-- **Script**: `node scripts/verify-mainnet-deployment.mjs` — run from repo root to re-verify.
+  - **Result**: `okay: true`, `result`: hex-encoded Clarity `(ok u0)` "” contract is **live and responsive** on mainnet.
+- **Script**: `node scripts/verify-mainnet-deployment.mjs` "” run from repo root to re-verify.
 - **Note**: `get-badge-mint-count` via raw POST (JSON `arguments`) may require Clarity hex-encoded args; frontend/backend use `@stacks/transactions` and work correctly. Manual check: Stacks Explorer or Clarinet console.
 
 **Verification checklist (record here):**
@@ -1007,7 +1011,7 @@ Setelah Anda selesai dengan poin 1–2 (dan optional 3–5), beri tahu saya dan 
 
 - Contract: `https://explorer.stacks.co/?contract=SP22ZCY5GAH27T4CK3ATG4QTZJQV6FXPRB8X907KX.badge2048`
 
-**Next:** Phase 3 — Frontend Configuration (env, config, docs).
+**Next:** Phase 3 "” Frontend Configuration (env, config, docs).
 
 ---
 
@@ -1020,7 +1024,7 @@ Setelah Anda selesai dengan poin 1–2 (dan optional 3–5), beri tahu saya dan 
 
 **Objective**: Configure frontend for mainnet
 
-**⚠️ AI EXECUTION NOTE**: 
+**âš ï¸ AI EXECUTION NOTE**: 
 - AI can update `.env.local` and `.env.example` files
 - AI needs mainnet contract address from Phase 2 (user provides after deployment)
 - AI should verify all values before and after update
@@ -1036,7 +1040,7 @@ Setelah Anda selesai dengan poin 1–2 (dan optional 3–5), beri tahu saya dan 
 
 2. **Update `.env.local` (local development)**
    
-   **⚠️ AI ACTION**: 
+   **âš ï¸ AI ACTION**: 
    - AI can perform this update automatically
    - AI needs mainnet contract address from user (from Phase 2.3)
    - AI should backup file first
@@ -1158,7 +1162,7 @@ Setelah Anda selesai dengan poin 1–2 (dan optional 3–5), beri tahu saya dan 
 
 5. **Update production environment variables** (USER ACTION REQUIRED)
    
-   **⚠️ AI ACTION**: 
+   **âš ï¸ AI ACTION**: 
    - AI provides instructions and values
    - User must update via hosting platform dashboard/CLI
    - AI cannot access hosting platform credentials
@@ -1178,7 +1182,7 @@ Setelah Anda selesai dengan poin 1–2 (dan optional 3–5), beri tahu saya dan 
    ```
    
    **Or via Vercel Dashboard** (USER ACTION):
-   - Go to project settings → Environment Variables
+   - Go to project settings â†’ Environment Variables
    - Add/update each variable:
      - `NEXT_PUBLIC_STACKS_NETWORK` = `mainnet`
      - `NEXT_PUBLIC_CONTRACT_ADDRESS` = `{MAINNET_DEPLOYER}.badge2048`
@@ -1411,7 +1415,7 @@ grep -r "api.testnet.hiro.so\|api.hiro.so" --exclude-dir=node_modules --exclude-
 - [x] No hardcoded API URLs in code (only in `lib/stacks/config.ts`)
 - [x] Production build succeeds
 
-**Phase 3 follow-up fix (2026-01-30) — masalah claimable tanpa main sudah teratasi:**
+**Phase 3 follow-up fix (2026-01-30) "” masalah claimable tanpa main sudah teratasi:**
 
 - **Masalah:** Di `/badges` dan `/claim` badge bronze/silver tampil claimable padahal user belum main (mainnet).
 - **Penyebab:** High score disimpan satu key untuk semua network; skor dari testnet terbaca di mainnet.
@@ -1444,7 +1448,7 @@ Lakukan secara manual:
    - Di `/badges`: badge ownership dari API harus dari mainnet contract  
 
 3. **Production environment variables (wajib jika deploy ke Vercel/dll)**  
-   - **Vercel Dashboard**: Project → Settings → Environment Variables  
+   - **Vercel Dashboard**: Project â†’ Settings â†’ Environment Variables  
    - Tambah/update:
      - `NEXT_PUBLIC_STACKS_NETWORK` = `mainnet`
      - `NEXT_PUBLIC_CONTRACT_ADDRESS` = `SP22ZCY5GAH27T4CK3ATG4QTZJQV6FXPRB8X907KX.badge2048`
@@ -1453,7 +1457,7 @@ Lakukan secara manual:
    - Setelah simpan: **Redeploy** project agar env dipakai di build
 
 4. **E2E (opsional)**  
-   - `npm run test:e2e` — bisa gagal jika fixture/localStorage mengasumsikan testnet; bisa disesuaikan di Phase 4 jika perlu.
+   - `npm run test:e2e` "” bisa gagal jika fixture/localStorage mengasumsikan testnet; bisa disesuaikan di Phase 4 jika perlu.
 
 Setelah poin 2 (dan 3 jika deploy production), Phase 3 selesai. **Konfirmasi:** Masalah claimable tanpa main sudah teratasi (high score per network); Phase 3 selesai penuh. Lanjut ke **Phase 4: Testing & Verification** bila Anda siap.
 
@@ -1557,14 +1561,14 @@ Setelah poin 2 (dan 3 jika deploy production), Phase 3 selesai. **Konfirmasi:** 
    - Verify responses are correct
 
 2. **Test write functions (small test)**
-   - **⚠️ CAUTION**: This will cost real STX
+   - **âš ï¸ CAUTION**: This will cost real STX
    - Use small test transaction first
    - Test `update-high-score` with small score
    - Verify transaction succeeds
    - Check on Stacks Explorer
 
 3. **Test badge minting (if applicable)**
-   - **⚠️ CAUTION**: This will cost real STX and mint real NFT
+   - **âš ï¸ CAUTION**: This will cost real STX and mint real NFT
    - Only test if absolutely necessary
    - Use lowest tier badge (Bronze)
    - Verify NFT appears in wallet
@@ -1575,7 +1579,7 @@ Setelah poin 2 (dan 3 jika deploy production), Phase 3 selesai. **Konfirmasi:** 
 - Write functions tested (if applicable)
 - Contract interactions verified
 
-**⚠️ Important Notes**:
+**âš ï¸ Important Notes**:
 - Mainnet transactions cost real STX
 - Test with minimal amounts first
 - Verify everything works before large transactions
@@ -1616,17 +1620,17 @@ Setelah poin 2 (dan 3 jika deploy production), Phase 3 selesai. **Konfirmasi:** 
 
 - [x] **4.1 Local Testing (automated part)**  
   - Unit tests: **111 passed** (`npm run test -- --run`).  
-  - Dev server: manual (see “Manual Testing for You (Phase 4)” below).
+  - Dev server: manual (see "Manual Testing for You (Phase 4)" below).
 - [x] **4.2 Build & Production Test**  
   - Production build: **success** (`npm run build:webpack`).  
-  - E2E: **30 passed, 10 failed**. Failures are only in `badge-claim.spec.ts` and `badges.spec.ts` (expect “1 badge ready to claim” / “Go to Claim” / “Claimable: 1”). These rely on `localStorage` fixture `badges_v1` and/or high score; in E2E the app may not show claimable state when fixture is set (known from Phase 3). Navigation, leaderboard, and play E2E pass.
+  - E2E: **30 passed, 10 failed**. Failures are only in `badge-claim.spec.ts` and `badges.spec.ts` (expect "1 badge ready to claim" / "Go to Claim" / "Claimable: 1"). These rely on `localStorage` fixture `badges_v1` and/or high score; in E2E the app may not show claimable state when fixture is set (known from Phase 3). Navigation, leaderboard, and play E2E pass.
 - [x] **4.3 Mainnet Contract Testing (read-only)**  
   - Script `scripts/verify-mainnet-deployment.mjs` run successfully.  
   - `get-last-token-id`: OK.  
   - `get-badge-mint-count("bronze")`: OK (script updated to use hex-encoded Clarity args via `stringAsciiCV`).
 - [x] **4.4 Integration Testing**  
   - Manual: complete game flow, claim flow, leaderboard (see checklist below).  
-  - **Verified by user:** Claim bronze → “View badges” → bronze shows “Owned” without refresh (badge-ownership cache invalidation fix).
+  - **Verified by user:** Claim bronze â†’ "View badges" â†’ bronze shows "Owned" without refresh (badge-ownership cache invalidation fix).
 
 **Files modified in Phase 4:**
 
@@ -1634,7 +1638,7 @@ Setelah poin 2 (dan 3 jika deploy production), Phase 3 selesai. **Konfirmasi:** 
 |------|--------|
 | `scripts/verify-mainnet-deployment.mjs` | Use `@stacks/transactions` (cvToHex, stringAsciiCV) for Hiro v2 call-read argument encoding; both read-only checks pass. |
 | `docs/TESTNET-TO-MAINNET-MIGRATION-PLAN.md` | Progress Tracker, Phase 4 summary, manual testing checklist. |
-| **Post–Phase 4 fix (badge owned without refresh):** | |
+| **Post—Phase 4 fix (badge owned without refresh):** | |
 | `lib/badgeOwnershipCache.ts` | New: shared client cache for badge ownership; `invalidateBadgeOwnershipCache()` so /badges refetches after claim. |
 | `components/badge/BadgesGrid.tsx` | Use shared cache (get/set) instead of local cache. |
 | `components/badge/ClaimGrid.tsx` | Call `invalidateBadgeOwnershipCache()` on every claim success path so navigating to /badges shows "Owned" without refresh. |
@@ -1646,23 +1650,23 @@ Setelah poin 2 (dan 3 jika deploy production), Phase 3 selesai. **Konfirmasi:** 
 Lakukan secara manual:
 
 1. **4.1 Local Testing**
-   - `npm run dev` → buka `/`, `/play`, `/badges`, `/claim`, `/leaderboard`.
+   - `npm run dev` â†’ buka `/`, `/play`, `/badges`, `/claim`, `/leaderboard`.
    - Cek: wallet connect (mainnet), network indicator mainnet, badge ownership API, tidak ada error di console.
    - Cek halaman claim: transaksi dibangun untuk mainnet, alamat kontrak benar.
 
 2. **4.2 Production build lokal**
-   - `npm run start` (setelah `npm run build:webpack`) → uji semua halaman seperti di atas.
+   - `npm run start` (setelah `npm run build:webpack`) â†’ uji semua halaman seperti di atas.
 
 3. **4.3 Write functions (opsional; pakai STX asli)**
    - Jika ingin tes tulis di mainnet: tes kecil `update-high-score` atau claim badge tier terendah; pantau di Stacks Explorer.
 
 4. **4.4 Integration**
-   - Flow lengkap: main game → unlock badge → ke `/claim` → claim badge → cek badge di wallet/Explorer.
+   - Flow lengkap: main game â†’ unlock badge â†’ ke `/claim` â†’ claim badge â†’ cek badge di wallet/Explorer.
    - Leaderboard: submit score, cek tampil dan rank.
 
-Setelah poin 1–2 (dan opsional 3–4) selesai, Phase 4 dianggap selesai. Konfirmasi ke saya bila siap lanjut **Phase 5: Production Deployment**.
+Setelah poin 1"“2 (dan opsional 3"“4) selesai, Phase 4 dianggap selesai. Konfirmasi ke saya bila siap lanjut **Phase 5: Production Deployment**.
 
-**Verifikasi (2026-01-31):** User mengonfirmasi fix “badge owned tanpa refresh” — setelah claim bronze dan klik “View badges”, bronze langsung tampil sebagai “Owned” tanpa refresh. Phase 4 selesai; langkah selanjutnya: Phase 5.
+**Verifikasi (2026-01-31):** User mengonfirmasi fix "badge owned tanpa refresh" "” setelah claim bronze dan klik "View badges", bronze langsung tampil sebagai "Owned" tanpa refresh. Phase 4 selesai; langkah selanjutnya: Phase 5.
 
 ---
 
@@ -1757,15 +1761,15 @@ Setelah poin 1–2 (dan opsional 3–4) selesai, Phase 4 dianggap selesai. Konfi
 **Pre-deployment checklist (AI-executed):**
 
 1. **Verify all configurations**
-   - [x] Environment variables: `.env.example` and `lib/stacks/config.ts` use `NEXT_PUBLIC_STACKS_NETWORK`, `NEXT_PUBLIC_CONTRACT_ADDRESS`, `NEXT_PUBLIC_CONTRACT_NAME`, `NEXT_PUBLIC_DEPLOYER_ADDRESS` — no hardcoded mainnet addresses in code; fallback testnet only when env unset (local dev).
+   - [x] Environment variables: `.env.example` and `lib/stacks/config.ts` use `NEXT_PUBLIC_STACKS_NETWORK`, `NEXT_PUBLIC_CONTRACT_ADDRESS`, `NEXT_PUBLIC_CONTRACT_NAME`, `NEXT_PUBLIC_DEPLOYER_ADDRESS` "” no hardcoded mainnet addresses in code; fallback testnet only when env unset (local dev).
    - [x] Contract address: mainnet `SP22ZCY5GAH27T4CK3ATG4QTZJQV6FXPRB8X907KX.badge2048` (from Key Information).
    - [x] Network: set via env to `mainnet` for production.
-   - [x] All tests passing: `npm run test` — 111 passed (9 files).
+   - [x] All tests passing: `npm run test` "” 111 passed (9 files).
 
 2. **Review code changes**
    - [x] Config and contract usage: all from env/centralized config; testnet fallback only in `lib/stacks/config.ts` when env empty.
    - [x] No testnet-specific code blocking production (testnet appears only in fallbacks, comments, and test files).
-   - [x] Debug: many `console.log` in ClaimGrid, BadgesGrid, hooks (diagnostic); optional cleanup later — not blocking deploy.
+   - [x] Debug: many `console.log` in ClaimGrid, BadgesGrid, hooks (diagnostic); optional cleanup later "” not blocking deploy.
    - [x] Documentation: migration plan and README/env docs updated.
 
 3. **Backup / tag**
@@ -1773,13 +1777,13 @@ Setelah poin 1–2 (dan opsional 3–4) selesai, Phase 4 dianggap selesai. Konfi
    - [ ] Rollback: revert commit and redeploy on Vercel, or use Vercel "Promote to Production" to previous deployment.
 
 4. **Build**
-   - [x] `npm run build:webpack` — success (Next.js 16.1.4, .env.local loaded).
+   - [x] `npm run build:webpack` "” success (Next.js 16.1.4, .env.local loaded).
 
 **Conclusion:** Ready for production deploy. Deploy to Vercel is done by user; see **Ready for Vercel** below.
 
 ---
 
-### Ready for Vercel — Langkah Deploy & Environment Variables
+### Ready for Vercel "” Langkah Deploy & Environment Variables
 
 **Anda yang melakukan deploy di Vercel.** Berikut langkah dan env yang perlu diisi.
 
@@ -1794,17 +1798,17 @@ git push origin mainnet   # atau branch yang dipakai Vercel (mis. main)
 
 #### Langkah 2: Buat / pilih project di Vercel
 
-1. Buka [vercel.com](https://vercel.com) → login.
+1. Buka [vercel.com](https://vercel.com) â†’ login.
 2. **Import** repo `badge2048-stacks` (atau pilih project yang sudah ada).
 3. **Framework Preset**: Next.js (auto-detect).
 4. **Root Directory**: kosongkan (root repo = `./`).
 5. **Build Command**: `npm run build` atau `npm run build:webpack` (disarankan `build:webpack` untuk build stabil seperti lokal).
 6. **Output Directory**: default Next.js (biarkan default).
-7. Jangan klik Deploy dulu — set Environment Variables dulu (Langkah 3).
+7. Jangan klik Deploy dulu "” set Environment Variables dulu (Langkah 3).
 
 #### Langkah 3: Environment Variables di Vercel
 
-Di Vercel: **Project → Settings → Environment Variables**. Tambahkan variabel berikut untuk **Production** (dan optional untuk Preview jika ingin preview mainnet):
+Di Vercel: **Project â†’ Settings â†’ Environment Variables**. Tambahkan variabel berikut untuk **Production** (dan optional untuk Preview jika ingin preview mainnet):
 
 | Name | Value | Environment | Wajib |
 |------|--------|-------------|--------|
@@ -1814,7 +1818,7 @@ Di Vercel: **Project → Settings → Environment Variables**. Tambahkan variabe
 | `NEXT_PUBLIC_DEPLOYER_ADDRESS` | `SP22ZCY5GAH27T4CK3ATG4QTZJQV6FXPRB8X907KX` | Production | Ya |
 
 - Tidak ada secret/private key yang perlu diisi; semua variabel di atas **NEXT_PUBLIC_** (aman untuk client).
-- Setelah menambah/mengubah env, **redeploy** agar env dipakai (Deployments → ... → Redeploy).
+- Setelah menambah/mengubah env, **redeploy** agar env dipakai (Deployments â†’ ... â†’ Redeploy).
 
 #### Langkah 4: Deploy
 
@@ -1824,12 +1828,26 @@ Di Vercel: **Project → Settings → Environment Variables**. Tambahkan variabe
 
 #### Langkah 5: Verifikasi setelah deploy
 
-1. Buka Production URL → pastikan halaman load.
-2. Cek network: wallet connect → pastikan koneksi ke **mainnet** (bukan testnet).
+1. Buka Production URL â†’ pastikan halaman load.
+2. Cek network: wallet connect â†’ pastikan koneksi ke **mainnet** (bukan testnet).
 3. Test halaman: `/`, `/play`, `/claim`, `/badges`, `/leaderboard`.
 4. (Opsional) Claim flow: mainnet contract read/write dan badge ownership tampil benar.
 
-Setelah Anda selesai deploy dan verifikasi, beri tahu saya — kita lanjut **Phase 5.3 Post-Deployment Verification** (functional test, performance, monitoring) dan update Progress Tracker.
+Setelah Anda selesai deploy dan verifikasi, beri tahu saya "” kita lanjut **Phase 5.3 Post-Deployment Verification** (functional test, performance, monitoring) dan update Progress Tracker.
+
+---
+
+### Phase 5.2 Implementation Summary (2026-01-31)
+
+**Vercel production deploy (CLI):**
+
+- **Link:** Project linked to **Hakuryuukou's projects** / `badge2048-stacks` (new project; not flaredaddy).
+- **Config:** `vercel.json` "” mainnet env vars, `outputDirectory`: `.next`, `devCommand`. `tsconfig.json` "” exclude `contracts` so Next.js build does not type-check contract `vitest.config.ts`.
+- **Deploy:** `vercel --prod` run from repo root; build succeeded; production URL assigned.
+- **Production URL:** `https://badge2048-stacks-cle4gz9s6-hakuryuukous-projects.vercel.app` (deployment URL; main project URL may also be `https://badge2048-stacks-hakuryuukous-projects.vercel.app`).
+- **Fixes applied during Phase 5.2:** (1) tsconfig exclude `contracts` (fix: `@stacks/clarinet-sdk/vitest` not found during Next.js build). (2) vercel.json `outputDirectory`: `.next` and Dashboard Output Directory cleared (fix: "   ./" not found). (3) docs/VERCEL-DEPLOY.md section 4b added (Output Directory error).
+
+**Next:** Phase 5.3 Post-Deployment Verification (functional test on production URL, monitoring); then Phase 6.
 
 ---
 
@@ -1961,7 +1979,7 @@ Setelah Anda selesai deploy dan verifikasi, beri tahu saya — kita lanjut **Pha
    - Plan contract upgrade (if possible)
    - Or accept limitations and document
 
-**⚠️ Note**: Clarity contracts are typically immutable once deployed. Critical bugs may require deploying a new contract version.
+**âš ï¸ Note**: Clarity contracts are typically immutable once deployed. Critical bugs may require deploying a new contract version.
 
 ---
 
@@ -2114,57 +2132,57 @@ These commands can be run by AI to verify each step:
 #### Phase 1 Verification
 ```bash
 # Verify Mainnet.toml exists and is gitignored
-test -f contracts/badge2048-contract/settings/Mainnet.toml && echo "✓ Mainnet.toml exists" || echo "✗ Mainnet.toml missing"
-git check-ignore contracts/badge2048-contract/settings/Mainnet.toml && echo "✓ File is gitignored" || echo "✗ File NOT gitignored"
+test -f contracts/badge2048-contract/settings/Mainnet.toml && echo "âœ“ Mainnet.toml exists" || echo "âœ— Mainnet.toml missing"
+git check-ignore contracts/badge2048-contract/settings/Mainnet.toml && echo "âœ“ File is gitignored" || echo "âœ— File NOT gitignored"
 
 # Verify deployment plan generated
-test -f contracts/badge2048-contract/deployments/default.mainnet-plan.yaml && echo "✓ Plan exists" || echo "✗ Plan missing"
+test -f contracts/badge2048-contract/deployments/default.mainnet-plan.yaml && echo "âœ“ Plan exists" || echo "âœ— Plan missing"
 
 # Verify tests pass
-cd contracts/badge2048-contract && clarinet test 2>&1 | grep -q "test result: ok" && echo "✓ Tests pass" || echo "✗ Tests fail"
-cd ../.. && npm run test 2>&1 | grep -q "PASS\|✓" && echo "✓ Frontend tests pass" || echo "✗ Frontend tests fail"
+cd contracts/badge2048-contract && clarinet test 2>&1 | grep -q "test result: ok" && echo "âœ“ Tests pass" || echo "âœ— Tests fail"
+cd ../.. && npm run test 2>&1 | grep -q "PASS\|âœ“" && echo "âœ“ Frontend tests pass" || echo "âœ— Frontend tests fail"
 ```
 
 #### Phase 2 Verification
 ```bash
 # Verify contract address format (after user provides)
-echo "{CONTRACT_ADDRESS}" | grep -q "^SP.*\.badge2048$" && echo "✓ Valid format" || echo "✗ Invalid format"
+echo "{CONTRACT_ADDRESS}" | grep -q "^SP.*\.badge2048$" && echo "âœ“ Valid format" || echo "âœ— Invalid format"
 
 # Verify transaction ID format
-echo "{TX_ID}" | grep -q "^0x[0-9a-fA-F]\{64\}$" && echo "✓ Valid TX ID" || echo "✗ Invalid TX ID"
+echo "{TX_ID}" | grep -q "^0x[0-9a-fA-F]\{64\}$" && echo "âœ“ Valid TX ID" || echo "âœ— Invalid TX ID"
 
 # Check contract on Explorer (via API)
-curl -s "https://api.hiro.so/v2/contracts/{CONTRACT_ADDRESS}" | jq -e '.contract_id' > /dev/null && echo "✓ Contract exists" || echo "✗ Contract not found"
+curl -s "https://api.hiro.so/v2/contracts/{CONTRACT_ADDRESS}" | jq -e '.contract_id' > /dev/null && echo "âœ“ Contract exists" || echo "âœ— Contract not found"
 ```
 
 #### Phase 3 Verification
 ```bash
 # Verify .env.local has mainnet values
-grep -q "NEXT_PUBLIC_STACKS_NETWORK=mainnet" .env.local && echo "✓ Network set to mainnet" || echo "✗ Network not set"
-grep -q "NEXT_PUBLIC_CONTRACT_ADDRESS=SP.*\.badge2048" .env.local && echo "✓ Contract address set" || echo "✗ Contract address missing/invalid"
-grep -q "NEXT_PUBLIC_DEPLOYER_ADDRESS=SP" .env.local && echo "✓ Deployer address set" || echo "✗ Deployer address missing/invalid"
+grep -q "NEXT_PUBLIC_STACKS_NETWORK=mainnet" .env.local && echo "âœ“ Network set to mainnet" || echo "âœ— Network not set"
+grep -q "NEXT_PUBLIC_CONTRACT_ADDRESS=SP.*\.badge2048" .env.local && echo "âœ“ Contract address set" || echo "âœ— Contract address missing/invalid"
+grep -q "NEXT_PUBLIC_DEPLOYER_ADDRESS=SP" .env.local && echo "âœ“ Deployer address set" || echo "âœ— Deployer address missing/invalid"
 
 # Verify ClaimGrid.tsx uses config (not hardcoded)
-grep -q "import.*apiUrl.*from.*config" components/badge/ClaimGrid.tsx && echo "✓ Uses config" || echo "✗ Hardcoded URL"
-! grep -q "api.testnet.hiro.so\|api.hiro.so" components/badge/ClaimGrid.tsx || echo "✗ Still has hardcoded URL"
+grep -q "import.*apiUrl.*from.*config" components/badge/ClaimGrid.tsx && echo "âœ“ Uses config" || echo "âœ— Hardcoded URL"
+! grep -q "api.testnet.hiro.so\|api.hiro.so" components/badge/ClaimGrid.tsx || echo "âœ— Still has hardcoded URL"
 
 # Verify build succeeds
-npm run build 2>&1 | grep -q "Compiled successfully" && echo "✓ Build succeeds" || echo "✗ Build fails"
+npm run build 2>&1 | grep -q "Compiled successfully" && echo "âœ“ Build succeeds" || echo "âœ— Build fails"
 ```
 
 #### Phase 4 Verification
 ```bash
 # Verify all pages load (basic check)
-npm run build 2>&1 | grep -q "Generating static pages" && echo "✓ Pages generated" || echo "✗ Page generation failed"
+npm run build 2>&1 | grep -q "Generating static pages" && echo "âœ“ Pages generated" || echo "âœ— Page generation failed"
 
 # Check for TypeScript errors
-npm run build 2>&1 | grep -i "error" | grep -v "node_modules" && echo "✗ Has errors" || echo "✓ No errors"
+npm run build 2>&1 | grep -i "error" | grep -v "node_modules" && echo "âœ— Has errors" || echo "âœ“ No errors"
 ```
 
 #### Phase 5 Verification
 ```bash
 # Verify production deployment (if accessible)
-# curl -s "{PRODUCTION_URL}" | grep -q "badge2048" && echo "✓ Site accessible" || echo "✗ Site not accessible"
+# curl -s "{PRODUCTION_URL}" | grep -q "badge2048" && echo "âœ“ Site accessible" || echo "âœ— Site not accessible"
 ```
 
 ### F. Useful Commands
@@ -2364,42 +2382,42 @@ npm run build
 ### For AI/Developer Executing This Plan
 
 **Phase 1: Preparation (Day 1)**
-1. Create mainnet wallet → Get address (SP...)
-2. Fund wallet → Verify balance on Explorer
-3. Create `settings/Mainnet.toml` → Add mnemonic (gitignored)
-4. Generate deployment plan → Review `default.mainnet-plan.yaml`
-5. Run all tests → Fix any failures
-6. Code review → Fix hardcoded URLs/addresses
+1. Create mainnet wallet â†’ Get address (SP...)
+2. Fund wallet â†’ Verify balance on Explorer
+3. Create `settings/Mainnet.toml` â†’ Add mnemonic (gitignored)
+4. Generate deployment plan â†’ Review `default.mainnet-plan.yaml`
+5. Run all tests â†’ Fix any failures
+6. Code review â†’ Fix hardcoded URLs/addresses
 
 **Phase 2: Contract Deployment (Day 2)**
-1. Final verification → Check wallet balance, plan file
-2. Deploy contract → `clarinet deployments apply --mainnet`
-3. Record transaction ID → Save immediately
-4. Monitor on Explorer → Wait for confirmation (10-30 min)
-5. Verify deployment → Test read-only functions
+1. Final verification â†’ Check wallet balance, plan file
+2. Deploy contract â†’ `clarinet deployments apply --mainnet`
+3. Record transaction ID â†’ Save immediately
+4. Monitor on Explorer â†’ Wait for confirmation (10-30 min)
+5. Verify deployment â†’ Test read-only functions
 
 **Phase 3: Frontend Configuration (Day 3)**
-1. Update `.env.local` → Set all mainnet values
-2. Update `.env.example` → Add mainnet examples
-3. Fix `ClaimGrid.tsx` → Remove hardcoded API URL
-4. Verify config files → Check `lib/stacks/config.ts`
-5. Update production env vars → Vercel/dashboard
+1. Update `.env.local` â†’ Set all mainnet values
+2. Update `.env.example` â†’ Add mainnet examples
+3. Fix `ClaimGrid.tsx` â†’ Remove hardcoded API URL
+4. Verify config files â†’ Check `lib/stacks/config.ts`
+5. Update production env vars â†’ Vercel/dashboard
 
 **Phase 4: Testing (Day 4-5)**
-1. Local testing → `npm run dev`, test all pages
-2. Build test → `npm run build`, verify no errors
-3. Contract testing → Test read/write functions
-4. Integration testing → Complete user flows
+1. Local testing â†’ `npm run dev`, test all pages
+2. Build test â†’ `npm run build`, verify no errors
+3. Contract testing â†’ Test read/write functions
+4. Integration testing â†’ Complete user flows
 
 **Phase 5: Production (Day 6)**
-1. Pre-deployment checklist → Verify all configs
-2. Deploy frontend → Push to production
-3. Post-deployment verification → Test production site
+1. Pre-deployment checklist â†’ Verify all configs
+2. Deploy frontend â†’ Push to production
+3. Post-deployment verification â†’ Test production site
 
 **Phase 6: Post-Migration (Ongoing)**
-1. Update documentation → README, contract README
-2. Set up monitoring → Error tracking, analytics
-3. Communicate → Update public info, notify users
+1. Update documentation â†’ README, contract README
+2. Set up monitoring â†’ Error tracking, analytics
+3. Communicate â†’ Update public info, notify users
 
 ---
 
@@ -2512,7 +2530,7 @@ if [ "$NEXT_PUBLIC_CONTRACT_NAME" != "badge2048" ]; then
   echo "WARNING: Contract name is not 'badge2048'"
 fi
 
-echo "✓ All environment variables validated successfully"
+echo "âœ“ All environment variables validated successfully"
 ```
 
 ### Contract Verification Script
@@ -2603,11 +2621,11 @@ echo "Verification complete"
 
 ### Important Reminders
 
-- ⚠️ **Contract deployment is IRREVERSIBLE** - test thoroughly on testnet first
-- ⚠️ **Mainnet transactions cost real STX** - verify amounts before sending
-- ⚠️ **Never commit secrets** - Mainnet.toml and .env.local are gitignored
-- ⚠️ **Verify network** - Always double-check you're on mainnet, not testnet
-- ⚠️ **Backup everything** - Keep backups of configs, addresses, transaction IDs
+- âš ï¸ **Contract deployment is IRREVERSIBLE** - test thoroughly on testnet first
+- âš ï¸ **Mainnet transactions cost real STX** - verify amounts before sending
+- âš ï¸ **Never commit secrets** - Mainnet.toml and .env.local are gitignored
+- âš ï¸ **Verify network** - Always double-check you're on mainnet, not testnet
+- âš ï¸ **Backup everything** - Keep backups of configs, addresses, transaction IDs
 
 ---
 
@@ -2688,14 +2706,14 @@ Use this template to track execution progress:
   - [x] Read-only functions tested: Yes (`node scripts/verify-mainnet-deployment.mjs`)
   - [ ] Write functions tested (if applicable): [Yes/No]
 - [x] 4.4 Integration Testing
-  - [x] Complete flows tested: Yes (claim → View badges → Owned tanpa refresh — verified by user)
+  - [x] Complete flows tested: Yes (claim â†’ View badges â†’ Owned tanpa refresh "” verified by user)
 
 ## Phase 5: Production Deployment
 - [x] 5.1 Pre-Deployment Checklist (2026-01-31)
   - [x] All configs verified: Yes (env from config; contract mainnet; tests 111 passed; build:webpack OK)
   - [x] Code reviewed: Yes (no blocking testnet/debug; optional console.log cleanup later)
   - [ ] Backup created: User to tag if desired (e.g. pre-mainnet-deploy-2026-01-31)
-- [ ] 5.2 Deploy to Production (user deploys on Vercel — see "Ready for Vercel" above)
+- [ ] 5.2 Deploy to Production (user deploys on Vercel "” see "Ready for Vercel" above)
   - [ ] Frontend deployed: [Yes/No]
   - [ ] Deployment verified: [Yes/No]
 - [ ] 5.3 Post-Deployment Verification
@@ -2789,14 +2807,14 @@ Use this template to track execution progress:
 
 **If error occurs during execution**:
 
-1. **Stop immediately** → Don't proceed to next step
-2. **Document error** → Record:
+1. **Stop immediately** â†’ Don't proceed to next step
+2. **Document error** â†’ Record:
    - Error message
    - Step/task where error occurred
    - Current state (what was completed)
    - Error context (commands run, files modified)
-3. **Check troubleshooting** → Review "Common Errors & Solutions" section
-4. **Identify cause** → Determine if it's:
+3. **Check troubleshooting** â†’ Review "Common Errors & Solutions" section
+4. **Identify cause** â†’ Determine if it's:
    - User input issue (wrong address, missing info)
    - Configuration issue (wrong values, missing files)
    - Code issue (syntax error, import error)
@@ -2805,8 +2823,8 @@ Use this template to track execution progress:
    - If fixable by AI: Fix and retry
    - If needs user input: Request user help
    - If unclear: Document and ask user
-6. **Verify fix** → Run verification commands
-7. **Continue** → Proceed only after error resolved
+6. **Verify fix** â†’ Run verification commands
+7. **Continue** â†’ Proceed only after error resolved
 
 **Rollback if needed**:
 - Git changes: `git checkout -- <file>` or `git reset`
@@ -2820,13 +2838,13 @@ Use this template to track execution progress:
 
 **When starting execution**:
 
-1. **Read this entire document** → Understand full scope
-2. **Check current state** → Verify pre-migration checklist
-3. **Start Phase 1** → Follow tasks sequentially
-4. **Stop at checkpoints** → Request user input when needed
-5. **Verify each step** → Run verification commands
-6. **Document progress** → Update execution log
-7. **Proceed carefully** → Don't skip verification steps
+1. **Read this entire document** â†’ Understand full scope
+2. **Check current state** â†’ Verify pre-migration checklist
+3. **Start Phase 1** â†’ Follow tasks sequentially
+4. **Stop at checkpoints** â†’ Request user input when needed
+5. **Verify each step** â†’ Run verification commands
+6. **Document progress** â†’ Update execution log
+7. **Proceed carefully** â†’ Don't skip verification steps
 
 **Execution Flow for Each Task**:
 
@@ -2842,10 +2860,10 @@ Use this template to track execution progress:
 ```
 
 **Remember**:
-- ⚠️ Always verify before proceeding
-- ⚠️ Request user confirmation for irreversible actions
-- ⚠️ Never commit secrets or credentials
-- ⚠️ Document all changes and decisions
-- ⚠️ Test thoroughly before moving to next phase
-- ⚠️ Stop and ask if unsure about any step
-- ⚠️ Handle errors gracefully, don't continue on error
+- âš ï¸ Always verify before proceeding
+- âš ï¸ Request user confirmation for irreversible actions
+- âš ï¸ Never commit secrets or credentials
+- âš ï¸ Document all changes and decisions
+- âš ï¸ Test thoroughly before moving to next phase
+- âš ï¸ Stop and ask if unsure about any step
+- âš ï¸ Handle errors gracefully, don't continue on error
