@@ -1,69 +1,49 @@
-# PRD Documentation - badge2048
+# badge2048 — Documentation Index
 
-**Application Name:** badge2048
+**Application:** badge2048
 
-This documentation is split into multiple files to support phased implementation.
+This folder contains specs, deployment guides, and conventions. The main product overview is in the root [README.md](../README.md).
+
+---
 
 ## Documentation Structure
 
-### Main Docs
-- **[PRD-MASTER.md](./PRD-MASTER.md)** - Executive summary, goals, non-goals, and overall overview
+### Specs (game, badges, UI)
 
-### Game Specs
-- **[GAME-MECHANICS.md](./GAME-MECHANICS.md)** - Core mechanics, input, state machine, spawn/merge logic
-- **[GAME-IMPLEMENTATION.md](./GAME-IMPLEMENTATION.md)** - Game implementation requirements (reducer, deterministic, testable)
-
-### UI/UX Specs
-- **[UI-UX-SPEC.md](./UI-UX-SPEC.md)** - Visual design, motion, and responsiveness
-
-### DApp Specs
-- **[PAGES-ROUTING.md](./PAGES-ROUTING.md)** - Page structure and routing
-- **[BADGE-SYSTEM.md](./BADGE-SYSTEM.md)** - Badge system, tiers, rules, and display
-- **[CLAIM-FLOW.md](./CLAIM-FLOW.md)** - Badge claim flow (pre-chain)
+- **[BADGE-SYSTEM.md](./BADGE-SYSTEM.md)** — Badge tiers, rules, and display
+- **[CLAIM-FLOW.md](./CLAIM-FLOW.md)** — Badge claim flow (local and on-chain)
+- **[DATA-MODELS.md](./DATA-MODELS.md)** — Game state and badge state data models
+- **[GAME-IMPLEMENTATION.md](./GAME-IMPLEMENTATION.md)** — Game implementation (reducer, deterministic, testable)
+- **[GAME-MECHANICS.md](./GAME-MECHANICS.md)** — Core mechanics, input, state machine, spawn/merge logic
+- **[UI-UX-SPEC.md](./UI-UX-SPEC.md)** — Visual design, motion, responsiveness
 
 ### Technical
-- **[TECH-STACK.md](./TECH-STACK.md)** - Tech stack and folder structure
-- **[DATA-MODELS.md](./DATA-MODELS.md)** - Game state and badge state data models
 
-### Scope and Planning
-- **[MVP-SCOPE.md](./MVP-SCOPE.md)** - Features included in MVP
-- **[FUTURE-SCOPE.md](./FUTURE-SCOPE.md)** - Features for later phases
-- **[SUCCESS-CRITERIA.md](./SUCCESS-CRITERIA.md)** - Project success criteria
+- **[TECH-STACK.md](./TECH-STACK.md)** — Tech stack and folder structure
+- **[MVP-SCOPE.md](./MVP-SCOPE.md)** — Features included in MVP
+- **[ONCHAIN_STACKS_BADGE2048.md](./ONCHAIN_STACKS_BADGE2048.md)** — On-chain contract and Stacks integration
+- **[PERFORMANCE-BASELINE.md](./PERFORMANCE-BASELINE.md)** — Baseline performance per page
 
-### Testing and Quality
-- **[TESTING-MATRIX.md](./TESTING-MATRIX.md)** - Device/browser matrix and testing checklist
-- **[PERFORMANCE-BASELINE.md](./PERFORMANCE-BASELINE.md)** - Baseline performance per page
-- **[POLISH-CHECKLIST.md](./POLISH-CHECKLIST.md)** - UI/UX polish checklist
-- **[RELEASE-SUMMARY.md](./RELEASE-SUMMARY.md)** - Phase 8 release summary
+### Deployment and operations
 
-## Start Implementation
+- **[TESTNET-TO-MAINNET-MIGRATION-PLAN.md](./TESTNET-TO-MAINNET-MIGRATION-PLAN.md)** — Testnet → mainnet migration (phases, checklists, verification)
+- **[VERCEL-DEPLOY.md](./VERCEL-DEPLOY.md)** — Vercel deployment (build command, env, troubleshooting)
+- **[MONITORING.md](./MONITORING.md)** — Health check, error monitoring, analytics, maintenance routine
 
-**IMPORTANT:** Read **[IMPLEMENTATION-ROADMAP.md](./IMPLEMENTATION-ROADMAP.md)** for a detailed phase-by-phase implementation order.
+### Future
 
-The roadmap provides:
-- Clear phase order
-- Checklist per phase
-- Reference docs for each phase
-- Expected deliverables
-- Implementation tips
+- **[FUTURE-SCOPE.md](./FUTURE-SCOPE.md)** — Features and enhancements for later
 
-## Short Implementation Order
+### Conventions (rules)
 
-1. **Phase 1: Setup and Foundation** -> `TECH-STACK.md`, `DATA-MODELS.md`
-2. **Phase 2: Core Game Logic** -> `GAME-MECHANICS.md`, `GAME-IMPLEMENTATION.md`
-3. **Phase 3: Game UI Component** -> `UI-UX-SPEC.md`
-4. **Phase 4: Multi-Page Structure** -> `PAGES-ROUTING.md`
-5. **Phase 5: Badge System Logic** -> `BADGE-SYSTEM.md`
-6. **Phase 6: Badge Display Page** -> `BADGE-SYSTEM.md`
-7. **Phase 7: Claim Flow** -> `CLAIM-FLOW.md`
-8. **Phase 8: Integration and Polish** -> `MVP-SCOPE.md`, `SUCCESS-CRITERIA.md`, `TESTING-MATRIX.md`, `PERFORMANCE-BASELINE.md`, `POLISH-CHECKLIST.md`
+All project and coding rules live under **[docs/rules/](./rules/)**:
 
-## Release Notes
+- [ai-rules.md](./rules/ai-rules.md)
+- [backend-rules.md](./rules/backend-rules.md)
+- [frontend-rules.md](./rules/frontend-rules.md)
+- [onchain-rules.md](./rules/onchain-rules.md)
+- [repo-rules.md](./rules/repo-rules.md)
+- [stacks-rules.md](./rules/stacks-rules.md)
+- [testing-rules.md](./rules/testing-rules.md)
 
-### 2026-01-24 — Phase 8 Complete
-
-- E2E coverage validated (Playwright) across desktop and mobile emulation.
-- Performance baselines captured for production + mobile throttling.
-- UI/UX polish checklist completed and documented.
-- Mobile performance preset baselines captured for release readiness.
-- Phase 8 release summary published in `RELEASE-SUMMARY.md`.
+See the root README [Contributing](../README.md#contributing) section for branch/commit/PR conventions and links to these rules.

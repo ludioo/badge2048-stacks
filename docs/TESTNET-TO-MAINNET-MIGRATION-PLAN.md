@@ -2,15 +2,15 @@
 
 **Project**: badge2048-stacks  
 **Date Created**: 2026-01-29  
-**Status**: Mainnet migration complete (Phase 1–5.3 done; Phase 6 in progress)  
+**Status**: **Migration complete** — Phase 1–6.3 done (2026-01-31). Mainnet live; production deployed; monitoring & communication verified.
 **Target Network**: Stacks Mainnet ✅
 
 ---
 
 ## Migration Progress Tracker
 
-**Current Phase**: Phase 6 — Post-Migration Tasks  
-**Status**: Phase 6.1 complete; Phase 6.2 draft complete (2026-01-31): health API + docs/MONITORING.md + .env.example. Anda isi tool/secret (Uptime Robot, Sentry) dan centang checklist di MONITORING.md. Next: Phase 6.3 Communication setelah monitoring aman.
+**Current Phase**: **Complete** (Phase 1–6.3)  
+**Status**: Phase 6.3 Communication verified by user (2026-01-31). Testnet → mainnet migration complete.
 **Last Updated**: 2026-01-31
 
 ### Completed Phases
@@ -19,12 +19,12 @@
 - [x] Phase 3: Frontend Configuration (see Phase 3 Implementation Summary and Manual Testing below)
 - [x] Phase 4: Testing & Verification (automated + manual; "badge owned without refresh" fix verified by user)
 - [x] Phase 5: Production Deployment (5.1 checklist, 5.2 Vercel CLI deploy — see Phase 5.2 summary below)
-- [ ] Phase 6: Post-Migration Tasks
+- [x] Phase 6: Post-Migration Tasks (6.1 docs, 6.2 monitoring, 6.3 communication — verified 2026-01-31)
 
 ### Key Information Recorded
 - Mainnet Wallet: `SP22ZCY5GAH27T4CK3ATG4QTZJQV6FXPRB8X907KX`
 - Contract Address: `SP22ZCY5GAH27T4CK3ATG4QTZJQV6FXPRB8X907KX.badge2048`
-- Transaction ID: _(isi jika ada dari output deploy; atau cek di Stacks Explorer)_
+- Transaction ID: _(fill in from deploy output if available; or check Stacks Explorer)_
 - Deployment Date: 2026-01-30
 - **Production URL**: `https://badge2048-stacks-cle4gz9s6-hakuryuukous-projects.vercel.app` (Vercel production 2026-01-31; main project URL may also be `https://badge2048-stacks-hakuryuukous-projects.vercel.app`)
 
@@ -63,7 +63,7 @@
 
 #### Phase 6.2
 - [x] `app/api/health/route.ts` (GET /api/health — contract reachable check via Hiro read-only)
-- [x] `docs/MONITORING.md` (checklist & draft konfigurasi: health, Sentry, analytics, maintenance; Anda isi tool/secret)
+- [x] `docs/MONITORING.md` (checklist & draft config: health, Sentry, analytics, maintenance; you supply tools/secrets)
 - [x] `.env.example` (optional NEXT_PUBLIC_SENTRY_DSN / SENTRY_DSN)
 - [x] `docs/TESTNET-TO-MAINNET-MIGRATION-PLAN.md` (Phase 6.2 implementation summary, checklist)
 
@@ -628,40 +628,40 @@ Or add to `package.json`: `"build:webpack": "next build --webpack"` and use `npm
 
 ### Manual Testing for You (Phase 1)
 
-Lakukan secara manual:
+Perform manually:
 
 1. **Mainnet wallet (Phase 1.1)**  
-   - Siapkan wallet mainnet (alamat format `SP...`).  
-   - Danakan dengan minimal ~0.5"“1 STX.  
-   - Simpan mnemonic/private key dengan aman; **jangan** commit ke repo.  
-   - Beri tahu saya alamat mainnet Anda (SP...) setelah selesai (untuk dicatat di Progress Tracker).
+   - Prepare a mainnet wallet (address format `SP...`).  
+   - Fund it with at least ~0.5–1 STX.  
+   - Store mnemonic/private key securely; **do not** commit to the repo.  
+   - Share your mainnet address (SP...) when done (to record in Progress Tracker).
 
 2. **Mainnet.toml (Phase 1.2)**  
-   - Buka `contracts/badge2048-contract/settings/Mainnet.toml`.  
-   - Ganti placeholder mnemonic dengan 12 atau 24 kata wallet mainnet Anda.  
-   - Jangan commit file ini (sudah ada di `.gitignore`).
+   - Open `contracts/badge2048-contract/settings/Mainnet.toml`.  
+   - Replace the placeholder mnemonic with your mainnet wallet's 12 or 24 words.  
+   - Do not commit this file (it is in `.gitignore`).
 
-3. **Generate deployment plan (setelah mnemonic diisi)**  
-   Di `contracts/badge2048-contract` jalankan:
+3. **Generate deployment plan (after mnemonic is set)**  
+   In `contracts/badge2048-contract` run:
    ```bash
    clarinet deployments generate --mainnet --manual-cost
    ```
-   Cek bahwa `deployments/default.mainnet-plan.yaml` terbentuk dan biaya deployment sesuai.
+   Verify that `deployments/default.mainnet-plan.yaml` is created and deployment cost is as expected.
 
-4. **E2E tests (opsional)**  
-   Jalankan E2E terpisah:
+4. **E2E tests (optional)**  
+   Run E2E separately:
    ```bash
    npm run test:e2e
    ```
-   **Status (2026-01-30):** Leaderboard & play E2E sudah diperbaiki (30 passed). Tes badge-claim dan badges masih gagal karena fixture localStorage tidak terbaca saat halaman load (bisa ditangani di Phase 4). Jika Anda hanya butuh navigasi/leaderboard/play lulus, E2E sudah memadai.
+   **Status (2026-01-30):** Leaderboard & play E2E are fixed (30 passed). Badge-claim and badges tests may still fail due to fixture localStorage not being read on page load (can be addressed in Phase 4). If you only need navigation/leaderboard/play to pass, E2E is sufficient.
 
 5. **Desktop & mobile view**  
-   - Jalankan `npm run dev`, buka `/`, `/play`, `/claim`, `/badges`, `/leaderboard`.  
-   - Di desktop: pastikan layout dan tombol berfungsi.  
-   - Di browser: buka DevTools â†’ toggle device toolbar (mobile view), atau uji di ponsel nyata.  
-   - Pastikan: wallet connect, claim flow, dan polling tx tidak error; UI tetap terbaca di layar kecil.
+   - Run `npm run dev`, open `/`, `/play`, `/claim`, `/badges`, `/leaderboard`.  
+   - On desktop: ensure layout and buttons work.  
+   - In browser: open DevTools â†’ toggle device toolbar (mobile view), or test on a real device.  
+   - Ensure: wallet connect, claim flow, and tx polling have no errors; UI remains readable on small screens.
 
-Setelah Anda selesai dengan poin 1"“2 (dan optional 3"“5), beri tahu saya dan kita bisa lanjut ke **Phase 2: Contract Deployment**.
+When you have completed items 1–2 (and optional 3–5), let me know and we can proceed to **Phase 2: Contract Deployment**.
 
 ---
 
@@ -1421,51 +1421,51 @@ grep -r "api.testnet.hiro.so\|api.hiro.so" --exclude-dir=node_modules --exclude-
 - [x] No hardcoded API URLs in code (only in `lib/stacks/config.ts`)
 - [x] Production build succeeds
 
-**Phase 3 follow-up fix (2026-01-30) "” masalah claimable tanpa main sudah teratasi:**
+**Phase 3 follow-up fix (2026-01-30) — claimable-without-playing issue resolved:**
 
-- **Masalah:** Di `/badges` dan `/claim` badge bronze/silver tampil claimable padahal user belum main (mainnet).
-- **Penyebab:** High score disimpan satu key untuk semua network; skor dari testnet terbaca di mainnet.
-- **Perbaikan:**
-  - **`lib/highScore.ts`**: High score sekarang **per network** (`highScore_v1_mainnet`, `highScore_v1_testnet`). Mainnet selalu mulai dari 0; testnet tetap migrasi dari key lama.
-  - **`BadgesGrid` & `ClaimGrid`**: "Unlocked" / claimable memakai **current high score** (loadHighScore()) saja; mainnet = 0 sampai user main di mainnet.
-  - **API `/api/badge-ownership`**: Response header `X-Stacks-Network` dan `X-Contract-Address` untuk verifikasi mainnet/testnet.
-  - **Diagnostic logs**: `[BadgesGrid] diagnostic`, `[ClaimGrid] diagnostic`, dan API response headers di console (bisa dihapus setelah stabil).
-- **Konfirmasi:** User mengonfirmasi masalah sudah teratasi; Phase 3 selesai penuh.
+- **Issue:** On `/badges` and `/claim`, bronze/silver badges appeared claimable even though the user had not played on mainnet.
+- **Cause:** High score used a single key for all networks; testnet score was read on mainnet.
+- **Fix:**
+  - **`lib/highScore.ts`**: High score is now **per network** (`highScore_v1_mainnet`, `highScore_v1_testnet`). Mainnet always starts at 0; testnet continues to migrate from the old key.
+  - **`BadgesGrid` & `ClaimGrid`**: "Unlocked" / claimable use **current high score** (loadHighScore()) only; mainnet = 0 until the user plays on mainnet.
+  - **API `/api/badge-ownership`**: Response headers `X-Stacks-Network` and `X-Contract-Address` for mainnet/testnet verification.
+  - **Diagnostic logs**: `[BadgesGrid] diagnostic`, `[ClaimGrid] diagnostic`, and API response headers in console (can be removed once stable).
+- **Confirmation:** User confirmed the issue is resolved; Phase 3 complete.
 
 ---
 
 ### Manual Testing for You (Phase 3)
 
-Lakukan secara manual:
+Perform manually:
 
-1. **Backup .env.local testnet (opsional)**  
-   Jika ingin bisa switch kembali ke testnet:
+1. **Backup .env.local testnet (optional)**  
+   If you want to switch back to testnet later:
    ```bash
    cp .env.local .env.local.mainnet.backup
-   # Simpan isi testnet lama di .env.local.testnet.backup jika belum
+   # Save old testnet contents to .env.local.testnet.backup if not already done
    ```
 
-2. **Verifikasi lokal dengan mainnet**  
-   - Jalankan: `npm run dev`  
-   - Buka http://localhost:3000  
-   - Cek: `/`, `/play`, `/claim`, `/badges`, `/leaderboard`  
-   - Connect wallet (mainnet); pastikan network di wallet adalah **Mainnet**  
-   - Di `/claim`: jika eligible, cek bahwa flow claim/mint memakai mainnet (Explorer link harus mainnet)  
-   - Di `/badges`: badge ownership dari API harus dari mainnet contract  
+2. **Local verification with mainnet**  
+   - Run: `npm run dev`  
+   - Open http://localhost:3000  
+   - Check: `/`, `/play`, `/claim`, `/badges`, `/leaderboard`  
+   - Connect wallet (mainnet); ensure wallet network is **Mainnet**  
+   - On `/claim`: if eligible, verify claim/mint flow uses mainnet (Explorer link must be mainnet)  
+   - On `/badges`: badge ownership from API must be from mainnet contract  
 
-3. **Production environment variables (wajib jika deploy ke Vercel/dll)**  
+3. **Production environment variables (required if deploying to Vercel etc.)**  
    - **Vercel Dashboard**: Project â†’ Settings â†’ Environment Variables  
-   - Tambah/update:
+   - Add/update:
      - `NEXT_PUBLIC_STACKS_NETWORK` = `mainnet`
      - `NEXT_PUBLIC_CONTRACT_ADDRESS` = `SP22ZCY5GAH27T4CK3ATG4QTZJQV6FXPRB8X907KX.badge2048`
      - `NEXT_PUBLIC_DEPLOYER_ADDRESS` = `SP22ZCY5GAH27T4CK3ATG4QTZJQV6FXPRB8X907KX`
-   - Scope: Production (dan Preview/Development jika ingin)
-   - Setelah simpan: **Redeploy** project agar env dipakai di build
+   - Scope: Production (and Preview/Development if desired)
+   - After saving: **Redeploy** the project so env is used in the build
 
-4. **E2E (opsional)**  
-   - `npm run test:e2e` "” bisa gagal jika fixture/localStorage mengasumsikan testnet; bisa disesuaikan di Phase 4 jika perlu.
+4. **E2E (optional)**  
+   - `npm run test:e2e` — may fail if fixture/localStorage assumes testnet; can be adjusted in Phase 4 if needed.
 
-Setelah poin 2 (dan 3 jika deploy production), Phase 3 selesai. **Konfirmasi:** Masalah claimable tanpa main sudah teratasi (high score per network); Phase 3 selesai penuh. Lanjut ke **Phase 4: Testing & Verification** bila Anda siap.
+After items 2 (and 3 if deploying to production), Phase 3 is complete. **Confirmation:** Claimable-without-playing issue resolved (high score per network); Phase 3 fully complete. Proceed to **Phase 4: Testing & Verification** when ready.
 
 ---
 
@@ -1657,22 +1657,22 @@ Lakukan secara manual:
 
 1. **4.1 Local Testing**
    - `npm run dev` â†’ buka `/`, `/play`, `/badges`, `/claim`, `/leaderboard`.
-   - Cek: wallet connect (mainnet), network indicator mainnet, badge ownership API, tidak ada error di console.
-   - Cek halaman claim: transaksi dibangun untuk mainnet, alamat kontrak benar.
+   - Check: wallet connect (mainnet), network indicator mainnet, badge ownership API, no errors in console.
+   - Check claim page: transaction is built for mainnet, contract address is correct.
 
 2. **4.2 Production build lokal**
-   - `npm run start` (setelah `npm run build:webpack`) â†’ uji semua halaman seperti di atas.
+   - `npm run start` (after `npm run build:webpack`) â†’ test all pages as above.
 
-3. **4.3 Write functions (opsional; pakai STX asli)**
+3. **4.3 Write functions (optional; use real STX)**
    - Jika ingin tes tulis di mainnet: tes kecil `update-high-score` atau claim badge tier terendah; pantau di Stacks Explorer.
 
 4. **4.4 Integration**
-   - Flow lengkap: main game â†’ unlock badge â†’ ke `/claim` â†’ claim badge â†’ cek badge di wallet/Explorer.
-   - Leaderboard: submit score, cek tampil dan rank.
+   - Full flow: main game â†’ unlock badge â†’ ke `/claim` â†’ claim badge â†’ check badge in wallet/Explorer.
+   - Leaderboard: submit score, check display and rank.
 
-Setelah poin 1"“2 (dan opsional 3"“4) selesai, Phase 4 dianggap selesai. Konfirmasi ke saya bila siap lanjut **Phase 5: Production Deployment**.
+After items 1–2 (and optional 3–4) are done, Phase 4 is complete. Confirm with me when ready to proceed to **Phase 5: Production Deployment**.
 
-**Verifikasi (2026-01-31):** User mengonfirmasi fix "badge owned tanpa refresh" "” setelah claim bronze dan klik "View badges", bronze langsung tampil sebagai "Owned" tanpa refresh. Phase 4 selesai; langkah selanjutnya: Phase 5.
+**Verification (2026-01-31):** User confirmed fix "badge owned without refresh" "” setelah claim bronze dan klik "View badges", bronze langsung tampil sebagai "Owned" tanpa refresh. Phase 4 selesai; langkah selanjutnya: Phase 5.
 
 ---
 
@@ -1789,26 +1789,26 @@ Setelah poin 1"“2 (dan opsional 3"“4) selesai, Phase 4 dianggap selesai. Kon
 
 ---
 
-### Ready for Vercel "” Langkah Deploy & Environment Variables
+### Ready for Vercel — Deploy Steps & Environment Variables
 
-**Anda yang melakukan deploy di Vercel.** Berikut langkah dan env yang perlu diisi.
+**You perform the deploy on Vercel.** Below are the steps and env vars to set.
 
-#### Langkah 1: Push code (jika belum)
+#### Step 1: Push code (if not already done)
 
 ```bash
 git add .
-git status   # pastikan hanya file yang ingin deploy
+git status   # ensure only the files you want to deploy are staged
 git commit -m "chore: ready for mainnet production deploy"
 git push origin mainnet   # atau branch yang dipakai Vercel (mis. main)
 ```
 
-#### Langkah 2: Buat / pilih project di Vercel
+#### Step 2: Create / select project in Vercel
 
-1. Buka [vercel.com](https://vercel.com) â†’ login.
+1. Open [vercel.com](https://vercel.com) â†’ login.
 2. **Import** repo `badge2048-stacks` (atau pilih project yang sudah ada).
 3. **Framework Preset**: Next.js (auto-detect).
 4. **Root Directory**: kosongkan (root repo = `./`).
-5. **Build Command**: `npm run build` atau `npm run build:webpack` (disarankan `build:webpack` untuk build stabil seperti lokal).
+5. **Build Command**: `npm run build` or `npm run build:webpack` (recommend `build:webpack` for stable build like local).
 6. **Output Directory**: default Next.js (biarkan default).
 7. Jangan klik Deploy dulu "” set Environment Variables dulu (Langkah 3).
 
@@ -1816,30 +1816,30 @@ git push origin mainnet   # atau branch yang dipakai Vercel (mis. main)
 
 Di Vercel: **Project â†’ Settings â†’ Environment Variables**. Tambahkan variabel berikut untuk **Production** (dan optional untuk Preview jika ingin preview mainnet):
 
-| Name | Value | Environment | Wajib |
+| Name | Value | Environment | Required |
 |------|--------|-------------|--------|
-| `NEXT_PUBLIC_STACKS_NETWORK` | `mainnet` | Production (dan Preview jika mau) | Ya |
-| `NEXT_PUBLIC_CONTRACT_ADDRESS` | `SP22ZCY5GAH27T4CK3ATG4QTZJQV6FXPRB8X907KX.badge2048` | Production | Ya |
-| `NEXT_PUBLIC_CONTRACT_NAME` | `badge2048` | Production | Ya |
-| `NEXT_PUBLIC_DEPLOYER_ADDRESS` | `SP22ZCY5GAH27T4CK3ATG4QTZJQV6FXPRB8X907KX` | Production | Ya |
+| `NEXT_PUBLIC_STACKS_NETWORK` | `mainnet` | Production (and Preview if desired) | Yes |
+| `NEXT_PUBLIC_CONTRACT_ADDRESS` | `SP22ZCY5GAH27T4CK3ATG4QTZJQV6FXPRB8X907KX.badge2048` | Production | Yes |
+| `NEXT_PUBLIC_CONTRACT_NAME` | `badge2048` | Production | Yes |
+| `NEXT_PUBLIC_DEPLOYER_ADDRESS` | `SP22ZCY5GAH27T4CK3ATG4QTZJQV6FXPRB8X907KX` | Production | Yes |
 
-- Tidak ada secret/private key yang perlu diisi; semua variabel di atas **NEXT_PUBLIC_** (aman untuk client).
-- Setelah menambah/mengubah env, **redeploy** agar env dipakai (Deployments â†’ ... â†’ Redeploy).
+- No secrets/private keys to set; all variables above are **NEXT_PUBLIC_** (safe for client).
+- After adding/changing env, **redeploy** so env is used (Deployments â†’ ... â†’ Redeploy).
 
-#### Langkah 4: Deploy
+#### Step 4: Deploy
 
-1. Klik **Deploy** (atau trigger deploy lewat push).
-2. Tunggu build selesai; cek log bila ada error.
-3. Catat **Production URL** (mis. `https://badge2048-stacks.vercel.app`).
+1. Click **Deploy** (or trigger deploy via push).
+2. Wait for build to finish; check logs for errors.
+3. Note **Production URL** (mis. `https://badge2048-stacks.vercel.app`).
 
 #### Langkah 5: Verifikasi setelah deploy
 
 1. Buka Production URL â†’ pastikan halaman load.
 2. Cek network: wallet connect â†’ pastikan koneksi ke **mainnet** (bukan testnet).
 3. Test halaman: `/`, `/play`, `/claim`, `/badges`, `/leaderboard`.
-4. (Opsional) Claim flow: mainnet contract read/write dan badge ownership tampil benar.
+4. (Optional) Claim flow: mainnet contract read/write and badge ownership display correctly.
 
-Setelah Anda selesai deploy dan verifikasi, beri tahu saya "” kita lanjut **Phase 5.3 Post-Deployment Verification** (functional test, performance, monitoring) dan update Progress Tracker.
+When you have finished deploy and verification, let me know — we continue to **Phase 5.3 Post-Deployment Verification** (functional test, performance, monitoring) and update Progress Tracker.
 
 ---
 
@@ -1872,13 +1872,13 @@ Setelah Anda selesai deploy dan verifikasi, beri tahu saya "” kita lanjut **Ph
 
 **Manual verification (for you):**
 
-- See **Manual Testing for You (Phase 5.3)** below. Setelah Anda selesai cek production URL (load, wallet mainnet, claim/badges/leaderboard), centang checklist di sana dan beri tahu jika ada issue — lalu kita lanjut Phase 6.
+- See **Manual Testing for You (Phase 5.3)** below. When you have finished checking production URL (load, wallet mainnet, claim/badges/leaderboard), tick the checklist there and let me know if there are issues — then we proceed to Phase 6.
 
 ---
 
 ### Manual Testing for You (Phase 5.3)
 
-Lakukan di **production URL** (mis. `https://badge2048-stacks-cle4gz9s6-hakuryuukous-projects.vercel.app` atau URL project Vercel Anda):
+Perform at **production URL** (mis. `https://badge2048-stacks-cle4gz9s6-hakuryuukous-projects.vercel.app` or your Vercel project URL):
 
 1. **Site load**
    - [x] Home `/` load tanpa error.
@@ -1899,7 +1899,7 @@ Lakukan di **production URL** (mis. `https://badge2048-stacks-cle4gz9s6-hakuryuu
 5. **Optional: device/browser**
    - [x] Test di mobile view atau browser lain jika perlu.
 
-**Status (2026-01-31):** Manual testing selesai oleh user; semua aman. Lanjut Phase 6.
+**Status (2026-01-31):** Manual testing completed by user; all good. Proceed to Phase 6.
 
 ---
 
@@ -1938,8 +1938,8 @@ Lakukan di **production URL** (mis. `https://badge2048-stacks-cle4gz9s6-hakuryuu
 
 **Tasks**:
 1. **Set up error monitoring**
-   - [ ] Configure error tracking (Sentry, etc.) — **Anda isi tool/secret**; langkah di [docs/MONITORING.md](MONITORING.md).
-   - [ ] Set up alerts for critical errors (Sentry / Vercel / layanan pilihan).
+   - [x] Error tracking: **tidak pakai Sentry** — cek error lewat Vercel dashboard / log drain ([docs/MONITORING.md](MONITORING.md)).
+   - [x] Alerts: Vercel dashboard + Uptime Robot (health) cukup untuk saat ini.
    - [ ] (Opsional) Monitor transaction failure rates (Stacks Explorer / indexer).
 
 2. **Set up analytics**
@@ -1948,19 +1948,17 @@ Lakukan di **production URL** (mis. `https://badge2048-stacks-cle4gz9s6-hakuryuu
 
 3. **Regular health checks**
    - [x] **Health endpoint tersedia**: `GET /api/health` — verifikasi contract reachable (Hiro read-only). Implementasi: `app/api/health/route.ts`.
-   - [ ] Daftar health check di Uptime Robot (atau Cronitor/Better Uptime); alert jika 503.
-   - [ ] Rutinitas: harian (health), mingguan (error logs), bulanan (usage) — checklist di [docs/MONITORING.md](MONITORING.md).
+   - [x] **Register health in Uptime Robot** — verified by user; production `/api/health` → 200, contract reachable; alert jika 503/timeout.
+   - [ ] Routine: daily (health), weekly (error logs), monthly (usage) — checklist in [docs/MONITORING.md](MONITORING.md).
 
 **Deliverables**:
-- Health check API live (`/api/health`); Anda daftar di layanan uptime + isi error monitoring (Sentry/tool).
-- Checklist dan draft konfigurasi: **[docs/MONITORING.md](MONITORING.md)**.
-- Env placeholder untuk monitoring: `.env.example` (SENTRY_DSN, dll.); Anda isi di Vercel.
+- Health check API live; Uptime Robot terdaftar; error monitoring via Vercel dashboard (Sentry tidak dipakai).
+- Checklist dan konfigurasi: **[docs/MONITORING.md](MONITORING.md)**.
 
 **Phase 6.2 Implementation Summary (2026-01-31):**
 - **Health API**: `GET /api/health` — returns 200 when contract reachable, 503 when Hiro/contract unreachable. No secrets; pakai config existing.
-- **Docs**: `docs/MONITORING.md` — checklist step-by-step (health, Sentry, analytics, maintenance). Anda isi tool (Uptime Robot, Sentry DSN, dll.).
-- **Env**: `.env.example` — optional `NEXT_PUBLIC_SENTRY_DSN` / `SENTRY_DSN`; Anda set di Vercel bila pakai Sentry.
-- **Sisa untuk Anda**: (1) Daftar `/api/health` di Uptime Robot; (2) Pilih & konfigurasi error monitoring (Sentry); (3) Centang checklist di MONITORING.md setelah selesai.
+- **Docs**: `docs/MONITORING.md` — checklist (health, Sentry opsional, analytics opsional, maintenance).
+- **Verified by user**: Deploy → `/api/health` 200 + contract reachable; Uptime Robot terdaftar; error monitoring tidak pakai Sentry (Vercel dashboard / log drain).
 
 ### 6.3 Communication
 
@@ -1968,18 +1966,28 @@ Lakukan di **production URL** (mis. `https://badge2048-stacks-cle4gz9s6-hakuryuu
 
 **Tasks**:
 1. **Update public information**
-   - Update website/social media
-   - Announce mainnet launch (if applicable)
-   - Update any public documentation
+   - [x] Update website/social media (production URL, mainnet live, contract Explorer link).
+   - [x] Announce mainnet launch (if applicable) — tweet, post, Discord, dll.
+   - [x] Update any public documentation (README sudah mainnet; contract README sudah; internal doc ini).
 
 2. **User communication**
-   - Notify users of migration (if applicable)
-   - Provide migration guide (if needed)
-   - Update support documentation
+   - [x] Notify users of migration (if applicable) — email, in-app, atau tidak perlu jika belum ada user.
+   - [x] Provide migration guide (if needed) — untuk badge2048 tidak ada user migration (testnet vs mainnet terpisah).
+   - [x] Update support documentation (jika ada).
 
 **Deliverables**:
-- Public information updated
-- Users notified (if applicable)
+- Public information updated (sesuai kebutuhan).
+- Users notified (if applicable).
+
+**Status (verified by user):** Phase 6.3 complete. Testnet → mainnet migration complete (Phase 1–6.3).
+
+---
+
+### After migration is complete — Next steps
+
+- **Ongoing:** Ikuti rutinitas di [docs/MONITORING.md](MONITORING.md) (health check, error logs mingguan, usage bulanan).
+- **Roadmap:** Future features (leaderboard persistence, anti-cheat, i18n, etc.) — see README → Roadmap and `docs/FUTURE-SCOPE.md`.
+- **Rollback:** Jika ada masalah production, gunakan [Rollback Procedures](#rollback-procedures) di bawah.
 
 ---
 
@@ -2781,11 +2789,12 @@ Use this template to track execution progress:
 ## Phase 6: Post-Migration Tasks
 - [x] 6.1 Documentation Updates (2026-01-31)
   - [x] All docs updated: README (mainnet status, deploy links), contract README (mainnet date, migration link), migration plan status
-- [x] 6.2 Monitoring & Maintenance (draft 2026-01-31)
+- [x] 6.2 Monitoring & Maintenance (2026-01-31)
   - [x] Health check API: GET /api/health (contract reachable); docs/MONITORING.md + .env.example placeholder
-  - [ ] User: daftar health di Uptime Robot; konfigurasi Sentry/tool; centang checklist di MONITORING.md
-- [ ] 6.3 Communication
-  - [ ] Public info updated: [Yes/No]
+  - [x] User: deploy verified; /api/health 200 + contract reachable; Uptime Robot terdaftar; error monitoring via Vercel (tidak pakai Sentry)
+- [x] 6.3 Communication (2026-01-31)
+  - [x] Public info updated (website/sosmed, pengumuman mainnet): Yes
+  - [x] Users notified (if applicable): Yes / N/A
 
 ## Key Information
 - Mainnet Wallet: [SP...]

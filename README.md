@@ -199,7 +199,7 @@ After `npm install` you may see **9 low severity** vulnerabilities. They come fr
 ├── contracts/
 │   └── badge2048-contract/      # Clarity (Clarinet), badge2048.clar, tests, deployments
 ├── e2e/                         # Playwright: navigation, play, badges, badge-claim, leaderboard
-└── docs/                        # Specs, rules, roadmap (TECH-STACK, BADGE-SYSTEM, LEADERBOARD-PLAN, etc.)
+└── docs/                        # Specs, rules, deployment (TECH-STACK, BADGE-SYSTEM, TESTNET-TO-MAINNET-MIGRATION-PLAN, VERCEL-DEPLOY, docs/rules/)
 ```
 
 ---
@@ -229,7 +229,7 @@ After `npm install` you may see **9 low severity** vulnerabilities. They come fr
 - **UI/UX:** i18n, sound, theme toggles, further a11y.
 - **Ecosystem:** Farcaster, Telegram mini-app, identity and cross-platform sync.
 
-See `docs/FUTURE-SCOPE.md` and `docs/IMPLEMENTATION-ROADMAP.md` for more.
+See [docs/FUTURE-SCOPE.md](docs/FUTURE-SCOPE.md) for more.
 
 ---
 
@@ -241,7 +241,7 @@ See `docs/FUTURE-SCOPE.md` and `docs/IMPLEMENTATION-ROADMAP.md` for more.
 4. **Code** — Follow existing patterns; keep `lib/game` pure and tested. User-facing text in English.
 5. **Docs** — Put non-trivial design and decisions in `docs/`.
 
-See `docs/repo-rules.md`, `docs/frontend-rules.md`, `docs/backend-rules.md`, and `docs/testing-rules.md` for detailed conventions.
+See [docs/rules/repo-rules.md](docs/rules/repo-rules.md), [docs/rules/frontend-rules.md](docs/rules/frontend-rules.md), [docs/rules/backend-rules.md](docs/rules/backend-rules.md), and [docs/rules/testing-rules.md](docs/rules/testing-rules.md) for detailed conventions.
 
 ---
 
