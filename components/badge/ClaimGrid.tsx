@@ -19,6 +19,7 @@ import {
 import { WalletConnect } from '@/components/ui/wallet-connect'
 import { cn } from '@/lib/utils'
 import { updateBadgeWithOnchainData } from '@/lib/badges'
+import { invalidateBadgeOwnershipCache } from '@/lib/badgeOwnershipCache'
 import { loadHighScore } from '@/lib/highScore'
 import { fetchBadgeOwnership, getOwnershipForTier } from '@/lib/stacks/badgeOwnershipClient'
 import { getExplorerUrl, apiUrl } from '@/lib/stacks/config'
@@ -500,7 +501,7 @@ export function ClaimGrid() {
                 setLastClaimedTier(selectedBadge.tier)
                 setTransactionStatus('success')
                 setIsClaiming(false)
-                
+                invalidateBadgeOwnershipCache()
                 // Re-sync onchain state after successful mint
                 if (address && isAuthenticated) {
                   setTimeout(() => {
@@ -566,6 +567,7 @@ export function ClaimGrid() {
               
               setTransactionStatus('success')
               setIsClaiming(false)
+              invalidateBadgeOwnershipCache()
               
               // Auto-close dialog after 3 seconds
               setTimeout(() => {
@@ -601,6 +603,7 @@ export function ClaimGrid() {
               
               setTransactionStatus('success')
               setIsClaiming(false)
+              invalidateBadgeOwnershipCache()
               
               setTimeout(() => {
                 setDialogOpen(false)
@@ -635,6 +638,7 @@ export function ClaimGrid() {
             
             setTransactionStatus('success')
             setIsClaiming(false)
+            invalidateBadgeOwnershipCache()
             
             setTimeout(() => {
               setDialogOpen(false)

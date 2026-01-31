@@ -1,8 +1,13 @@
 /**
- * Phase 2.3: Verify mainnet contract deployment.
+ * Phase 2.3 / Phase 4.3: Verify mainnet contract deployment.
  * Calls Hiro mainnet API to test read-only functions.
  * Run: node scripts/verify-mainnet-deployment.mjs
+ *
+ * Hiro v2 call-read expects arguments as hex-encoded Clarity values (serialized).
  */
+
+import pkg from '@stacks/transactions';
+const { cvToHex, stringAsciiCV } = pkg;
 
 const MAINNET_API = 'https://api.hiro.so';
 const DEPLOYER = 'SP22ZCY5GAH27T4CK3ATG4QTZJQV6FXPRB8X907KX';
@@ -42,11 +47,10 @@ async function main() {
     ok = false;
   }
 
-  // 2. get-badge-mint-count (bronze)
+  // 2. get-badge-mint-count (bronze) — arguments must be hex-encoded Clarity values
   try {
-    const data = await callReadOnly('get-badge-mint-count', [
-      { type: 'string', value: 'bronze' },
-    ]);
+    const bronzeHex = cvToHex(stringAsciiCV('bronze'));
+    const data = await callReadOnly('get-badge-mint-count', [bronzeHex]);
     const result = data.result ?? data;
     const value = result?.value ?? result;
     console.log('get-badge-mint-count("bronze"):', JSON.stringify(data, null, 2));

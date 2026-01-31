@@ -6,14 +6,10 @@ import { useBadges } from '@/hooks/useBadges'
 import { useStacksWallet } from '@/hooks/useStacksWallet'
 import { BadgeCard } from '@/components/badge/BadgeCard'
 import { loadHighScore } from '@/lib/highScore'
-
-const CACHE_TTL_MS = 60_000 // Cache result per address for 60s
-
-const ownershipCache: {
-  address: string
-  data: Record<string, number | null>
-  ts: number
-} = { address: '', data: {}, ts: 0 }
+import {
+  getBadgeOwnershipCache,
+  setBadgeOwnershipCache,
+} from '@/lib/badgeOwnershipCache'
 
 export function BadgesGrid() {
   const { badges } = useBadges()
@@ -36,13 +32,9 @@ export function BadgesGrid() {
       setOnchainByTier(null)
       return
     }
-    const now = Date.now()
-    if (
-      ownershipCache.address === address &&
-      ownershipCache.ts > 0 &&
-      now - ownershipCache.ts < CACHE_TTL_MS
-    ) {
-      setOnchainByTier(ownershipCache.data)
+    const cached = getBadgeOwnershipCache(address)
+    if (cached !== null) {
+      setOnchainByTier(cached)
       return
     }
     let cancelled = false
@@ -60,9 +52,7 @@ export function BadgesGrid() {
         const json = await res.json()
         const data = (json?.data ?? {}) as Record<string, number | null>
         if (!cancelled) {
-          ownershipCache.address = address
-          ownershipCache.data = data
-          ownershipCache.ts = Date.now()
+          setBadgeOwnershipCache(address, data)
           setOnchainByTier(data)
           // Diagnostic: verifikasi API pakai mainnet/testnet (cek header response)
           const apiNetwork = res.headers.get('X-Stacks-Network')
