@@ -140,6 +140,11 @@ npm run start
 
 - **Build command** must be `npm run build` (defined in `vercel.json`). Do **not** override it in Vercel Dashboard with a custom script (e.g. one that exits on production), or production builds will fail.
 - Set environment variables in **Project → Settings → Environment Variables** (see table above; use mainnet values for production).
+- If production deploy fails with a script that exits on `VERCEL_ENV=production`, see **[docs/VERCEL-DEPLOY.md](docs/VERCEL-DEPLOY.md)** for where it is set (Dashboard override) and how to fix it.
+
+### npm audit (vulnerabilities)
+
+After `npm install` you may see **9 low severity** vulnerabilities. They come from **transitive dependencies** of `@stacks/connect` / `@stacks/connect-react` (elliptic, bip322-js, etc.). The **high severity** (Next.js) is addressed by using **Next.js 16.1.6**. Do **not** run `npm audit fix --force` without testing: it would downgrade `@stacks/connect` and can break the app. Re-run `npm audit` after dependency updates; fix upstream when `@stacks/connect` bumps its dependencies.
 
 ---
 

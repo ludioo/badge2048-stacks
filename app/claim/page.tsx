@@ -13,14 +13,12 @@ export default function ClaimPage() {
   // Listen to wallet connect/disconnect events for real-time updates
   useEffect(() => {
     const handleWalletChange = () => {
-      console.log('[ClaimPage] Wallet status changed, forcing re-render');
       forceUpdate({});
     };
 
     if (typeof window !== 'undefined') {
       window.addEventListener('wallet-connected', handleWalletChange);
       window.addEventListener('wallet-disconnected', handleWalletChange);
-      console.log('[ClaimPage] Listening for wallet status changes');
     }
 
     return () => {
@@ -30,9 +28,6 @@ export default function ClaimPage() {
       }
     };
   }, []);
-
-  // Debug logs to track state changes
-  console.log('[ClaimPage] Render with wallet state:', { isAuthenticated, address })
 
   return (
     <div className="mx-auto w-full max-w-5xl">
